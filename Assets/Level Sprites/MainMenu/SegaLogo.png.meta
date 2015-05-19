@@ -1,0 +1,528 @@
+fileFormatVersion: 2
+guid: ee0c5e6b37043a64b9bad0ee1b4b427d
+timeCreated: 1431137860
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: SegaLogo01
+    21300002: SegaLogo02
+    21300004: SegaLogo03
+    21300006: SegaLogo04
+    21300008: SegaLogo05
+    21300010: SegaLogo06
+    21300012: SegaLogo07
+    21300014: SegaLogo08
+    21300016: SegaLogo09
+    21300018: SegaLogo10
+    21300020: SegaLogo11
+    21300022: SegaLogo12
+    21300024: SegaLogo13
+    21300026: SegaLogo14
+    21300028: SegaLogo15
+    21300030: SegaLogo16
+    21300032: SegaLogo17
+    21300034: SegaLogo18
+    21300036: SegaLogo19
+    21300038: SegaLogo20
+    21300040: SegaLogo21
+    21300042: SegaLogo22
+    21300044: SegaLogo23
+    21300046: SegaLogo24
+    21300048: SegaLogo25
+    21300050: SegaLogo26
+    21300052: SegaLogo27
+    21300054: SegaLogo28
+    21300056: SegaLogo29
+    21300058: SegaLogo30
+    21300060: SegaLogo31
+    21300062: SegaLogo32
+    21300064: SegaLogo33
+    21300066: SegaLogo34
+    21300068: SegaLogo35
+    21300070: SegaLogo36
+    21300072: SegaLogo37
+    21300074: SegaLogo38
+    21300076: SegaLogo39
+    21300078: SegaLogo40
+    21300080: SegaLogo41
+    21300082: SegaLogo42
+    21300084: SegaLogo43
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 4096
+  textureSettings:
+    filterMode: 0
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 1
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: SegaLogo01
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 953
+        width: 24
+        height: 69
+      alignment: 9
+      pivot: {x: -5.66666651, y: .51449275}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo02
+      rect:
+        serializedVersion: 2
+        x: 28
+        y: 950
+        width: 56
+        height: 72
+      alignment: 9
+      pivot: {x: -1.85714281, y: .506944418}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo03
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 952
+        width: 88
+        height: 70
+      alignment: 9
+      pivot: {x: -.818181813, y: .521428585}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo04
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 950
+        width: 120
+        height: 72
+      alignment: 9
+      pivot: {x: -.333333343, y: .506944418}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo05
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 952
+        width: 152
+        height: 70
+      alignment: 9
+      pivot: {x: -.0526315793, y: .521428585}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo06
+      rect:
+        serializedVersion: 2
+        x: 452
+        y: 950
+        width: 184
+        height: 72
+      alignment: 9
+      pivot: {x: .130434781, y: .506944418}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo07
+      rect:
+        serializedVersion: 2
+        x: 638
+        y: 952
+        width: 216
+        height: 70
+      alignment: 9
+      pivot: {x: .259259254, y: .521428585}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo08
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 876
+        width: 248
+        height: 72
+      alignment: 9
+      pivot: {x: .354838699, y: .506944418}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo09
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 878
+        width: 280
+        height: 70
+      alignment: 9
+      pivot: {x: .428571433, y: .521428585}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo10
+      rect:
+        serializedVersion: 2
+        x: 534
+        y: 876
+        width: 312
+        height: 72
+      alignment: 9
+      pivot: {x: .487179488, y: .506944418}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo11
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 804
+        width: 320
+        height: 70
+      alignment: 9
+      pivot: {x: .5, y: .521428585}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo12
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 805
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .51449275}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo13
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 805
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .51449275}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo14
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 733
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .51449275}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo15
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 733
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .51449275}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo16
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 733
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .51449275}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo17
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 662
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .51449275}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo18
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 662
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .51449275}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo19
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 662
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .51449275}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo20
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 591
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .51449275}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo21
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 591
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .51449275}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo22
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 591
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .51449275}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo23
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 520
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .51449275}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo24
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 532
+        width: 187
+        height: 57
+      alignment: 9
+      pivot: {x: .508021414, y: .517543852}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo25
+      rect:
+        serializedVersion: 2
+        x: 513
+        y: 520
+        width: 252
+        height: 69
+      alignment: 9
+      pivot: {x: .634920657, y: .5289855}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo26
+      rect:
+        serializedVersion: 2
+        x: 767
+        y: 519
+        width: 252
+        height: 70
+      alignment: 9
+      pivot: {x: .634920657, y: .521428585}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo27
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 445
+        width: 252
+        height: 72
+      alignment: 9
+      pivot: {x: .634920657, y: .506944418}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo28
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 447
+        width: 252
+        height: 70
+      alignment: 9
+      pivot: {x: .634920657, y: .521428585}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo29
+      rect:
+        serializedVersion: 2
+        x: 510
+        y: 445
+        width: 252
+        height: 72
+      alignment: 9
+      pivot: {x: .634920657, y: .506944418}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo30
+      rect:
+        serializedVersion: 2
+        x: 764
+        y: 447
+        width: 252
+        height: 70
+      alignment: 9
+      pivot: {x: .634920657, y: .521428585}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo31
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 371
+        width: 252
+        height: 72
+      alignment: 9
+      pivot: {x: .634920657, y: .506944418}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo32
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 373
+        width: 256
+        height: 70
+      alignment: 9
+      pivot: {x: .625, y: .521428585}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo33
+      rect:
+        serializedVersion: 2
+        x: 514
+        y: 371
+        width: 288
+        height: 72
+      alignment: 9
+      pivot: {x: .555555582, y: .506944418}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo34
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 299
+        width: 320
+        height: 70
+      alignment: 9
+      pivot: {x: .5, y: .521428585}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo35
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 297
+        width: 320
+        height: 72
+      alignment: 9
+      pivot: {x: .5, y: .506944418}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo36
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 300
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .5289855}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo37
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 226
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .5289855}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo38
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 226
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .5289855}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo39
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 226
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .5289855}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo40
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 155
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .5289855}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo41
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 155
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .5289855}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo42
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 155
+        width: 320
+        height: 69
+      alignment: 9
+      pivot: {x: .5, y: .5289855}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SegaLogo43
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 84
+        width: 252
+        height: 69
+      alignment: 9
+      pivot: {x: .634920657, y: .5289855}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
