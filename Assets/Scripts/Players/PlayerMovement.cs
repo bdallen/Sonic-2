@@ -20,6 +20,11 @@ public class PlayerMovement : MonoBehaviour {
 	private int PlayerDirection = 0;
 	private float FallSpeed = 0f;
 	private bool Jumping = false;
+	private bool StartJump = false;
+
+	// Ground Sensor Values
+	private Vector2 SensorGroundA, SensorGroundB;
+
 
 	// Checks
 	bool grounded = false;
@@ -29,8 +34,9 @@ public class PlayerMovement : MonoBehaviour {
 	private int verticalRays = 2;
 	private int margin = 2;
 
-	// Velocity
+	// Velocity and Rotation
 	private Vector2 velocity;
+	private float YRotation;
 
 	void Start()
 	{
@@ -48,15 +54,31 @@ public class PlayerMovement : MonoBehaviour {
 		               collider.bounds.size.y);
 		GroundState ();
 		DMovement ();
+		if (Input.GetKey (KeyCode.A) && grounded) {
+			StartJump = true;
+		}
+		if (StartJump && Input.GetKey(KeyCode.A)){
+			Jumping = true;
+			StartJump = false;
+			velocity = new Vector2 (velocity.x, Jump);
+		}
+		else if (StartJump)
+		{
+			Jumping = true;
+			StartJump = false;
+			velocity = new Vector2 (velocity.x, 4f);
+		}
 		UpdateAnimations ();
+		transform.eulerAngles = new Vector2(0,YRotation);
 		transform.Translate (velocity.x,velocity.y,0f);
 	}
 
 	void OnGUI()
 	{
-		GUILayout.Label ("Grounded: " + grounded + ", Falling: " + falling);
+		GUILayout.Label ("Grounded: " + grounded + ", Falling: " + falling + ", Jumping: " + Jumping);
 		GUILayout.Label ("Location: " + transform.position.ToString());
 		GUILayout.Label ("Velocity: " + velocity.ToString ());
+		GUILayout.Label ("Sensor A: " + SensorGroundA.ToString() + ", Sensor B: " + SensorGroundB.ToString ());
 	}    
 
 	void DMovement()
@@ -75,7 +97,7 @@ public class PlayerMovement : MonoBehaviour {
 			}
 			
 			// Turn Sprite Left
-			transform.eulerAngles = new Vector2 (0, 180);
+			YRotation = 180;
 			
 		} else if (Input.GetKey (KeyCode.RightArrow)) {
 			
@@ -91,7 +113,7 @@ public class PlayerMovement : MonoBehaviour {
 			}
 			
 			// Turn Sprite Right
-			transform.eulerAngles = new Vector2 (0, 0);
+			YRotation = 0;
 			
 		} else {
 			CurrentSpeed = CurrentSpeed - (Mathf.Min(Mathf.Abs(CurrentSpeed), Friction)*Mathf.Sign(CurrentSpeed));
@@ -109,6 +131,8 @@ public class PlayerMovement : MonoBehaviour {
 
 	void GroundState()
 	{
+		Vector3 vGaStart, vGbStart;
+
 		// Not grounded apply gravity
 		if (!grounded) {
 			velocity = new Vector2 (velocity.x, Mathf.Max (velocity.y - Gravity, -MaxFall));
@@ -118,8 +142,19 @@ public class PlayerMovement : MonoBehaviour {
 			falling = true;
 		}
 		if (grounded || falling) {
-			Vector3 vGaStart = new Vector3(box.center.x + 9,box.center.y,transform.position.z);
-			Vector3 vGbStart = new Vector3(box.center.x - 9,box.center.y,transform.position.z);
+
+			// If not jumping then rays are 9 pixels apart from X=0 of the sprite
+			if (!Jumping)
+			{
+				vGaStart = new Vector3(box.center.x + 9,box.center.y,transform.position.z);
+				vGbStart = new Vector3(box.center.x - 9,box.center.y,transform.position.z);
+			}
+			// Else set the rays 7 pixels apart from X=0 of the sprite
+			else
+			{
+				vGaStart = new Vector3(box.center.x + 7,box.center.y,transform.position.z);
+				vGbStart = new Vector3(box.center.x - 7,box.center.y,transform.position.z);
+			}
 
 			RaycastHit hGa, hGb;
 
@@ -134,8 +169,8 @@ public class PlayerMovement : MonoBehaviour {
 			Ray rGb = new Ray(vGbStart,Vector3.down);
 
 			// Debug this shiz
-			Debug.DrawRay(vGaStart,Vector3.down * distance,Color.green,10f);
-			Debug.DrawRay(vGbStart,Vector3.down * distance,Color.green,10f);
+			Debug.DrawRay(vGaStart,Vector3.down * distance,Color.green,2f);
+			Debug.DrawRay(vGbStart,Vector3.down * distance,Color.green,2f);
 
 			bGaConnected = Physics.Raycast(rGa, out hGa, distance,1 << lmGround); // Shoot out Ray A and set layer mask to ground
 			bGbConnected = Physics.Raycast(rGb, out hGb, distance,1 << lmGround); // Shoot out Ray B and set layer mask to ground
@@ -145,12 +180,22 @@ public class PlayerMovement : MonoBehaviour {
 			{
 				grounded = true;
 				falling = false;
+				Jumping = false;
+
+				// Store out the sensor values
+				if (hGa.collider != null) {SensorGroundA = hGa.point;}
+				if (hGb.collider != null) {SensorGroundB = hGb.point;}
 
 				// Fixes a weird bug where a and b although the same height seem to give different distances
 				if (hGb.distance > hGa.distance)
 				{
 					transform.Translate(Vector3.down * (hGb.distance - box.height/2)); // Places the transform on the ground
-				}else
+				}
+				else if (hGa.distance > hGb.distance)
+				{
+					transform.Translate(Vector3.down * (hGa.distance - box.height/2)); // Places the transform on the ground
+				}
+				else
 				{
 					transform.Translate(Vector3.down * (hGa.distance - box.height/2)); // Places the transform on the ground
 				}
