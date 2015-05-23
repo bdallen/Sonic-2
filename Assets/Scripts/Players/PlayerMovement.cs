@@ -26,7 +26,7 @@ public class PlayerMovement : MonoBehaviour {
 	bool falling = false;
 
 	// variables for raycasting
-	private int verticalRays = 4;
+	private int verticalRays = 2;
 	private int margin = 2;
 
 	// Velocity
@@ -49,7 +49,7 @@ public class PlayerMovement : MonoBehaviour {
 		GroundState ();
 		DMovement ();
 		UpdateAnimations ();
-		transform.Translate (velocity);
+		transform.Translate (velocity.x,velocity.y,0f);
 	}
 
 	void OnGUI()
@@ -107,7 +107,6 @@ public class PlayerMovement : MonoBehaviour {
 		anim.SetBool ("Jumping", Jumping);
 	}
 
-
 	void GroundState()
 	{
 		// Not grounded apply gravity
@@ -118,37 +117,52 @@ public class PlayerMovement : MonoBehaviour {
 		if (velocity.y < 0) {
 			falling = true;
 		}
-		//
 		if (grounded || falling) {
-			Vector3 startPoint = new Vector3(box.xMin + margin, box.center.y, transform.position.z);
-			Vector3 endPoint = new Vector3(box.xMax - margin, box.center.y, transform.position.z);
+			Vector3 vGaStart = new Vector3(box.center.x + 9,box.center.y,transform.position.z);
+			Vector3 vGbStart = new Vector3(box.center.x - 9,box.center.y,transform.position.z);
 
-			RaycastHit hitInfo;
+			RaycastHit hGa, hGb;
 
 			float distance = box.height/2+(grounded? margin: Mathf.Abs (velocity.y));
 
-			bool connected = false;
+			// No were not connected, no yet anyway
+			bool bGaConnected = false;
+			bool bGbConnected = false;
 
-			for (int i =0; i < verticalRays; i++){
-				float lerpAmount = (float)i / (float) verticalRays -1;
-				Vector3 origin = Vector3.Lerp (startPoint, endPoint, lerpAmount);
-				Ray ray = new Ray(origin, Vector3.down);
+			// Make the ray vectors
+			Ray rGa = new Ray(vGaStart,Vector3.down);
+			Ray rGb = new Ray(vGbStart,Vector3.down);
 
-				connected = Physics.Raycast(ray, out hitInfo, distance,1 << lmGround);
+			// Debug this shiz
+			Debug.DrawRay(vGaStart,Vector3.down * distance,Color.green,10f);
+			Debug.DrawRay(vGbStart,Vector3.down * distance,Color.green,10f);
 
-				if (connected){
-					grounded = true;
-					falling = false;
-					transform.Translate(Vector3.down * (hitInfo.distance - box.height/2));
-					velocity = new Vector2(velocity.x, 0);
-					break;
+			bGaConnected = Physics.Raycast(rGa, out hGa, distance,1 << lmGround); // Shoot out Ray A and set layer mask to ground
+			bGbConnected = Physics.Raycast(rGb, out hGb, distance,1 << lmGround); // Shoot out Ray B and set layer mask to ground
+
+			// If anything collides were on the floor
+			if (bGaConnected || bGbConnected)
+			{
+				grounded = true;
+				falling = false;
+
+				// Fixes a weird bug where a and b although the same height seem to give different distances
+				if (hGb.distance > hGa.distance)
+				{
+					transform.Translate(Vector3.down * (hGb.distance - box.height/2)); // Places the transform on the ground
+				}else
+				{
+					transform.Translate(Vector3.down * (hGa.distance - box.height/2)); // Places the transform on the ground
 				}
+
+				velocity = new Vector2(velocity.x, 0);
 			}
-			if (!connected){
+
+			// Uh Oh not on the ground here, were going to fall :O
+			if (!bGaConnected && !bGbConnected){
 				grounded = false;
 			}
 		}
 
 	}
-
 }
