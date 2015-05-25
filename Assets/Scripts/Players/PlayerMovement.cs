@@ -3,6 +3,9 @@ using System.Collections;
 
 public class PlayerMovement : MonoBehaviour {
 
+	private const float FacingRight = 0f;
+	private const float FacingLeft = 180f;
+
 	// User configurable options
 	public float Gravity = 0.21875f;
 	public float MaxFall = 16f;
@@ -17,10 +20,14 @@ public class PlayerMovement : MonoBehaviour {
 	private Rect box;
 	private LayerMask lmGround;
 	public float CurrentSpeed = 0f;
-	private int PlayerDirection = 0;
 	private float FallSpeed = 0f;
 	private bool Jumping = false;
 	private bool StartJump = false;
+	private int JumpHold = 0;		// Counts if jump is held down
+	private bool FrontEdge = false;
+	private bool BackEdge = false;
+
+	private float FEdgeDistance = 0f;
 
 	// Ground Sensor Values
 	private Vector2 SensorGroundA, SensorGroundB;
@@ -56,17 +63,15 @@ public class PlayerMovement : MonoBehaviour {
 		DMovement ();
 		if (Input.GetKey (KeyCode.A) && grounded) {
 			StartJump = true;
+			JumpHold += 1;
+		} else {
+			//JumpHold = 0;
 		}
-		if (StartJump && Input.GetKey(KeyCode.A)){
+		if (StartJump){
+
 			Jumping = true;
 			StartJump = false;
 			velocity = new Vector2 (velocity.x, Jump);
-		}
-		else if (StartJump)
-		{
-			Jumping = true;
-			StartJump = false;
-			velocity = new Vector2 (velocity.x, 4f);
 		}
 		UpdateAnimations ();
 		transform.eulerAngles = new Vector2(0,YRotation);
@@ -75,10 +80,12 @@ public class PlayerMovement : MonoBehaviour {
 
 	void OnGUI()
 	{
-		GUILayout.Label ("Grounded: " + grounded + ", Falling: " + falling + ", Jumping: " + Jumping);
+		GUILayout.Label ("Grounded: " + grounded + ", Falling: " + falling + ", Jumping: " + Jumping + ", Edge: " + FrontEdge);
 		GUILayout.Label ("Location: " + transform.position.ToString());
 		GUILayout.Label ("Velocity: " + velocity.ToString ());
 		GUILayout.Label ("Sensor A: " + SensorGroundA.ToString() + ", Sensor B: " + SensorGroundB.ToString ());
+		GUILayout.Label ("Jump Hold: " + JumpHold.ToString ());
+		GUILayout.Label ("Edge Detect Distance: " + FEdgeDistance.ToString());
 	}    
 
 	void DMovement()
@@ -97,7 +104,7 @@ public class PlayerMovement : MonoBehaviour {
 			}
 			
 			// Turn Sprite Left
-			YRotation = 180;
+			YRotation = FacingLeft;
 			
 		} else if (Input.GetKey (KeyCode.RightArrow)) {
 			
@@ -113,7 +120,7 @@ public class PlayerMovement : MonoBehaviour {
 			}
 			
 			// Turn Sprite Right
-			YRotation = 0;
+			YRotation = FacingRight;
 			
 		} else {
 			CurrentSpeed = CurrentSpeed - (Mathf.Min(Mathf.Abs(CurrentSpeed), Friction)*Mathf.Sign(CurrentSpeed));
@@ -124,6 +131,9 @@ public class PlayerMovement : MonoBehaviour {
 
 	void UpdateAnimations()
 	{
+
+
+
 		Animator anim = GetComponent<Animator> ();
 		anim.SetFloat ("Speed", CurrentSpeed);
 		anim.SetBool ("Jumping", Jumping);
@@ -143,17 +153,32 @@ public class PlayerMovement : MonoBehaviour {
 		}
 		if (grounded || falling) {
 
-			// If not jumping then rays are 9 pixels apart from X=0 of the sprite
-			if (!Jumping)
+			// Check if we are jumping, if so change the width of the Sensors
+			// Also check the roataion and swap the A and B sensors depending on what way we are facing
+			switch(Jumping)
 			{
-				vGaStart = new Vector3(box.center.x + 9,box.center.y,transform.position.z);
-				vGbStart = new Vector3(box.center.x - 9,box.center.y,transform.position.z);
-			}
-			// Else set the rays 7 pixels apart from X=0 of the sprite
-			else
-			{
-				vGaStart = new Vector3(box.center.x + 7,box.center.y,transform.position.z);
-				vGbStart = new Vector3(box.center.x - 7,box.center.y,transform.position.z);
+			case true:
+				if (YRotation == FacingRight)
+				{
+					vGaStart = new Vector3(box.center.x + 7,box.center.y,transform.position.z);
+					vGbStart = new Vector3(box.center.x - 7,box.center.y,transform.position.z);
+				}else
+				{
+					vGaStart = new Vector3(box.center.x - 7,box.center.y,transform.position.z);
+					vGbStart = new Vector3(box.center.x + 7,box.center.y,transform.position.z);
+				}
+				break;
+			default:
+				if (YRotation == FacingRight)
+				{
+					vGaStart = new Vector3(box.center.x + 9,box.center.y,transform.position.z);
+					vGbStart = new Vector3(box.center.x - 9,box.center.y,transform.position.z);
+				}else
+				{
+					vGaStart = new Vector3(box.center.x - 9,box.center.y,transform.position.z);
+					vGbStart = new Vector3(box.center.x + 9,box.center.y,transform.position.z);
+				}
+				break;
 			}
 
 			RaycastHit hGa, hGb;
@@ -187,18 +212,15 @@ public class PlayerMovement : MonoBehaviour {
 				if (hGb.collider != null) {SensorGroundB = hGb.point;}
 
 				// Fixes a weird bug where a and b although the same height seem to give different distances
-				if (hGb.distance > hGa.distance)
+				if (hGa.distance > hGb.distance)
+				{
+					transform.Translate(Vector3.down * (hGa.distance - box.height/2)); // Places the transform on the ground
+				}
+				else if (hGa.distance < hGb.distance)
 				{
 					transform.Translate(Vector3.down * (hGb.distance - box.height/2)); // Places the transform on the ground
 				}
-				else if (hGa.distance > hGb.distance)
-				{
-					transform.Translate(Vector3.down * (hGa.distance - box.height/2)); // Places the transform on the ground
-				}
-				else
-				{
-					transform.Translate(Vector3.down * (hGa.distance - box.height/2)); // Places the transform on the ground
-				}
+
 
 				velocity = new Vector2(velocity.x, 0);
 			}
@@ -206,8 +228,20 @@ public class PlayerMovement : MonoBehaviour {
 			// Uh Oh not on the ground here, were going to fall :O
 			if (!bGaConnected && !bGbConnected){
 				grounded = false;
+				FrontEdge = false;
+			}
+
+			// Edge detection for the Balancing Animations
+			if (!bGaConnected && bGbConnected && !Jumping)
+			{
+				FrontEdge = true;
+				FEdgeDistance = ((SensorGroundA.x - hGb.point.x) / 2);
+			}
+			else if (bGaConnected && bGbConnected)
+			{
+				FrontEdge = false;
 			}
 		}
-
 	}
+
 }
