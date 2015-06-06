@@ -8,7 +8,7 @@ public class GameCamera : MonoBehaviour {
 	public Transform target;
 
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 		if (target)
 		{
 			Vector3 point = GetComponent<Camera>().WorldToViewportPoint(target.position);

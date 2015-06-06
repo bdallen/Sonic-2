@@ -98,13 +98,11 @@ public class PlayerMovement : MonoBehaviour
 		lmGround = LayerMask.NameToLayer ("Ground");
 	}
 
+    /// <summary>
+    /// Update at a set rate of 50 Cycles per Second (This keeps compatability with the Megadrive)
+    /// </summary>
 	void FixedUpdate()
 	{
-
-	}
-
-    void Update()
-    {
         // Grab out box collider and make rect object box for easier user
         BoxCollider collider = GetComponent<BoxCollider>();
         box = new Rect(collider.bounds.min.x,
@@ -117,6 +115,14 @@ public class PlayerMovement : MonoBehaviour
         UpdateAnimations();
         transform.eulerAngles = new Vector2(0, YRotation);
         transform.Translate(velocity.x, velocity.y, 0f);
+	}
+
+    /// <summary>
+    /// Update Every Single Frame
+    /// </summary>
+    void Update()
+    {
+        KeyUpdates();
     }
 
 	void OnGUI()
@@ -129,23 +135,32 @@ public class PlayerMovement : MonoBehaviour
 		GUILayout.Label ("Edge Detect Distance: " + FEdgeDistance.ToString());
 	}
 
-    void Jumping()
+    /// <summary>
+    /// Checks if mapped keys have been pressed, needs to be in the Update() section to allow fluid keypress detection.
+    /// </summary>
+    void KeyUpdates()
     {
-
         if (Input.GetButtonDown("Jump") && grounded)
         {
-            _jumping = true;
             _jump = true;
-        }
-        if (_jump)
-        {
-            velocity = new Vector2(velocity.x, MAX_JUMP_FORCE);
-            _jump = false;
         }
         if (Input.GetButtonUp("Jump") && !grounded)
         {
             _jumpCancel = true;
         }
+    }
+
+    void Jumping()
+    {
+
+
+        if (_jump)
+        {
+            _jumping = true;
+            velocity = new Vector2(velocity.x, MAX_JUMP_FORCE);
+            _jump = false;
+        }
+
         if (_jumpCancel)
         {
             if (velocity.y > MIN_JUMP_FORCE)
