@@ -70,12 +70,6 @@ public class PlayerMovement : MonoBehaviour
 
 	private bool StartJump = false;
     
-
-
-	
-
-
-
 	// Ground Sensor Values
 	private Vector2 SensorGroundA, SensorGroundB;
 
@@ -90,7 +84,7 @@ public class PlayerMovement : MonoBehaviour
 
 	// Velocity and Rotation
 	private Vector2 velocity;
-	private float YRotation;
+	private float YRotation = FACING_RIGHT;
 
 	void Start()
 	{
@@ -326,6 +320,7 @@ public class PlayerMovement : MonoBehaviour
 		anim.SetBool ("Jumping", _jumping);
         anim.SetFloat("EdgeDistance", _edgeDistance);
         anim.SetBool("FrontEdge", _edgeFront);
+        anim.SetBool("BackEdge", _edgeBack);
 	}
 
 	void GroundState()
@@ -423,12 +418,20 @@ public class PlayerMovement : MonoBehaviour
 			if (!bGaConnected && bGbConnected && !_jumping)
 			{
 				_edgeFront = true;
-				_edgeDistance = ((SensorGroundA.x - hGb.point.x) / 2);
+                _edgeBack = false;
+				_edgeDistance = Mathf.Abs(((SensorGroundA.x - hGb.point.x) / 2));
 			}
-			else if (bGaConnected && bGbConnected)
-			{
-				_edgeFront = false;
-			}
+            else if (bGaConnected && !bGbConnected && !_jumping)
+            {
+                _edgeFront = false;
+                _edgeBack = true;
+                _edgeDistance = Mathf.Abs(((SensorGroundA.x - hGb.point.x) / 2));
+            }
+            else
+            {
+                _edgeBack = false;
+                _edgeFront = false;
+            }
 		}
 	}
 
