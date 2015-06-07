@@ -20,7 +20,6 @@ public class PlayerMovement : MonoBehaviour
     public float TOP_SPEED = 6f;
     #endregion
 
-
     #region Player States
     //	    ; ===========================================================================
 	//		; off_19F6A: Obj01_States:
@@ -80,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
 
 	// variables for raycasting
 	private int verticalRays = 2;
-	private int margin = 2;
+	private int margin = 1;
 
 	// Velocity and Rotation
 	private Vector2 velocity;
@@ -106,6 +105,8 @@ public class PlayerMovement : MonoBehaviour
         GroundState();
         CheckJump();
         DMovement();
+        ApplyGravity();
+
         transform.eulerAngles = new Vector2(0, YRotation);
         transform.Translate(velocity.x, velocity.y, 0f);
 	}
@@ -115,8 +116,17 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     void Update()
     {
+        if (Input.GetKey(KeyCode.Z))
+        {
+            Time.timeScale = 0.25f;
+        }
+        else
+        {
+            Time.timeScale = 1f;
+        }
         KeyUpdates();
         UpdateAnimations();
+
     }
 
 	void OnGUI()
@@ -323,18 +333,24 @@ public class PlayerMovement : MonoBehaviour
         anim.SetBool("BackEdge", _edgeBack);
 	}
 
+    void ApplyGravity()
+    {
+        // Not grounded apply gravity
+        if (!grounded)
+        {
+            velocity = new Vector2(velocity.x, Mathf.Max(velocity.y - GRAVITY, -MAX_FALL_VELOCITY));
+        }
+        // Were falling
+        if (velocity.y < 0)
+        {
+            falling = true;
+        }
+    }
+
 	void GroundState()
 	{
 		Vector3 vGaStart, vGbStart;
 
-		// Not grounded apply gravity
-		if (!grounded) {
-			velocity = new Vector2 (velocity.x, Mathf.Max (velocity.y - GRAVITY, -MAX_FALL_VELOCITY));
-		}
-		// Were falling
-		if (velocity.y < 0) {
-			falling = true;
-		}
 		if (grounded || falling) {
 
 			// Check if we are jumping, if so change the width of the Sensors
@@ -367,7 +383,7 @@ public class PlayerMovement : MonoBehaviour
 
 			RaycastHit hGa, hGb;
 
-			float distance = box.height/2+(grounded? margin: Mathf.Abs (velocity.y));
+            float distance = (box.height / 2)+(grounded? margin: Mathf.Abs (velocity.y));
 
 			// No were not connected, no yet anyway
 			bool bGaConnected = false;
@@ -387,6 +403,7 @@ public class PlayerMovement : MonoBehaviour
 			// If anything collides were on the floor
 			if (bGaConnected || bGbConnected)
 			{
+           
                 _jumping = false;
 				grounded = true;
 				falling = false;
@@ -404,8 +421,7 @@ public class PlayerMovement : MonoBehaviour
 				{
 					transform.Translate(Vector3.down * (hGb.distance - box.height/2)); // Places the transform on the ground
 				}
-
-				velocity = new Vector2(velocity.x, 0);
+                velocity = new Vector2(velocity.x, 0);
 			}
 
 			// Uh Oh not on the ground here, were going to fall :O
