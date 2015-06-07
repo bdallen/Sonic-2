@@ -134,7 +134,7 @@ public class PlayerMovement : MonoBehaviour
         //GUILayout.Label ("Grounded: " + grounded + ", Falling: " + falling + ", Jumping: " + _jumping + ", Front Edge: " + FrontEdge + ", Back Edge: " + BackEdge);
 		GUILayout.Label ("Location: " + transform.position.ToString());
 		GUILayout.Label ("Velocity: " + velocity.ToString ());
-        GUILayout.Label("Current Speed: " + CurrentSpeed.ToString());
+        GUILayout.Label("Current Speed: " + Mathf.Abs(CurrentSpeed).ToString());
 		GUILayout.Label ("Sensor A: " + SensorGroundA.ToString() + ", Sensor B: " + SensorGroundB.ToString ());
 		GUILayout.Label ("Edge Detect Distance: " + _edgeDistance.ToString());
 	}
@@ -319,6 +319,8 @@ public class PlayerMovement : MonoBehaviour
 			CurrentSpeed = CurrentSpeed - (Mathf.Min(Mathf.Abs(CurrentSpeed), FRICTION)*Mathf.Sign(CurrentSpeed));
 		}
 
+        
+
 		velocity = new Vector2 (Mathf.Abs(CurrentSpeed), velocity.y);		
 		
 	}
@@ -326,7 +328,7 @@ public class PlayerMovement : MonoBehaviour
 	void UpdateAnimations()
 	{
 		Animator anim = GetComponent<Animator> ();
-		anim.SetFloat ("Speed", CurrentSpeed);
+		anim.SetFloat ("Speed", Mathf.Abs(CurrentSpeed));
 		anim.SetBool ("Jumping", _jumping);
         anim.SetFloat("EdgeDistance", _edgeDistance);
         anim.SetBool("FrontEdge", _edgeFront);
