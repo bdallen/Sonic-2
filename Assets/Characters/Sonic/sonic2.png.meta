@@ -1,0 +1,583 @@
+fileFormatVersion: 2
+guid: cfe409f03d68e8b479d64d3d31d7813e
+timeCreated: 1433648477
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: ball01
+    21300002: ball02
+    21300004: ball03
+    21300006: ball04
+    21300008: ball05
+    21300010: crouch01
+    21300012: crouch02
+    21300014: edge01
+    21300016: edge02
+    21300018: edge03
+    21300020: edgealt01
+    21300022: edgealt02
+    21300024: flail01
+    21300026: flail02
+    21300028: flail03
+    21300030: flail04
+    21300032: hit01
+    21300034: hit02
+    21300036: lookup01
+    21300038: lookup02
+    21300040: push01
+    21300042: push02
+    21300044: push03
+    21300046: push04
+    21300048: run01
+    21300050: run02
+    21300052: run03
+    21300054: run04
+    21300056: skid01
+    21300058: skid02
+    21300060: skid03
+    21300062: spindash01
+    21300064: spindash02
+    21300066: spindash03
+    21300068: spindash04
+    21300070: spindash05
+    21300072: spindash06
+    21300074: spring01
+    21300076: stand1
+    21300078: turn01
+    21300080: walk01
+    21300082: walk02
+    21300084: walk03
+    21300086: walk04
+    21300088: walk05
+    21300090: walk06
+    21300092: walk07
+    21300094: walk08
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 4096
+  textureSettings:
+    filterMode: 0
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 1
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: ball01
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 17
+        width: 29
+        height: 30
+      alignment: 9
+      pivot: {x: .517241359, y: .800000012}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ball02
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 37
+        width: 30
+        height: 29
+      alignment: 9
+      pivot: {x: .5, y: .827586234}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ball03
+      rect:
+        serializedVersion: 2
+        x: 28
+        y: 16
+        width: 29
+        height: 30
+      alignment: 9
+      pivot: {x: .517241359, y: .800000012}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ball04
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 37
+        width: 30
+        height: 29
+      alignment: 9
+      pivot: {x: .5, y: .827586234}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ball05
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 3
+        width: 30
+        height: 30
+      alignment: 9
+      pivot: {x: .5, y: .800000012}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: crouch01
+      rect:
+        serializedVersion: 2
+        x: 187
+        y: 153
+        width: 24
+        height: 32
+      alignment: 9
+      pivot: {x: .375, y: .75}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: crouch02
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 4
+        width: 29
+        height: 26
+      alignment: 9
+      pivot: {x: .344827592, y: .923076928}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: edge01
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 68
+        width: 32
+        height: 37
+      alignment: 9
+      pivot: {x: .46875, y: .64864862}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: edge02
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 68
+        width: 35
+        height: 37
+      alignment: 9
+      pivot: {x: .514285743, y: .64864862}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: edge03
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 49
+        width: 34
+        height: 37
+      alignment: 9
+      pivot: {x: .5, y: .64864862}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: edgealt01
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 109
+        width: 31
+        height: 37
+      alignment: 9
+      pivot: {x: .483870953, y: .64864862}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: edgealt02
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 148
+        width: 32
+        height: 37
+      alignment: 9
+      pivot: {x: .46875, y: .64864862}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: flail01
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 217
+        width: 32
+        height: 37
+      alignment: 9
+      pivot: {x: .46875, y: .64864862}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: flail02
+      rect:
+        serializedVersion: 2
+        x: 185
+        y: 70
+        width: 29
+        height: 37
+      alignment: 9
+      pivot: {x: .413793117, y: .64864862}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: flail03
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 178
+        width: 29
+        height: 37
+      alignment: 9
+      pivot: {x: .413793117, y: .64864862}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: flail04
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 107
+        width: 36
+        height: 37
+      alignment: 9
+      pivot: {x: .333333343, y: .64864862}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: hit01
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 226
+        width: 40
+        height: 28
+      alignment: 9
+      pivot: {x: .524999976, y: .857142866}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: hit02
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 227
+        width: 39
+        height: 27
+      alignment: 9
+      pivot: {x: .538461566, y: .851851881}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: lookup01
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 49
+        width: 27
+        height: 38
+      alignment: 9
+      pivot: {x: .555555582, y: .631578922}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: lookup02
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 88
+        width: 27
+        height: 38
+      alignment: 9
+      pivot: {x: .555555582, y: .631578922}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: push01
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 35
+        width: 29
+        height: 36
+      alignment: 9
+      pivot: {x: .517241359, y: .666666687}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: push02
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 89
+        width: 24
+        height: 37
+      alignment: 9
+      pivot: {x: .416666657, y: .64864862}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: push03
+      rect:
+        serializedVersion: 2
+        x: 226
+        y: 218
+        width: 28
+        height: 36
+      alignment: 9
+      pivot: {x: .5, y: .666666687}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: push04
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 10
+        width: 24
+        height: 37
+      alignment: 9
+      pivot: {x: .416666657, y: .64864862}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: run01
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 73
+        width: 31
+        height: 35
+      alignment: 9
+      pivot: {x: .516129017, y: .685714304}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: run02
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 110
+        width: 31
+        height: 36
+      alignment: 9
+      pivot: {x: .516129017, y: .666666687}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: run03
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 112
+        width: 30
+        height: 35
+      alignment: 9
+      pivot: {x: .5, y: .685714304}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: run04
+      rect:
+        serializedVersion: 2
+        x: 185
+        y: 32
+        width: 31
+        height: 36
+      alignment: 9
+      pivot: {x: .516129017, y: .666666687}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: skid01
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 187
+        width: 38
+        height: 38
+      alignment: 9
+      pivot: {x: .473684222, y: .631578922}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: skid02
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 216
+        width: 38
+        height: 38
+      alignment: 9
+      pivot: {x: .473684222, y: .631578922}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: skid03
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 146
+        width: 37
+        height: 39
+      alignment: 9
+      pivot: {x: .459459454, y: .615384638}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: spindash01
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 187
+        width: 30
+        height: 27
+      alignment: 9
+      pivot: {x: .366666675, y: .888888896}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: spindash02
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 187
+        width: 29
+        height: 27
+      alignment: 9
+      pivot: {x: .37931034, y: .888888896}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: spindash03
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 149
+        width: 29
+        height: 27
+      alignment: 9
+      pivot: {x: .37931034, y: .888888896}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: spindash04
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 8
+        width: 29
+        height: 27
+      alignment: 9
+      pivot: {x: .37931034, y: .888888896}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: spindash05
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 8
+        width: 29
+        height: 27
+      alignment: 9
+      pivot: {x: .37931034, y: .888888896}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: spindash06
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 8
+        width: 29
+        height: 27
+      alignment: 9
+      pivot: {x: .37931034, y: .888888896}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: spring01
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 209
+        width: 24
+        height: 45
+      alignment: 9
+      pivot: {x: .5, y: .533333361}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: stand1
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 89
+        width: 27
+        height: 39
+      alignment: 9
+      pivot: {x: .555555582, y: .615384638}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: turn01
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 48
+        width: 26
+        height: 37
+      alignment: 9
+      pivot: {x: .423076928, y: .64864862}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: walk01
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 185
+        width: 26
+        height: 39
+      alignment: 9
+      pivot: {x: .576923072, y: .615384638}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: walk02
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 130
+        width: 28
+        height: 40
+      alignment: 9
+      pivot: {x: .535714269, y: .600000024}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: walk03
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 169
+        width: 40
+        height: 38
+      alignment: 9
+      pivot: {x: .524999976, y: .552631557}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: walk04
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 128
+        width: 39
+        height: 39
+      alignment: 9
+      pivot: {x: .512820542, y: .589743614}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: walk05
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 87
+        width: 26
+        height: 39
+      alignment: 9
+      pivot: {x: .576923072, y: .615384638}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: walk06
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 172
+        width: 29
+        height: 40
+      alignment: 9
+      pivot: {x: .620689631, y: .600000024}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: walk07
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 214
+        width: 39
+        height: 40
+      alignment: 9
+      pivot: {x: .538461566, y: .574999988}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: walk08
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 128
+        width: 39
+        height: 39
+      alignment: 9
+      pivot: {x: .56410259, y: .589743614}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
