@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerMovement : MonoBehaviour
+public class BasePlayerMovement : MonoBehaviour
 {
 
     #region Constants
@@ -10,6 +10,10 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Public Variables
+    // Player Tuning
+    public int LIVES = 3;
+
+    // Physics Section
     public float GRAVITY = 0.21875f;
     public float MAX_FALL_VELOCITY = 16f;
     public float MAX_JUMP_FORCE = 6.5f;
@@ -57,8 +61,7 @@ public class PlayerMovement : MonoBehaviour
     private bool _moveRight = false;
     private bool _edgeFound = false;
     private float _edgeDistance = 0f;
-    private float _hgaDistance = 0f;
-    private float _hgbDistance = 0f;
+    private float _udeltaTime = 0.0f;
     #endregion
 
 
@@ -94,20 +97,9 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
 	void FixedUpdate()
 	{
-        // Grab out box collider and make rect object box for easier user
-        BoxCollider collider = GetComponent<BoxCollider>();
-        box = new Rect(collider.bounds.min.x,
-                       collider.bounds.min.y,
-                       collider.bounds.size.x,
-                       collider.bounds.size.y);
 
-        Collision();
-        GroundState();
-        ApplyGravity();
-        CheckJump();
-        DMovement();
-        transform.eulerAngles = new Vector2(0, YRotation);
-        transform.Translate(velocity.x, velocity.y, 0f);
+
+
         
 	}
 
@@ -116,6 +108,9 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     void Update()
     {
+        _udeltaTime += (Time.deltaTime - _udeltaTime) * 0.1f; // Update for our movement ratio calculations
+        float _movementRatio = 50f / (1.0f/_udeltaTime);
+
         if (Input.GetKey(KeyCode.Z))
         {
             Time.timeScale = 0.25f;
@@ -124,11 +119,20 @@ public class PlayerMovement : MonoBehaviour
         {
             Time.timeScale = 1f;
         }
-
-
-        KeyUpdates();
+        // Grab out box collider and make rect object box for easier user
+        BoxCollider collider = GetComponent<BoxCollider>();
+        box = new Rect(collider.bounds.min.x,
+                       collider.bounds.min.y,
+                       collider.bounds.size.x,
+                       collider.bounds.size.y);
+        ApplyGravity();
+        Collision();
+        CheckJump();
+        DMovement();
         UpdateAnimations();
-  }
+        transform.eulerAngles = new Vector2(0, YRotation);
+        transform.Translate(velocity.x * _movementRatio, velocity.y * _movementRatio, 0f);
+    }
 
 	void OnGUI()
 	{
@@ -141,34 +145,20 @@ public class PlayerMovement : MonoBehaviour
 	}
 
     /// <summary>
-    /// Checks if mapped keys have been pressed, needs to be in the Update() section to allow fluid keypress detection.
-    /// </summary>
-    void KeyUpdates()
-    {
-        // Handle Jump
-        if (Input.GetButtonDown("Jump") && grounded) { _jump = true; }
-        if (Input.GetButtonUp("Jump") && !grounded) { _jumpCancel = true; }
-
-        // Handle D Movement
-        if (Input.GetKey(KeyCode.LeftArrow))  { _moveLeft = true; } else { _moveLeft = false; }
-        if (Input.GetKey(KeyCode.RightArrow)) { _moveRight = true; } else { _moveRight = false; }
-    }
-
-    /// <summary>
     /// Check For Jumps
     /// </summary>
     void CheckJump()
     {
         /// When you release the jump button in the air after jumping, the computer checks to see if Sonic is moving upward (i.e. Y speed is negative). If he is, then it checks to see if Y speed is less than -4 (e.g. -5 is "less" than -4). If it is, then Y speed is set to -4. In this way, you can cut your jump short at any time, just by releasing the jump button. If you release the button in the very next step after jumping, Sonic makes the shortest possible jump.
-  
-        if (_jump)
+
+        if (Input.GetKey(KeyCode.A) && grounded)
         {
             _jumping = true;
             velocity = new Vector2(velocity.x, MAX_JUMP_FORCE);
             _jump = false;
         }
 
-        if (_jumpCancel)
+        if (Input.GetKeyUp(KeyCode.A) && !grounded)
         {
             if (velocity.y > MIN_JUMP_FORCE)
                 velocity = new Vector2(velocity.x, MIN_JUMP_FORCE);
@@ -178,7 +168,8 @@ public class PlayerMovement : MonoBehaviour
 
 	void DMovement()
 	{
-		if (_moveLeft) {
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
 
             // Turn Sprite Left
             YRotation = FACING_LEFT;
@@ -193,8 +184,10 @@ public class PlayerMovement : MonoBehaviour
 					CurrentSpeed = -TOP_SPEED;
 				}
 			}
-			
-		} else if (_moveRight) {
+
+        }
+        else if (Input.GetKey(KeyCode.RightArrow))
+        {
 
             // Turn Sprite Right
             YRotation = FACING_RIGHT;
@@ -244,39 +237,31 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    void GroundState()
-    {
-        if (grounded)
-        {
-
-        }
-    }
-
 	void Collision()
 	{
 		Vector3 vGaStart, vGbStart;
 
 		if (grounded || falling) {
 
-			// Check if we are jumping, if so change the width of the Sensors
-			// Also check the roataion and swap the A and B sensors depending on what way we are facing
-			switch(_jumping)
-			{
-			case true:
-					vGaStart = new Vector3(box.center.x + 7,box.center.y,transform.position.z);
-					vGbStart = new Vector3(box.center.x - 7,box.center.y,transform.position.z);
-				break;
-			default:
+            // Check if we are jumping, if so change the width of the Sensors
+            // Also check the roataion and swap the A and B sensors depending on what way we are facing
+            switch(_jumping)
+            {
+            case true:
+                    vGaStart = new Vector3(box.center.x + 7,box.center.y,transform.position.z);
+                    vGbStart = new Vector3(box.center.x - 7,box.center.y,transform.position.z);
+                break;
+            default:
 					vGaStart = new Vector3(box.center.x + 9,box.center.y,transform.position.z);
 					vGbStart = new Vector3(box.center.x - 9,box.center.y,transform.position.z);
-				break;
-			}
+                break;
+            }
 
             RaycastHit hGa, hGb;
 
             // TODO: Fix this
             // This may need to be revised - This is what was causing the bouncing issue, but dividing the velocity has helped
-            float distance = (box.height / 2) +(grounded? margin: Mathf.Abs (velocity.y/1.5f));
+            float distance = (box.height / 2) +(grounded? margin: Mathf.Abs (velocity.y)/1.5f);
 
 
 			// No were not connected, no yet anyway
@@ -307,14 +292,14 @@ public class PlayerMovement : MonoBehaviour
 				if (hGb.collider != null) {SensorGroundB = hGb.point;}
 
                 // Fixes a weird bug where a and b although the same height seem to give different distances
-                if (_hgaDistance > _hgbDistance)
+                if (hGa.distance > hGb.distance)
                 {
-                    transform.Translate(Vector3.down * (_hgaDistance - box.height / 2)); // Places the transform on the ground
+                    transform.Translate(Vector3.down * (hGa.distance - box.height / 2)); // Places the transform on the ground
 
                 }
-                else if (_hgaDistance < _hgbDistance)
+                else if (hGa.distance < hGb.distance)
                 {
-                    transform.Translate(Vector3.down * (_hgbDistance - box.height / 2)); // Places the transform on the ground
+                    transform.Translate(Vector3.down * (hGb.distance - box.height / 2)); // Places the transform on the ground
                 }
                 velocity = new Vector2(velocity.x, 0);
 
