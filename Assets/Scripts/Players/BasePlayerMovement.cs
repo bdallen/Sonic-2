@@ -62,6 +62,7 @@ public class BasePlayerMovement : MonoBehaviour
     private bool _edgeFound = false;
     private float _edgeDistance = 0f;
     private float _udeltaTime = 0.0f;
+    private float _movementRatio = 0.0f;
     #endregion
 
 
@@ -89,6 +90,7 @@ public class BasePlayerMovement : MonoBehaviour
 	{
 		// Get layer masks by name rather than Int
 		lmGround = LayerMask.NameToLayer ("Ground");
+        QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 50;
 	}
 
@@ -108,8 +110,8 @@ public class BasePlayerMovement : MonoBehaviour
     /// </summary>
     void Update()
     {
-        _udeltaTime += (Time.deltaTime - _udeltaTime) * 0.1f; // Update for our movement ratio calculations
-        float _movementRatio = 50f / (1.0f/_udeltaTime);
+        _udeltaTime += (Time.deltaTime - _udeltaTime) * 0.1f;       // Update our delta time between frames to capture frame rate
+        _movementRatio = 50f / (1.0f / _udeltaTime);          // Update for our movement ratio calculations (to lock movement to 50 fps)
 
         if (Input.GetKey(KeyCode.Z))
         {
@@ -131,7 +133,7 @@ public class BasePlayerMovement : MonoBehaviour
         DMovement();
         UpdateAnimations();
         transform.eulerAngles = new Vector2(0, YRotation);
-        transform.Translate(velocity.x * _movementRatio, velocity.y * _movementRatio, 0f);
+        transform.Translate(velocity.x * _movementRatio, velocity.y * _movementRatio, 0f);  // Apply translation to the transformation (Move It) According to the Movement Ratio calculated Above
     }
 
 	void OnGUI()
@@ -142,6 +144,7 @@ public class BasePlayerMovement : MonoBehaviour
         GUILayout.Label("Current Speed: " + Mathf.Abs(CurrentSpeed).ToString());
 		GUILayout.Label ("Sensor A: " + SensorGroundA.ToString() + ", Sensor B: " + SensorGroundB.ToString ());
 		GUILayout.Label ("Edge Detect Distance: " + _edgeDistance.ToString());
+        GUILayout.Label("Movement Ratio: " + _movementRatio.ToString());
 	}
 
     /// <summary>
@@ -151,7 +154,7 @@ public class BasePlayerMovement : MonoBehaviour
     {
         /// When you release the jump button in the air after jumping, the computer checks to see if Sonic is moving upward (i.e. Y speed is negative). If he is, then it checks to see if Y speed is less than -4 (e.g. -5 is "less" than -4). If it is, then Y speed is set to -4. In this way, you can cut your jump short at any time, just by releasing the jump button. If you release the button in the very next step after jumping, Sonic makes the shortest possible jump.
 
-        if (Input.GetKey(KeyCode.A) && grounded)
+        if (Input.GetKeyDown(KeyCode.A) && grounded)
         {
             _jumping = true;
             velocity = new Vector2(velocity.x, MAX_JUMP_FORCE);
