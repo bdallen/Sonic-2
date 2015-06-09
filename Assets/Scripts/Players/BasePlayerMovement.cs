@@ -102,7 +102,6 @@ public class BasePlayerMovement : MonoBehaviour
 
 
 
-        
 	}
 
     /// <summary>
@@ -133,7 +132,8 @@ public class BasePlayerMovement : MonoBehaviour
         DMovement();
         UpdateAnimations();
         transform.eulerAngles = new Vector2(0, YRotation);
-        transform.Translate(velocity.x * _movementRatio, velocity.y * _movementRatio, 0f);  // Apply translation to the transformation (Move It) According to the Movement Ratio calculated Above
+        transform.Translate(velocity.x, velocity.y, 0f);
+
     }
 
 	void OnGUI()
