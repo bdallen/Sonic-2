@@ -228,11 +228,19 @@ public class BasePlayerMovement : MonoBehaviour
 	void UpdateAnimations()
 	{
 		Animator anim = GetComponent<Animator> ();
-		anim.SetFloat ("Speed", Mathf.Abs(CurrentSpeed));
+        anim.SetFloat("Speed", Mathf.Abs(CurrentSpeed));
 		anim.SetBool ("Jumping", _jumping);
         anim.SetFloat("EdgeDistance", _edgeDistance);
         anim.SetBool("EdgeInfront", _edgeInfront);
         anim.SetBool("EdgeBehind", _edgeBehind);
+
+        if (grounded && CurrentSpeed > 0)
+        {
+            float walkspeed = (Mathf.Abs(CurrentSpeed) / TOP_SPEED) * 2f;
+            if (walkspeed < 0.5) { walkspeed = 0.5f; }
+            anim.speed = walkspeed;
+        }
+
 	}
 
     void ApplyGravity()
