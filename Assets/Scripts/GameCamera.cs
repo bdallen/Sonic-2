@@ -7,8 +7,18 @@ public class GameCamera : MonoBehaviour {
 	private Vector3 velocity = Vector3.zero;
 	public Transform target;
 
+    public int TARGET_FRAMERATE = 50;
+
+    // Init
+    void Start()
+    {
+        // Lock the framerate to 50 FPS for engine compatability with Megadrive
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = TARGET_FRAMERATE;
+    }
+
 	// Update is called once per frame
-	void Update () {
+	void LateUpdate () {
 		if (target)
 		{
 			Vector3 point = GetComponent<Camera>().WorldToViewportPoint(target.position);

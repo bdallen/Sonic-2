@@ -22,6 +22,8 @@ public class BasePlayerMovement : MonoBehaviour
     public float FRICTION = 0.046875f;
     public float DECELERATION = 0.5f;
     public float TOP_SPEED = 6f;
+
+    public AudioClip SndJump;
     #endregion
 
     #region Player States
@@ -63,13 +65,16 @@ public class BasePlayerMovement : MonoBehaviour
     private float _edgeDistance = 0f;
     private float _udeltaTime = 0.0f;
     private float _movementRatio = 0.0f;
+
+    // Audio Section
+    private AudioSource _audioSource;
     #endregion
 
 
 	// Private Objects
 	private Rect box;
 	private LayerMask lmGround;
-	public float CurrentSpeed = 0f;
+	private float CurrentSpeed = 0f;
     
 	// Ground Sensor Values
 	private Vector2 SensorGroundA, SensorGroundB;
@@ -90,9 +95,12 @@ public class BasePlayerMovement : MonoBehaviour
 	{
 		// Get layer masks by name rather than Int
 		lmGround = LayerMask.NameToLayer ("Ground");
-        QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 50;
 	}
+
+    void Awake()
+    {
+        _audioSource = GetComponent<AudioSource>();
+    }
 
     /// <summary>
     /// Update at a set rate of 50 Cycles per Second (This keeps compatability with the Megadrive)
@@ -144,7 +152,6 @@ public class BasePlayerMovement : MonoBehaviour
         GUILayout.Label("Current Speed: " + Mathf.Abs(CurrentSpeed).ToString());
 		GUILayout.Label ("Sensor A: " + SensorGroundA.ToString() + ", Sensor B: " + SensorGroundB.ToString ());
 		GUILayout.Label ("Edge Detect Distance: " + _edgeDistance.ToString());
-        GUILayout.Label("Movement Ratio: " + _movementRatio.ToString());
 	}
 
     /// <summary>
@@ -158,6 +165,7 @@ public class BasePlayerMovement : MonoBehaviour
         {
             _jumping = true;
             velocity = new Vector2(velocity.x, MAX_JUMP_FORCE);
+            _audioSource.PlayOneShot(SndJump);
             _jump = false;
         }
 
