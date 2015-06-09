@@ -61,7 +61,8 @@ public class BasePlayerMovement : MonoBehaviour
     private bool _jumpCancel = false;
     private bool _moveLeft = false;
     private bool _moveRight = false;
-    private bool _edgeFound = false;
+    private bool _edgeInfront = false;
+    private bool _edgeBehind = false;
     private float _edgeDistance = 0f;
     private float _udeltaTime = 0.0f;
     private float _movementRatio = 0.0f;
@@ -230,8 +231,8 @@ public class BasePlayerMovement : MonoBehaviour
 		anim.SetFloat ("Speed", Mathf.Abs(CurrentSpeed));
 		anim.SetBool ("Jumping", _jumping);
         anim.SetFloat("EdgeDistance", _edgeDistance);
-        anim.SetBool("EdgeFound", _edgeFound);
-        anim.SetFloat("Direction", YRotation);
+        anim.SetBool("EdgeInfront", _edgeInfront);
+        anim.SetBool("EdgeBehind", _edgeBehind);
 	}
 
     void ApplyGravity()
@@ -322,19 +323,34 @@ public class BasePlayerMovement : MonoBehaviour
             }
 
 			// Edge detection for the Balancing Animations
-			if (!bGaConnected && bGbConnected && !_jumping)
+			if (!bGaConnected && bGbConnected && YRotation == FACING_RIGHT && !_jumping)         // We are facing right and edge is infront of us
 			{
-				_edgeFound = true;
+                _edgeInfront = true;
+                _edgeBehind = false;
 				_edgeDistance = Mathf.Abs(((SensorGroundA.x - hGb.point.x) / 2));
 			}
-            else if (bGaConnected && !bGbConnected && !_jumping)
+            else if (!bGaConnected && bGbConnected && YRotation == FACING_LEFT && !_jumping)    // We are facing right and the ledge is behind us
             {
-                _edgeFound = true;
+                _edgeInfront = false;
+                _edgeBehind = true;
+                _edgeDistance = Mathf.Abs(((SensorGroundA.x - hGb.point.x) / 2));
+            }
+            else if (bGaConnected && !bGbConnected && YRotation == FACING_LEFT && !_jumping)   // We are facing left and the ledge is infront of us
+            {
+                _edgeInfront = true;
+                _edgeBehind = false;
+                _edgeDistance = Mathf.Abs(((SensorGroundB.x - hGa.point.x) / 2));
+            }
+            else if (bGaConnected && !bGbConnected && YRotation == FACING_RIGHT && !_jumping)  // We are facing right and the ledge is behind us
+            {
+                _edgeInfront = false;
+                _edgeBehind = true;
                 _edgeDistance = Mathf.Abs(((SensorGroundB.x - hGa.point.x) / 2));
             }
             else
             {
-                _edgeFound = false;
+                _edgeInfront = false;
+                _edgeBehind = false;
             }
 		}
 	}
