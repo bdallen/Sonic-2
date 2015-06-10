@@ -27,46 +27,15 @@ public class BasePlayerMovement : MonoBehaviour
     public AudioClip SndBrake;
     #endregion
 
-    #region Player States
-    //	    ; ===========================================================================
-	//		; off_19F6A: Obj01_States:
-	//		Obj01_Index:	offsetTable
-	//		offsetTableEntry.w Obj01_Init		    ;  0
-	//		offsetTableEntry.w Obj01_Control	    ;  2
-	//		offsetTableEntry.w Obj01_Hurt		    ;  4
-	//		offsetTableEntry.w Obj01_Dead		    ;  6
-	//		offsetTableEntry.w Obj01_Gone		    ;  8
-	//		offsetTableEntry.w Obj01_Respawning	    ; 10
-
-	private int PlayerState = 0;
-
-	#endregion
-
-	#region Player Mode
-
-	//  ; ===========================================================================
-	//	; secondary states under state Obj01_Control
-	//	; off_1A0BE:
-	//	Obj01_Modes:	offsetTable
-	//	offsetTableEntry.w Obj01_MdNormal_Checks	; 0 - not airborne or rolling
-	//	offsetTableEntry.w Obj01_MdAir			    ; 2 - airborne
-	//	offsetTableEntry.w Obj01_MdRoll			    ; 4 - rolling
-	//	offsetTableEntry.w Obj01_MdJump			    ; 6 - jumping
-	private int PlayerMode = 0;
-
-	#endregion
-
     #region Private Variables
-    private bool _jump = false;
+    // Player Variable Section
+    private bool _grounded = false;
     private bool _jumping = false;
-    private bool _jumpCancel = false;
-    private bool _moveLeft = false;
-    private bool _moveRight = false;
+    private bool _inWater = false;
+
     private bool _edgeInfront = false;
     private bool _edgeBehind = false;
     private float _edgeDistance = 0f;
-    private float _udeltaTime = 0.0f;
-    private float _movementRatio = 0.0f;
 
     // Audio Section
     private AudioSource _audioSource;
@@ -83,7 +52,7 @@ public class BasePlayerMovement : MonoBehaviour
 
 
 	// Checks
-	bool grounded = false;
+	
 	bool falling = false;
 
 	// variables for raycasting
@@ -126,7 +95,7 @@ public class BasePlayerMovement : MonoBehaviour
         //  SlopeResist
         //  Move
         //	Roll
-        //  LevelBound
+        //  LevelBound - Checks the Boundaries of the Level
         //  Update Player Position
         //  AnglePos
         //  SlopeRepel
@@ -161,19 +130,17 @@ public class BasePlayerMovement : MonoBehaviour
     {
         /// When you release the jump button in the air after jumping, the computer checks to see if Sonic is moving upward (i.e. Y speed is negative). If he is, then it checks to see if Y speed is less than -4 (e.g. -5 is "less" than -4). If it is, then Y speed is set to -4. In this way, you can cut your jump short at any time, just by releasing the jump button. If you release the button in the very next step after jumping, Sonic makes the shortest possible jump.
 
-        if (Input.GetKeyDown(KeyCode.A) && grounded)
+        if (Input.GetKeyDown(KeyCode.A) && _grounded)
         {
             _jumping = true;
             velocity = new Vector2(velocity.x, MAX_JUMP_FORCE);
             _audioSource.PlayOneShot(SndJump);
-            _jump = false;
         }
 
-        if (Input.GetKeyUp(KeyCode.A) && !grounded)
+        if (Input.GetKeyUp(KeyCode.A) && !_grounded)
         {
             if (velocity.y > MIN_JUMP_FORCE)
                 velocity = new Vector2(velocity.x, MIN_JUMP_FORCE);
-            _jumpCancel = false;
         }
     }
 
@@ -183,13 +150,15 @@ public class BasePlayerMovement : MonoBehaviour
         
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            // Player_MoveLeft
-
-            YRotation = FACING_LEFT;        
-
+            // Player_MoveLeft      
             if (CurrentSpeed > 0f)
             {
                 CurrentSpeed = CurrentSpeed - DECELERATION;
+
+                // Play Braking Sound
+                if (YRotation == FACING_RIGHT && Mathf.Abs(CurrentSpeed) > 4.5f && _jumping == false) 
+                { _audioSource.PlayOneShot(SndBrake); }
+
             }
             else
             {
@@ -203,17 +172,21 @@ public class BasePlayerMovement : MonoBehaviour
                 }
             }
 
+            // Flip sprite the other way
+            YRotation = FACING_LEFT;
+
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
             // Player_MoveRight
-
-            // Turn Sprite Right
-            YRotation = FACING_RIGHT;
-			
 			if (CurrentSpeed < 0f) 
             {
                 CurrentSpeed = CurrentSpeed + DECELERATION;
+
+                // Play braking Sound
+                if (YRotation == FACING_LEFT && Mathf.Abs(CurrentSpeed) > 4.5f && _jumping == false) 
+                { _audioSource.PlayOneShot(SndBrake); }
+
 			} 
             else 
             {
@@ -226,6 +199,9 @@ public class BasePlayerMovement : MonoBehaviour
 					CurrentSpeed = TOP_SPEED;
 				}
 			}
+
+            // Turn Sprite Right
+            YRotation = FACING_RIGHT;
 			
 		} else {
 			CurrentSpeed = CurrentSpeed - (Mathf.Min(Mathf.Abs(CurrentSpeed), FRICTION)*Mathf.Sign(CurrentSpeed));
@@ -244,10 +220,10 @@ public class BasePlayerMovement : MonoBehaviour
         anim.SetBool("EdgeInfront", _edgeInfront);
         anim.SetBool("EdgeBehind", _edgeBehind);
 
-        if (grounded && CurrentSpeed > 0)
+        if (_grounded && CurrentSpeed > 0)
         {
             float walkspeed = (Mathf.Abs(CurrentSpeed) / TOP_SPEED) * 2f;
-            if (walkspeed < 0.5) { walkspeed = 0.5f; }
+            if (walkspeed < 0.5f) { walkspeed = 0.5f; }
             anim.speed = walkspeed;
         }
 
@@ -256,7 +232,7 @@ public class BasePlayerMovement : MonoBehaviour
     void ApplyGravity()
     {
         // Not grounded apply gravity
-        if (!grounded)
+        if (!_grounded)
         {
             velocity = new Vector2(velocity.x, Mathf.Max(velocity.y - GRAVITY, -MAX_FALL_VELOCITY));
         }
@@ -278,7 +254,7 @@ public class BasePlayerMovement : MonoBehaviour
 
 		Vector3 vGaStart, vGbStart;
 
-		if (grounded || falling) {
+		if (_grounded || falling) {
 
             // Check if we are jumping, if so change the width of the Sensors
             // Also check the roataion and swap the A and B sensors depending on what way we are facing
@@ -298,7 +274,7 @@ public class BasePlayerMovement : MonoBehaviour
 
             // TODO: Fix this
             // This may need to be revised - This is what was causing the bouncing issue, but dividing the velocity has helped
-            float distance = (box.height / 2) +(grounded? margin: Mathf.Abs (velocity.y)/1.5f);
+            float distance = (box.height / 2) +(_grounded? margin: Mathf.Abs (velocity.y)/1.5f);
 
 
 			// No were not connected, no yet anyway
@@ -321,7 +297,7 @@ public class BasePlayerMovement : MonoBehaviour
 			{
            
                 _jumping = false;
-				grounded = true;
+				_grounded = true;
 				falling = false;
 			
 				// Store out the sensor values
@@ -344,7 +320,7 @@ public class BasePlayerMovement : MonoBehaviour
 			}
             else
             {
-                grounded = false;
+                _grounded = false;
             }
 
 			// Edge detection for the Balancing Animations
