@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class BasePlayerMovement : MonoBehaviour
+public abstract class BasePlayerMovement : MonoBehaviour
 {
 
     #region Constants
@@ -28,10 +29,20 @@ public class BasePlayerMovement : MonoBehaviour
     #endregion
 
     #region Private Variables
-    // Player Variable Section
+    // Player States Section
     private bool _grounded = false;
     private bool _jumping = false;
     private bool _inWater = false;
+    private bool _spinDash = false;
+    private bool _idleState1 = false;
+    private bool _idleState2 = false;
+
+    // Player Variables Section
+    private Vector3 _savePoint;
+    private List<Vector3> _playerPosBuf;
+
+    private int _spinDashCounter = 0;
+    private int _idleStateCounter = 0;
 
     private bool _edgeInfront = false;
     private bool _edgeBehind = false;
@@ -41,8 +52,11 @@ public class BasePlayerMovement : MonoBehaviour
     private AudioSource _audioSource;
     #endregion
 
+    #region Abstract Methods
+    public abstract void UpdateCharacterAnimation();    // Updates specific Character Animations
+    #endregion
 
-	// Private Objects
+    // Private Objects
 	private Rect box;
 	private LayerMask lmGround;
 	private float CurrentSpeed = 0f;
@@ -119,8 +133,7 @@ public class BasePlayerMovement : MonoBehaviour
 		GUILayout.Label ("Velocity: " + velocity.ToString ());
         GUILayout.Label("Current Speed: " + Mathf.Abs(CurrentSpeed).ToString());
 		GUILayout.Label ("Sensor A: " + SensorGroundA.ToString() + ", Sensor B: " + SensorGroundB.ToString ());
-		GUILayout.Label ("Edge Detect Distance: " + _edgeDistance.ToString());
-        GUILayout.Label("Edge InFront: " + _edgeInfront.ToString() + " Edge Behind: " + _edgeBehind.ToString());
+		GUILayout.Label ("Idle State Counter: " + _idleStateCounter.ToString());
 	}
     
     /// <summary>
@@ -219,6 +232,13 @@ public class BasePlayerMovement : MonoBehaviour
         anim.SetFloat("EdgeDistance", _edgeDistance);
         anim.SetBool("EdgeInfront", _edgeInfront);
         anim.SetBool("EdgeBehind", _edgeBehind);
+        anim.SetBool("IdleState1", _idleState1);
+
+        // Increment the idle state counter
+        _idleStateCounter += 1;
+
+        // Set the first idle animation
+        if (_idleStateCounter == 180 && !_idleState2) { _idleState1 = true; }
 
         if (_grounded && CurrentSpeed > 0)
         {
@@ -226,6 +246,9 @@ public class BasePlayerMovement : MonoBehaviour
             if (walkspeed < 0.5f) { walkspeed = 0.5f; }
             anim.speed = walkspeed;
         }
+
+        // Run animation Updates in the Character Class
+        UpdateCharacterAnimation();
 
 	}
 
@@ -356,9 +379,5 @@ public class BasePlayerMovement : MonoBehaviour
 		}
 	}
 
-    void PlayerMoveLeft()
-    {
-
-    }
 
 }

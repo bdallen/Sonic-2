@@ -20,5 +20,10 @@ public class PlayerSonic : BasePlayerMovement
 
     }
 
+    public override void UpdateCharacterAnimation()
+    {
+
+    }
+
 }
 
