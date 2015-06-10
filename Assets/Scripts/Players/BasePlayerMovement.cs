@@ -24,6 +24,7 @@ public class BasePlayerMovement : MonoBehaviour
     public float TOP_SPEED = 6f;
 
     public AudioClip SndJump;
+    public AudioClip SndBrake;
     #endregion
 
     #region Player States
@@ -41,7 +42,7 @@ public class BasePlayerMovement : MonoBehaviour
 
 	#endregion
 
-	#region Player Modes
+	#region Player Mode
 
 	//  ; ===========================================================================
 	//	; secondary states under state Obj01_Control
@@ -96,6 +97,7 @@ public class BasePlayerMovement : MonoBehaviour
 	{
 		// Get layer masks by name rather than Int
 		lmGround = LayerMask.NameToLayer ("Ground");
+
 	}
 
     void Awake()
@@ -118,27 +120,23 @@ public class BasePlayerMovement : MonoBehaviour
     /// </summary>
     void Update()
     {
-        _udeltaTime += (Time.deltaTime - _udeltaTime) * 0.1f;       // Update our delta time between frames to capture frame rate
-        _movementRatio = 50f / (1.0f / _udeltaTime);          // Update for our movement ratio calculations (to lock movement to 50 fps)
+        /// Seems the original code did the checks in the following order
+        /// CheckSpindash
+        /// Jump
+        //  SlopeResist
+        //  Move
+        //	Roll
+        //  LevelBound
+        //  Update Player Position
+        //  AnglePos
+        //  SlopeRepel
 
-        if (Input.GetKey(KeyCode.Z))
-        {
-            Time.timeScale = 0.25f;
-        }
-        else
-        {
-            Time.timeScale = 1f;
-        }
-        // Grab out box collider and make rect object box for easier user
-        BoxCollider collider = GetComponent<BoxCollider>();
-        box = new Rect(collider.bounds.min.x,
-                       collider.bounds.min.y,
-                       collider.bounds.size.x,
-                       collider.bounds.size.y);
-        ApplyGravity();
         Collision();
-        CheckJump();
-        DMovement();
+        PlayerJump();
+        PlayerMove();
+        ApplyGravity();
+
+        
         UpdateAnimations();
         transform.eulerAngles = new Vector2(0, YRotation);
         transform.Translate(velocity.x, velocity.y, 0f);
@@ -153,12 +151,13 @@ public class BasePlayerMovement : MonoBehaviour
         GUILayout.Label("Current Speed: " + Mathf.Abs(CurrentSpeed).ToString());
 		GUILayout.Label ("Sensor A: " + SensorGroundA.ToString() + ", Sensor B: " + SensorGroundB.ToString ());
 		GUILayout.Label ("Edge Detect Distance: " + _edgeDistance.ToString());
+        GUILayout.Label("Edge InFront: " + _edgeInfront.ToString() + " Edge Behind: " + _edgeBehind.ToString());
 	}
-
+    
     /// <summary>
     /// Check For Jumps
     /// </summary>
-    void CheckJump()
+    void PlayerJump()
     {
         /// When you release the jump button in the air after jumping, the computer checks to see if Sonic is moving upward (i.e. Y speed is negative). If he is, then it checks to see if Y speed is less than -4 (e.g. -5 is "less" than -4). If it is, then Y speed is set to -4. In this way, you can cut your jump short at any time, just by releasing the jump button. If you release the button in the very next step after jumping, Sonic makes the shortest possible jump.
 
@@ -178,39 +177,52 @@ public class BasePlayerMovement : MonoBehaviour
         }
     }
 
-	void DMovement()
+	void PlayerMove()
 	{
+
+        
         if (Input.GetKey(KeyCode.LeftArrow))
         {
+            // Player_MoveLeft
 
-            // Turn Sprite Left
-            YRotation = FACING_LEFT;
-			
-			if (CurrentSpeed > 0f) {
-				CurrentSpeed = CurrentSpeed - DECELERATION;
-			} else {
-				if (CurrentSpeed > -TOP_SPEED)
-				{
-					CurrentSpeed = CurrentSpeed - ACCELERATION;
-				}else{
-					CurrentSpeed = -TOP_SPEED;
-				}
-			}
+            YRotation = FACING_LEFT;        
+
+            if (CurrentSpeed > 0f)
+            {
+                CurrentSpeed = CurrentSpeed - DECELERATION;
+            }
+            else
+            {
+                if (CurrentSpeed > -TOP_SPEED)
+                {
+                    CurrentSpeed = CurrentSpeed - ACCELERATION;
+                }
+                else
+                {
+                    CurrentSpeed = -TOP_SPEED;
+                }
+            }
 
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
+            // Player_MoveRight
 
             // Turn Sprite Right
             YRotation = FACING_RIGHT;
 			
-			if (CurrentSpeed < 0f) {
+			if (CurrentSpeed < 0f) 
+            {
                 CurrentSpeed = CurrentSpeed + DECELERATION;
-			} else {
+			} 
+            else 
+            {
 				if (CurrentSpeed < TOP_SPEED)
 				{
 					CurrentSpeed = CurrentSpeed + ACCELERATION;
-				}else{
+				}
+                else
+                {
 					CurrentSpeed = TOP_SPEED;
 				}
 			}
@@ -218,8 +230,6 @@ public class BasePlayerMovement : MonoBehaviour
 		} else {
 			CurrentSpeed = CurrentSpeed - (Mathf.Min(Mathf.Abs(CurrentSpeed), FRICTION)*Mathf.Sign(CurrentSpeed));
 		}
-
-        
 
 		velocity = new Vector2 (Mathf.Abs(CurrentSpeed), velocity.y);		
 		
@@ -259,6 +269,13 @@ public class BasePlayerMovement : MonoBehaviour
 
 	void Collision()
 	{
+        // Grab out box collider and make rect object box for easier user
+        BoxCollider collider = GetComponent<BoxCollider>();
+        box = new Rect(collider.bounds.min.x,
+                       collider.bounds.min.y,
+                       collider.bounds.size.x,
+                       collider.bounds.size.y);
+
 		Vector3 vGaStart, vGbStart;
 
 		if (grounded || falling) {
@@ -362,5 +379,10 @@ public class BasePlayerMovement : MonoBehaviour
             }
 		}
 	}
+
+    void PlayerMoveLeft()
+    {
+
+    }
 
 }

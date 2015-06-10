@@ -52,6 +52,45 @@ TextureImporter:
     21300090: walk06
     21300092: walk07
     21300094: walk08
+    21300096: breath01
+    21300098: corkscrew01
+    21300100: corkscrew02
+    21300102: corkscrew03
+    21300104: corkscrew04
+    21300106: corkscrew05
+    21300108: corkscrew06
+    21300110: corkscrew07
+    21300112: corkscrew08
+    21300114: corkscrew09
+    21300116: corkscrew10
+    21300118: corkscrew11
+    21300120: corkscrew12
+    21300122: death01
+    21300124: death02
+    21300126: drown01
+    21300128: dust01
+    21300130: dust02
+    21300132: dust03
+    21300134: dust04
+    21300136: dust05
+    21300138: dust06
+    21300140: float01
+    21300142: float02
+    21300144: float03
+    21300146: float04
+    21300148: grapple01
+    21300150: grapple02
+    21300152: grapple03
+    21300154: grapple04
+    21300156: idlesit01
+    21300158: idlesit02
+    21300160: idlesit03
+    21300162: idlesit04
+    21300164: idletap01
+    21300166: idletap02
+    21300168: idletap03
+    21300170: idletap04
+    21300172: idletap05
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -100,8 +139,8 @@ TextureImporter:
     - name: ball01
       rect:
         serializedVersion: 2
-        x: 59
-        y: 17
+        x: 226
+        y: 39
         width: 29
         height: 30
       alignment: 9
@@ -110,8 +149,8 @@ TextureImporter:
     - name: ball02
       rect:
         serializedVersion: 2
-        x: 95
-        y: 37
+        x: 226
+        y: 8
         width: 30
         height: 29
       alignment: 9
@@ -120,8 +159,8 @@ TextureImporter:
     - name: ball03
       rect:
         serializedVersion: 2
-        x: 28
-        y: 16
+        x: 254
+        y: 259
         width: 29
         height: 30
       alignment: 9
@@ -130,8 +169,8 @@ TextureImporter:
     - name: ball04
       rect:
         serializedVersion: 2
-        x: 127
-        y: 37
+        x: 292
+        y: 228
         width: 30
         height: 29
       alignment: 9
@@ -140,18 +179,148 @@ TextureImporter:
     - name: ball05
       rect:
         serializedVersion: 2
-        x: 218
-        y: 3
+        x: 248
+        y: 155
         width: 30
         height: 30
       alignment: 9
       pivot: {x: .5, y: .800000012}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: crouch01
+    - name: breath01
+      rect:
+        serializedVersion: 2
+        x: 168
+        y: 254
+        width: 36
+        height: 36
+      alignment: 9
+      pivot: {x: .472222209, y: .666666687}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: corkscrew01
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 39
+        width: 27
+        height: 37
+      alignment: 9
+      pivot: {x: .518518507, y: .64864862}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: corkscrew02
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 186
+        width: 29
+        height: 34
+      alignment: 9
+      pivot: {x: .517241359, y: .70588237}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: corkscrew03
+      rect:
+        serializedVersion: 2
+        x: 289
+        y: 28
+        width: 27
+        height: 26
+      alignment: 9
+      pivot: {x: .518518507, y: .923076928}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: corkscrew04
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 71
+        width: 29
+        height: 32
+      alignment: 9
+      pivot: {x: .517241359, y: .75}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: corkscrew05
+      rect:
+        serializedVersion: 2
+        x: 284
+        y: 85
+        width: 26
+        height: 29
+      alignment: 9
+      pivot: {x: .5, y: .827586234}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: corkscrew06
       rect:
         serializedVersion: 2
         x: 187
-        y: 153
+        y: 141
+        width: 29
+        height: 35
+      alignment: 9
+      pivot: {x: .517241359, y: .685714304}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: corkscrew07
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 16
+        width: 31
+        height: 36
+      alignment: 9
+      pivot: {x: .483870953, y: .666666687}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: corkscrew08
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 56
+        width: 26
+        height: 36
+      alignment: 9
+      pivot: {x: .5, y: .666666687}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: corkscrew09
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 117
+        width: 31
+        height: 32
+      alignment: 9
+      pivot: {x: .419354826, y: .75}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: corkscrew10
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 83
+        width: 30
+        height: 32
+      alignment: 9
+      pivot: {x: .5, y: .75}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: corkscrew11
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 151
+        width: 28
+        height: 33
+      alignment: 9
+      pivot: {x: .5, y: .727272749}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: corkscrew12
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 105
+        width: 29
+        height: 34
+      alignment: 9
+      pivot: {x: .517241359, y: .70588237}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: crouch01
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 121
         width: 24
         height: 32
       alignment: 9
@@ -160,18 +329,108 @@ TextureImporter:
     - name: crouch02
       rect:
         serializedVersion: 2
-        x: 183
-        y: 4
+        x: 280
+        y: 116
         width: 29
         height: 26
       alignment: 9
       pivot: {x: .344827592, y: .923076928}
       border: {x: 0, y: 0, z: 0, w: 0}
+    - name: death01
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 204
+        width: 34
+        height: 43
+      alignment: 9
+      pivot: {x: .5, y: .558139563}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: death02
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 159
+        width: 34
+        height: 43
+      alignment: 9
+      pivot: {x: .5, y: .558139563}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: drown01
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 117
+        width: 34
+        height: 40
+      alignment: 9
+      pivot: {x: .5, y: .600000024}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: dust01
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 71
+        width: 32
+        height: 10
+      alignment: 9
+      pivot: {x: .53125, y: 2.4000001}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: dust02
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 2
+        width: 31
+        height: 12
+      alignment: 9
+      pivot: {x: .516129017, y: 2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: dust03
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 187
+        width: 29
+        height: 16
+      alignment: 9
+      pivot: {x: .482758611, y: 1.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: dust04
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 8
+        width: 28
+        height: 18
+      alignment: 9
+      pivot: {x: .464285702, y: 1.33333337}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: dust05
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 16
+        width: 31
+        height: 20
+      alignment: 9
+      pivot: {x: .516129017, y: 1.20000005}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: dust06
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 3
+        width: 31
+        height: 22
+      alignment: 9
+      pivot: {x: .516129017, y: 1.09090912}
+      border: {x: 0, y: 0, z: 0, w: 0}
     - name: edge01
       rect:
         serializedVersion: 2
-        x: 151
-        y: 68
+        x: 84
+        y: 251
         width: 32
         height: 37
       alignment: 9
@@ -180,8 +439,8 @@ TextureImporter:
     - name: edge02
       rect:
         serializedVersion: 2
-        x: 114
-        y: 68
+        x: 2
+        y: 78
         width: 35
         height: 37
       alignment: 9
@@ -190,8 +449,8 @@ TextureImporter:
     - name: edge03
       rect:
         serializedVersion: 2
-        x: 59
-        y: 49
+        x: 206
+        y: 251
         width: 34
         height: 37
       alignment: 9
@@ -200,8 +459,8 @@ TextureImporter:
     - name: edgealt01
       rect:
         serializedVersion: 2
-        x: 153
-        y: 109
+        x: 97
+        y: 132
         width: 31
         height: 37
       alignment: 9
@@ -210,8 +469,8 @@ TextureImporter:
     - name: edgealt02
       rect:
         serializedVersion: 2
-        x: 153
-        y: 148
+        x: 97
+        y: 93
         width: 32
         height: 37
       alignment: 9
@@ -220,8 +479,8 @@ TextureImporter:
     - name: flail01
       rect:
         serializedVersion: 2
-        x: 192
-        y: 217
+        x: 99
+        y: 54
         width: 32
         height: 37
       alignment: 9
@@ -230,8 +489,8 @@ TextureImporter:
     - name: flail02
       rect:
         serializedVersion: 2
-        x: 185
-        y: 70
+        x: 130
+        y: 132
         width: 29
         height: 37
       alignment: 9
@@ -240,8 +499,8 @@ TextureImporter:
     - name: flail03
       rect:
         serializedVersion: 2
-        x: 214
-        y: 178
+        x: 131
+        y: 93
         width: 29
         height: 37
       alignment: 9
@@ -250,18 +509,98 @@ TextureImporter:
     - name: flail04
       rect:
         serializedVersion: 2
-        x: 114
-        y: 107
+        x: 2
+        y: 39
         width: 36
         height: 37
       alignment: 9
       pivot: {x: .333333343, y: .64864862}
       border: {x: 0, y: 0, z: 0, w: 0}
+    - name: float01
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 308
+        width: 45
+        height: 22
+      alignment: 9
+      pivot: {x: .48888889, y: 1.09090912}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: float02
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 284
+        width: 44
+        height: 22
+      alignment: 9
+      pivot: {x: .5, y: 1.09090912}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: float03
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 259
+        width: 39
+        height: 23
+      alignment: 9
+      pivot: {x: .512820542, y: 1.04347825}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: float04
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 211
+        width: 44
+        height: 22
+      alignment: 9
+      pivot: {x: .5, y: 1.09090912}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: grapple01
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 290
+        width: 37
+        height: 40
+      alignment: 9
+      pivot: {x: .486486495, y: .600000024}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: grapple02
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 293
+        width: 40
+        height: 37
+      alignment: 9
+      pivot: {x: .449999988, y: .567567587}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: grapple03
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 265
+        width: 48
+        height: 25
+      alignment: 9
+      pivot: {x: .5, y: .959999979}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: grapple04
+      rect:
+        serializedVersion: 2
+        x: 243
+        y: 231
+        width: 47
+        height: 26
+      alignment: 9
+      pivot: {x: .510638297, y: .923076928}
+      border: {x: 0, y: 0, z: 0, w: 0}
     - name: hit01
       rect:
         serializedVersion: 2
-        x: 69
-        y: 226
+        x: 123
+        y: 235
         width: 40
         height: 28
       alignment: 9
@@ -270,18 +609,108 @@ TextureImporter:
     - name: hit02
       rect:
         serializedVersion: 2
-        x: 111
-        y: 227
+        x: 202
+        y: 222
         width: 39
         height: 27
       alignment: 9
       pivot: {x: .538461566, y: .851851881}
       border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idlesit01
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 2
+        width: 30
+        height: 35
+      alignment: 9
+      pivot: {x: .566666663, y: .685714304}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idlesit02
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 38
+        width: 31
+        height: 31
+      alignment: 9
+      pivot: {x: .580645144, y: .774193525}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idlesit03
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 205
+        width: 39
+        height: 24
+      alignment: 9
+      pivot: {x: .615384638, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idlesit04
+      rect:
+        serializedVersion: 2
+        x: 287
+        y: 202
+        width: 39
+        height: 24
+      alignment: 9
+      pivot: {x: .615384638, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idletap01
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 210
+        width: 26
+        height: 39
+      alignment: 9
+      pivot: {x: .538461566, y: .615384638}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idletap02
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 78
+        width: 28
+        height: 38
+      alignment: 9
+      pivot: {x: .464285702, y: .631578922}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idletap03
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 47
+        width: 28
+        height: 38
+      alignment: 9
+      pivot: {x: .464285702, y: .631578922}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idletap04
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 211
+        width: 29
+        height: 38
+      alignment: 9
+      pivot: {x: .448275864, y: .631578922}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: idletap05
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 171
+        width: 28
+        height: 38
+      alignment: 9
+      pivot: {x: .464285702, y: .631578922}
+      border: {x: 0, y: 0, z: 0, w: 0}
     - name: lookup01
       rect:
         serializedVersion: 2
-        x: 2
-        y: 49
+        x: 127
+        y: 171
         width: 27
         height: 38
       alignment: 9
@@ -290,8 +719,8 @@ TextureImporter:
     - name: lookup02
       rect:
         serializedVersion: 2
-        x: 59
-        y: 88
+        x: 133
+        y: 53
         width: 27
         height: 38
       alignment: 9
@@ -300,8 +729,8 @@ TextureImporter:
     - name: push01
       rect:
         serializedVersion: 2
-        x: 218
-        y: 35
+        x: 132
+        y: 15
         width: 29
         height: 36
       alignment: 9
@@ -310,8 +739,8 @@ TextureImporter:
     - name: push02
       rect:
         serializedVersion: 2
-        x: 88
-        y: 89
+        x: 156
+        y: 172
         width: 24
         height: 37
       alignment: 9
@@ -320,8 +749,8 @@ TextureImporter:
     - name: push03
       rect:
         serializedVersion: 2
-        x: 226
-        y: 218
+        x: 163
+        y: 18
         width: 28
         height: 36
       alignment: 9
@@ -330,8 +759,8 @@ TextureImporter:
     - name: push04
       rect:
         serializedVersion: 2
-        x: 2
-        y: 10
+        x: 161
+        y: 133
         width: 24
         height: 37
       alignment: 9
@@ -340,8 +769,8 @@ TextureImporter:
     - name: run01
       rect:
         serializedVersion: 2
-        x: 216
-        y: 73
+        x: 2
+        y: 2
         width: 31
         height: 35
       alignment: 9
@@ -350,8 +779,8 @@ TextureImporter:
     - name: run02
       rect:
         serializedVersion: 2
-        x: 186
-        y: 110
+        x: 169
+        y: 216
         width: 31
         height: 36
       alignment: 9
@@ -360,8 +789,8 @@ TextureImporter:
     - name: run03
       rect:
         serializedVersion: 2
-        x: 219
-        y: 112
+        x: 67
+        y: 2
         width: 30
         height: 35
       alignment: 9
@@ -370,8 +799,8 @@ TextureImporter:
     - name: run04
       rect:
         serializedVersion: 2
-        x: 185
-        y: 32
+        x: 182
+        y: 178
         width: 31
         height: 36
       alignment: 9
@@ -380,8 +809,8 @@ TextureImporter:
     - name: skid01
       rect:
         serializedVersion: 2
-        x: 111
-        y: 187
+        x: 127
+        y: 292
         width: 38
         height: 38
       alignment: 9
@@ -390,8 +819,8 @@ TextureImporter:
     - name: skid02
       rect:
         serializedVersion: 2
-        x: 152
-        y: 216
+        x: 167
+        y: 292
         width: 38
         height: 38
       alignment: 9
@@ -400,8 +829,8 @@ TextureImporter:
     - name: skid03
       rect:
         serializedVersion: 2
-        x: 114
-        y: 146
+        x: 246
+        y: 291
         width: 37
         height: 39
       alignment: 9
@@ -410,8 +839,8 @@ TextureImporter:
     - name: spindash01
       rect:
         serializedVersion: 2
-        x: 151
-        y: 187
+        x: 280
+        y: 173
         width: 30
         height: 27
       alignment: 9
@@ -420,8 +849,8 @@ TextureImporter:
     - name: spindash02
       rect:
         serializedVersion: 2
-        x: 183
-        y: 187
+        x: 280
+        y: 144
         width: 29
         height: 27
       alignment: 9
@@ -430,8 +859,8 @@ TextureImporter:
     - name: spindash03
       rect:
         serializedVersion: 2
-        x: 213
-        y: 149
+        x: 253
+        y: 87
         width: 29
         height: 27
       alignment: 9
@@ -440,8 +869,8 @@ TextureImporter:
     - name: spindash04
       rect:
         serializedVersion: 2
-        x: 90
-        y: 8
+        x: 257
+        y: 56
         width: 29
         height: 27
       alignment: 9
@@ -450,8 +879,8 @@ TextureImporter:
     - name: spindash05
       rect:
         serializedVersion: 2
-        x: 121
-        y: 8
+        x: 288
+        y: 56
         width: 29
         height: 27
       alignment: 9
@@ -460,8 +889,8 @@ TextureImporter:
     - name: spindash06
       rect:
         serializedVersion: 2
-        x: 152
-        y: 8
+        x: 258
+        y: 27
         width: 29
         height: 27
       alignment: 9
@@ -470,8 +899,8 @@ TextureImporter:
     - name: spring01
       rect:
         serializedVersion: 2
-        x: 43
-        y: 209
+        x: 38
+        y: 202
         width: 24
         height: 45
       alignment: 9
@@ -480,8 +909,8 @@ TextureImporter:
     - name: stand1
       rect:
         serializedVersion: 2
-        x: 2
-        y: 89
+        x: 68
+        y: 169
         width: 27
         height: 39
       alignment: 9
@@ -490,8 +919,8 @@ TextureImporter:
     - name: turn01
       rect:
         serializedVersion: 2
-        x: 31
-        y: 48
+        x: 162
+        y: 94
         width: 26
         height: 37
       alignment: 9
@@ -500,8 +929,8 @@ TextureImporter:
     - name: walk01
       rect:
         serializedVersion: 2
-        x: 75
-        y: 185
+        x: 69
+        y: 128
         width: 26
         height: 39
       alignment: 9
@@ -510,8 +939,8 @@ TextureImporter:
     - name: walk02
       rect:
         serializedVersion: 2
-        x: 2
-        y: 130
+        x: 38
+        y: 160
         width: 28
         height: 40
       alignment: 9
@@ -520,8 +949,8 @@ TextureImporter:
     - name: walk03
       rect:
         serializedVersion: 2
-        x: 33
-        y: 169
+        x: 43
+        y: 292
         width: 40
         height: 38
       alignment: 9
@@ -530,8 +959,8 @@ TextureImporter:
     - name: walk04
       rect:
         serializedVersion: 2
-        x: 32
-        y: 128
+        x: 2
+        y: 249
         width: 39
         height: 39
       alignment: 9
@@ -540,7 +969,7 @@ TextureImporter:
     - name: walk05
       rect:
         serializedVersion: 2
-        x: 31
+        x: 69
         y: 87
         width: 26
         height: 39
@@ -550,8 +979,8 @@ TextureImporter:
     - name: walk06
       rect:
         serializedVersion: 2
-        x: 2
-        y: 172
+        x: 38
+        y: 118
         width: 29
         height: 40
       alignment: 9
@@ -561,7 +990,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2
-        y: 214
+        y: 290
         width: 39
         height: 40
       alignment: 9
@@ -570,8 +999,8 @@ TextureImporter:
     - name: walk08
       rect:
         serializedVersion: 2
-        x: 73
-        y: 128
+        x: 43
+        y: 251
         width: 39
         height: 39
       alignment: 9
