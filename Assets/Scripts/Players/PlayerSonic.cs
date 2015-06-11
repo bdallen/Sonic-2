@@ -9,6 +9,7 @@ public class PlayerSonic : BasePlayerMovement
     #endregion
 
     #region Private Variables
+    private object _sonicSprites;
     private bool _superSonic = false;
     #endregion
 

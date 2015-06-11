@@ -47,9 +47,11 @@ public abstract class BasePlayerMovement : MonoBehaviour
     private bool _edgeInfront = false;
     private bool _edgeBehind = false;
     private float _edgeDistance = 0f;
+    #endregion
 
-    // Audio Section
-    private AudioSource _audioSource;
+    #region Protected Variables
+    protected AudioSource _audioSource;
+    protected SpriteRenderer _spRenderer;
     #endregion
 
     #region Abstract Methods
@@ -80,6 +82,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
 	{
 		// Get layer masks by name rather than Int
 		lmGround = LayerMask.NameToLayer ("Ground");
+        _spRenderer = GetComponent<SpriteRenderer>();
+        _inWater = true;
 
 	}
 
@@ -117,6 +121,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
         Collision();
         PlayerJump();
         PlayerMove();
+        CheckWater();
         ApplyGravity();
 
         
@@ -379,5 +384,30 @@ public abstract class BasePlayerMovement : MonoBehaviour
 		}
 	}
 
+    void CheckWater()
+    {
+        if (_inWater)   // Are we underwater? If so then set appropriate values
+        {
+            GRAVITY = 0.0625f;
+            MAX_FALL_VELOCITY = 16f;
+            MAX_JUMP_FORCE = 2f;
+            MIN_JUMP_FORCE = 3.5f;
+            ACCELERATION = 0.0234375f;
+            FRICTION = 0.0234375f;
+            DECELERATION = 0.25f;
+            TOP_SPEED = 6f;
+        }
+        else
+        {
+            GRAVITY = 0.21875f;
+            MAX_FALL_VELOCITY = 16f;
+            MAX_JUMP_FORCE = 6.5f;
+            MIN_JUMP_FORCE = 4f;
+            ACCELERATION = 0.046875f;
+            FRICTION = 0.046875f;
+            DECELERATION = 0.5f;
+            TOP_SPEED = 6f;
+        }
+    }
 
 }
