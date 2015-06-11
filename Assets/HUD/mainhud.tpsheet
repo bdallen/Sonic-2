@@ -1,0 +1,15 @@
+#
+# Sprite sheet data for Unity.
+#
+# To import these sprites into your Unity project, download "TexturePackerImporter":
+# http://www.codeandweb.com/texturepacker/unity
+#
+# Sprite sheet: mainhud.png (220 x 48)
+# $TexturePacker:SmartUpdate:18de8ff9e132cc8ae127e5e120a13e10:643b4b789e0458f51fd7e74ffcabaed3:b5e57e9961a9a2da0e4b84502be57eac$
+#
+
+mainhud01;2;3;54;43;0.5;0.5
+mainhud02;58;3;54;43;0.5;0.5
+mainhud03;114;3;54;43;0.5;0.5
+s_lives01;170;30;48;16;0.5;0.5
+s_lives02;170;12;48;16;0.5;0.5
