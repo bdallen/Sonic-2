@@ -83,7 +83,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 		// Get layer masks by name rather than Int
 		lmGround = LayerMask.NameToLayer ("Ground");
         _spRenderer = GetComponent<SpriteRenderer>();
-        _inWater = true;
+        //_inWater = true;
 
 	}
 
@@ -134,11 +134,11 @@ public abstract class BasePlayerMovement : MonoBehaviour
 	void OnGUI()
 	{
         //GUILayout.Label ("Grounded: " + grounded + ", Falling: " + falling + ", Jumping: " + _jumping + ", Front Edge: " + FrontEdge + ", Back Edge: " + BackEdge);
-		GUILayout.Label ("Location: " + transform.position.ToString());
-		GUILayout.Label ("Velocity: " + velocity.ToString ());
-        GUILayout.Label("Current Speed: " + Mathf.Abs(CurrentSpeed).ToString());
-		GUILayout.Label ("Sensor A: " + SensorGroundA.ToString() + ", Sensor B: " + SensorGroundB.ToString ());
-		GUILayout.Label ("Idle State Counter: " + _idleStateCounter.ToString());
+        //GUILayout.Label ("Location: " + transform.position.ToString());
+        //GUILayout.Label ("Velocity: " + velocity.ToString ());
+        //GUILayout.Label("Current Speed: " + Mathf.Abs(CurrentSpeed).ToString());
+        //GUILayout.Label ("Sensor A: " + SensorGroundA.ToString() + ", Sensor B: " + SensorGroundB.ToString ());
+        //GUILayout.Label ("Idle State Counter: " + _idleStateCounter.ToString());
 	}
     
     /// <summary>
