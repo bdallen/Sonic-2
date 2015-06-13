@@ -16,9 +16,9 @@ public class PlayerSonic : BasePlayerMovement
     public bool IsSuperSonic
     { get { return _superSonic; } set { _superSonic = value; } }
 
-    public PlayerSonic()
+    public override void CharacterAwake()
     {
-
+        _sonicSprites = Resources.Load("Characters/Sonic/drown01", typeof(Sprite));
     }
 
     public override void UpdateCharacterAnimation()

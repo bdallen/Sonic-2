@@ -19,10 +19,10 @@ public abstract class BasePlayerMovement : MonoBehaviour
     public float MAX_FALL_VELOCITY = 16f;
     public float MAX_JUMP_FORCE = 6.5f;
     public float MIN_JUMP_FORCE = 4f;
-    public float ACCELERATION = 0.046875f;
-    public float FRICTION = 0.046875f;
-    public float DECELERATION = 0.5f;
-    public float TOP_SPEED = 6f;
+    public float ACCELERATION = 0xC;
+    public float FRICTION = 0xC;
+    public float DECELERATION = 0x80;
+    public float TOP_SPEED = 0x600;
 
     public AudioClip SndJump;
     public AudioClip SndBrake;
@@ -44,6 +44,10 @@ public abstract class BasePlayerMovement : MonoBehaviour
     private int _spinDashCounter = 0;
     private int _idleStateCounter = 0;
 
+    // Collision & Edge Detection
+    private LayerMask lmGround;
+    private LayerMask lmRoof;
+    private LayerMask lmWalls;
     private bool _edgeInfront = false;
     private bool _edgeBehind = false;
     private float _edgeDistance = 0f;
@@ -52,15 +56,16 @@ public abstract class BasePlayerMovement : MonoBehaviour
     #region Protected Variables
     protected AudioSource _audioSource;
     protected SpriteRenderer _spRenderer;
+    protected float _angle = 0f;
     #endregion
 
     #region Abstract Methods
     public abstract void UpdateCharacterAnimation();    // Updates specific Character Animations
+    public abstract void CharacterAwake();              // Perform Awake on the Character Class
     #endregion
 
     // Private Objects
 	private Rect box;
-	private LayerMask lmGround;
 	private float CurrentSpeed = 0f;
     
 	// Ground Sensor Values
@@ -82,25 +87,19 @@ public abstract class BasePlayerMovement : MonoBehaviour
 	{
 		// Get layer masks by name rather than Int
 		lmGround = LayerMask.NameToLayer ("Ground");
+        lmRoof = LayerMask.NameToLayer("Roof");
+        lmWalls = LayerMask.NameToLayer("Walls");
+
         _spRenderer = GetComponent<SpriteRenderer>();
         //_inWater = true;
-
+        SonicAssembler.CalcAngle(0.03f, 0.23f);
 	}
 
     void Awake()
     {
         _audioSource = GetComponent<AudioSource>();
+        CharacterAwake();
     }
-
-    /// <summary>
-    /// Update at a set rate of 50 Cycles per Second (This keeps compatability with the Megadrive)
-    /// </summary>
-	void FixedUpdate()
-	{
-
-
-
-	}
 
     /// <summary>
     /// Update Every Single Frame
@@ -133,7 +132,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
 	void OnGUI()
 	{
-        //GUILayout.Label ("Grounded: " + grounded + ", Falling: " + falling + ", Jumping: " + _jumping + ", Front Edge: " + FrontEdge + ", Back Edge: " + BackEdge);
+        GUILayout.Label ("Angle: " + _angle);
         //GUILayout.Label ("Location: " + transform.position.ToString());
         //GUILayout.Label ("Velocity: " + velocity.ToString ());
         //GUILayout.Label("Current Speed: " + Mathf.Abs(CurrentSpeed).ToString());
@@ -280,9 +279,10 @@ public abstract class BasePlayerMovement : MonoBehaviour
                        collider.bounds.size.x,
                        collider.bounds.size.y);
 
-		Vector3 vGaStart, vGbStart;
+		Vector3 vGaStart, vGbStart, vRStart, vLStart;
 
-		if (_grounded || falling) {
+        #region Ground Collision
+        if (_grounded || falling) {
 
             // Check if we are jumping, if so change the width of the Sensors
             // Also check the roataion and swap the A and B sensors depending on what way we are facing
@@ -342,14 +342,15 @@ public abstract class BasePlayerMovement : MonoBehaviour
                 {
                     transform.Translate(Vector3.down * (hGb.distance - box.height / 2)); // Places the transform on the ground
                 }
-                velocity = new Vector2(velocity.x, 0);
 
+                velocity = new Vector2(velocity.x, 0);
 
 			}
             else
             {
                 _grounded = false;
             }
+
 
 			// Edge detection for the Balancing Animations
 			if (!bGaConnected && bGbConnected && YRotation == FACING_RIGHT && !_jumping)         // We are facing right and edge is infront of us
@@ -381,8 +382,25 @@ public abstract class BasePlayerMovement : MonoBehaviour
                 _edgeInfront = false;
                 _edgeBehind = false;
             }
-		}
-	}
+        }
+        #endregion
+
+        #region Side Collision
+        vRStart = new Vector3(box.center.x, box.center.y, transform.position.z);
+        Ray rR = new Ray(vRStart, Vector3.right);
+        bool bRConnected = false;
+        Debug.DrawRay(vRStart, Vector3.right * 10f, Color.cyan, 2f);
+        RaycastHit hR;
+        bRConnected = Physics.Raycast(rR, out hR, 10f, 1 << lmWalls);
+
+        vLStart = new Vector3(box.center.x, box.center.y, transform.position.z);
+        Ray rL = new Ray(vLStart, -Vector3.right);
+        bool bLConnected = false;
+        Debug.DrawRay(vLStart, -Vector3.right * 10f, Color.cyan, 2f);
+        RaycastHit hL;
+        bLConnected = Physics.Raycast(rL, out hL, 10f, 1 << lmWalls);
+        #endregion
+    }
 
     void CheckWater()
     {
@@ -410,4 +428,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
         }
     }
 
+    private void MoveLeft()
+    {
+
+    }
 }
