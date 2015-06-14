@@ -55,6 +55,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
     #endregion
 
     #region Protected Variables
+    // Player Options
+    protected string _PlayerCharacter;
+
     protected AudioSource _audioSource;
     protected SpriteRenderer _spRenderer;
     protected float _angle = 0f;
@@ -71,6 +74,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
     /// </summary>
     public int PlayTime
     { get { return _gameTime; } }
+
+    public string PlayerCharacter
+    { get { return _PlayerCharacter; } }
 
     // Private Objects
 	private Rect box;

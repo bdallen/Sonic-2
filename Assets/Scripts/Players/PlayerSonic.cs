@@ -5,20 +5,25 @@ public class PlayerSonic : BasePlayerMovement
 {
 
     #region Constants
-    public const string PLAYER_ID = "SONIC";
+    private const string PLAYER_ID = "SONIC";
     #endregion
 
     #region Private Variables
-    private object _sonicSprites;
+    private Object[] _sonicSprites;
     private bool _superSonic = false;
     #endregion
+
+    public PlayerSonic()
+    {
+        _PlayerCharacter = PLAYER_ID;
+    }
 
     public bool IsSuperSonic
     { get { return _superSonic; } set { _superSonic = value; } }
 
     public override void CharacterAwake()
     {
-        _sonicSprites = Resources.Load("Characters/Sonic/drown01", typeof(Sprite));
+        _sonicSprites = Resources.LoadAll("Characters/Sonic/Sprites", typeof(Sprite));
     }
 
     public override void UpdateCharacterAnimation()

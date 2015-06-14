@@ -6,6 +6,7 @@ public class HUD : MonoBehaviour
 
     #region Private
     BasePlayerMovement _bpm;
+    PlayerSonic _pSonic;
     TextMesh _livesText;
     TextMesh _ringsText;
     TextMesh _secondsText;
@@ -19,6 +20,16 @@ public class HUD : MonoBehaviour
         _ringsText = GameObject.Find("Rings").GetComponent<TextMesh>();
         _secondsText = GameObject.Find("TimeSeconds").GetComponent<TextMesh>();
         _minutesText = GameObject.Find("TimeMinutes").GetComponent<TextMesh>();
+
+        // Check the caracter and load up the required Class
+        switch(_bpm.PlayerCharacter)
+        {
+            case "SONIC":
+                {
+                    _pSonic = GameObject.Find("Player").GetComponent<PlayerSonic>();
+                    break;
+                }
+        }
 	}
 	
 	// Update is called once per frame
@@ -59,5 +70,15 @@ public class HUD : MonoBehaviour
 
         // If we have rings or not
         if (_bpm.RINGS > 0) { anim.SetBool("HasRings", true); } else { anim.SetBool("HasRings", false); }
+        
+        // Check the caracter and change variables as required
+        switch (_bpm.PlayerCharacter)
+        {
+            case "SONIC":
+                {
+                    //_pSonic.IsSuperSonic
+                    break;
+                }
+        }
     }
 }
