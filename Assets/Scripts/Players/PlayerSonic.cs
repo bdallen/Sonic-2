@@ -36,8 +36,12 @@ public class PlayerSonic : BasePlayerMovement
 
     }
 
+    /// <summary>
+    /// Updates the Character Animations, Depending on State of the Character
+    /// </summary>
     public override void UpdateCharacterAnimation()
     {
+        // Walking to Running Transition State
         if (Mathf.Abs(_currentSpeed) > 0.01f && !_jumping)
         {
             if (Mathf.Abs(_currentSpeed) > 4.5f)
@@ -48,29 +52,39 @@ public class PlayerSonic : BasePlayerMovement
             else
             {
                 _animator.Play(SonAni_Walk);
-                _animator.speed =Mathf.Abs(_currentSpeed) / 1.5f;
+                _animator.speed =Mathf.Abs(_currentSpeed) / 1.8f;
             }
         }
+
+        // Balancing on Forward Ledge
         else if (!_jumping && _edgeInfront  && _edgeDistance < 6f && _edgeDistance > 4f && _currentSpeed == 0f)
         {
             _animator.Play(SonAni_Balance);
             _animator.speed = 2f;
         }
+
+        // Balancing on Baward Ledge
         else if (!_jumping && _edgeBehind && _edgeDistance < 6f && _currentSpeed == 0f)
         {
             _animator.Play(SonAni_Balance2);
             _animator.speed = 2f;
         }
+
+        // Balancing on Forward Ledge (About to Fall Off)
         else if (!_jumping && _edgeInfront && _edgeDistance < 4f && _currentSpeed == 0f)
         {
             _animator.Play(SonAni_Balance3);
             _animator.speed = 6f;
         }
+        
+        // Jumping
         else if (_jumping)
         {
             _animator.Play(SonAni_Jump);
             _animator.speed = 1f;
         }
+
+        // Default State
         else
         {
             _animator.Play(SonAni_Stand);

@@ -254,30 +254,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
 	void UpdateAnimations()
 	{
-		
-        //_animator.SetFloat("Speed", Mathf.Abs(CurrentSpeed));
-        //_animator.SetBool ("Jumping", _jumping);
-        //_animator.SetFloat("EdgeDistance", _edgeDistance);
-        //_animator.SetBool("EdgeInfront", _edgeInfront);
-        //_animator.SetBool("EdgeBehind", _edgeBehind);
-        //_animator.SetBool("IdleState1", _idleState1);
-
-        //// Increment the idle state counter
-        //_idleStateCounter += 1;
-
-        //// Set the first idle animation
-        //if (_idleStateCounter == 180 && !_idleState2) { _idleState1 = true; }
-
-        //if (_grounded && CurrentSpeed > 0)
-        //{
-        //    float walkspeed = (Mathf.Abs(CurrentSpeed) / TOP_SPEED) * 2f;
-        //    if (walkspeed < 0.5f) { walkspeed = 0.5f; }
-        //    _animator.speed = walkspeed;
-        //}
-
-        // Run animation Updates in the Character Class
-        UpdateCharacterAnimation();
-
+		UpdateCharacterAnimation();
 	}
 
     void ApplyGravity()
