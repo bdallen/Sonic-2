@@ -23,7 +23,7 @@ public class PlayerSonic : BasePlayerMovement
 
     public override void CharacterAwake()
     {
-        _sonicSprites = Resources.LoadAll("Characters/Sonic/Sprites", typeof(Sprite));
+
     }
 
     public override void UpdateCharacterAnimation()
