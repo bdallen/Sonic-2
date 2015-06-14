@@ -40,7 +40,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     private List<Vector3> _playerPosBuf;
 
     private int _spinDashCounter = 0;
-    private int _idleStateCounter = 0;
+    
 
     // Collision & Edge Detection
     private LayerMask lmGround;
@@ -65,6 +65,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     protected bool _edgeInfront = false;
     protected bool _edgeBehind = false;
     protected float _edgeDistance = 0f;
+    protected int _idleStateCounter = 0;
 
     // Player Options
     protected string _PlayerCharacter;
@@ -110,6 +111,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
         lmRoof = LayerMask.NameToLayer("Roof");
         lmWalls = LayerMask.NameToLayer("Walls");
 
+        // Find the starting position of the character on the level
+        transform.position = GameObject.Find("StartPos").transform.position;
+
         _spRenderer = GetComponent<SpriteRenderer>();
         //_inWater = true;
         SonicAssembler.CalcAngle(0.03f, 0.23f);
@@ -119,7 +123,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     {
         _audioSource = GetComponent<AudioSource>();
         _animator = GetComponent<Animator>();
-        _subAnimator = GameObject.Find("SpinDashDust").GetComponent<Animator>();
+        _subAnimator = GameObject.Find("DustAnimations").GetComponent<Animator>();
         CharacterAwake();
     }
 
@@ -128,7 +132,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     /// </summary>
     void Update()
     {
-        // Update Game Time
+        // Update Game Time and counters
         _gameTime = (int)Time.timeSinceLevelLoad;
 
         /// Seems the original code did the checks in the following order

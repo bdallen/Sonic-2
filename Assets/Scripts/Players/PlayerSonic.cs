@@ -15,11 +15,17 @@ public class PlayerSonic : BasePlayerMovement
     private const string SonAni_Balance = "SonAni_Balance";
     private const string SonAni_Balance2 = "SonAni_Balance2";
     private const string SonAni_Balance3 = "SonAni_Balance3";
-
+    private const string SonAni_Blink = "SonAni_Blink";
+    private const string SonAni_Wait1 = "SonAni_Wait1";
+    private const string SonAni_Wait2 = "SonAni_Wait2";
     #endregion
 
     #region Private Variables
     private bool _superSonic = false;
+    private bool _idleState1 = false;
+    private bool _idleState2 = false;
+    private bool _idleWatchFrame = false;
+    private int _idleTapCounter = 0;
     #endregion
 
     public PlayerSonic()
@@ -95,8 +101,40 @@ public class PlayerSonic : BasePlayerMovement
         // Default State
         else
         {
-            _animator.Play(SonAni_Stand);
-            _animator.speed = 1f;
+            
+            _idleStateCounter += 1;
+
+            if (_idleStateCounter == 180 && !_idleState1 && !_idleState2)
+            {
+                _idleState1 = true;
+                _animator.Play(SonAni_Blink);
+                _idleStateCounter = 0;
+            }
+            else if (_idleWatchFrame && _idleStateCounter == 10)
+            {
+                _animator.Play(SonAni_Wait1);
+                _idleWatchFrame = false;
+            }
+            else if (_idleState1 && _idleStateCounter == 6)
+            {
+                _animator.Play(SonAni_Wait1);
+                _idleStateCounter = 0;
+                _idleState2 = true;
+                _idleState1 = false;
+            }
+            else if (_idleState2 && _idleStateCounter == 144)
+            {
+                _animator.Play(SonAni_Wait2);
+                _idleStateCounter = 0;
+                _idleTapCounter = 0;
+                _idleWatchFrame = true;
+            }
+
+            else if (!_idleState1 && !_idleState2)
+            {
+                _animator.Play(SonAni_Stand);
+                _animator.speed = 1f;
+            }
         }
         
     }
