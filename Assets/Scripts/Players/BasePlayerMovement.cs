@@ -13,22 +13,23 @@ public abstract class BasePlayerMovement : MonoBehaviour
     #region Public Variables
     // Player Tuning
     public int LIVES = 3;
-
-    // Physics Section
-    public float GRAVITY = 0.21875f;
-    public float MAX_FALL_VELOCITY = 16f;
-    public float MAX_JUMP_FORCE = 6.5f;
-    public float MIN_JUMP_FORCE = 4f;
-    public float ACCELERATION = 0xC;
-    public float FRICTION = 0xC;
-    public float DECELERATION = 0x80;
-    public float TOP_SPEED = 0x600;
+    public int RINGS = 0;
 
     public AudioClip SndJump;
     public AudioClip SndBrake;
     #endregion
 
     #region Private Variables
+    // Player Dynamics
+    private float GRAVITY = 0.21875f;
+    private float MAX_FALL_VELOCITY = 16f;
+    private float MAX_JUMP_FORCE = 6.5f;
+    private float MIN_JUMP_FORCE = 4f;
+    private float ACCELERATION = 0xC;
+    private float FRICTION = 0xC;
+    private float DECELERATION = 0x80;
+    private float TOP_SPEED = 0x600;
+
     // Player States Section
     private bool _grounded = false;
     private bool _jumping = false;
@@ -57,12 +58,19 @@ public abstract class BasePlayerMovement : MonoBehaviour
     protected AudioSource _audioSource;
     protected SpriteRenderer _spRenderer;
     protected float _angle = 0f;
+    protected int _gameTime;
     #endregion
 
     #region Abstract Methods
     public abstract void UpdateCharacterAnimation();    // Updates specific Character Animations
     public abstract void CharacterAwake();              // Perform Awake on the Character Class
     #endregion
+
+    /// <summary>
+    /// Returns the Current Game Time
+    /// </summary>
+    public int PlayTime
+    { get { return _gameTime; } }
 
     // Private Objects
 	private Rect box;
@@ -106,6 +114,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
     /// </summary>
     void Update()
     {
+        // Update Game Time
+        _gameTime = (int)Time.timeSinceLevelLoad;
+
         /// Seems the original code did the checks in the following order
         /// CheckSpindash
         /// Jump
@@ -125,6 +136,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
         
         UpdateAnimations();
+
         transform.eulerAngles = new Vector2(0, YRotation);
         transform.Translate(velocity.x, velocity.y, 0f);
 
@@ -132,7 +144,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
 	void OnGUI()
 	{
-        GUILayout.Label ("Angle: " + _angle);
+        //GUILayout.Label ("Angle: " + _angle);
         //GUILayout.Label ("Location: " + transform.position.ToString());
         //GUILayout.Label ("Velocity: " + velocity.ToString ());
         //GUILayout.Label("Current Speed: " + Mathf.Abs(CurrentSpeed).ToString());
@@ -298,7 +310,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
                 break;
             }
 
-            RaycastHit hGa, hGb;
+            RaycastHit2D hGa, hGb;
 
             // TODO: Fix this
             // This may need to be revised - This is what was causing the bouncing issue, but dividing the velocity has helped
@@ -310,27 +322,27 @@ public abstract class BasePlayerMovement : MonoBehaviour
 			bool bGbConnected = false;
 
 			// Make the ray vectors
-			Ray rGa = new Ray(vGaStart,Vector3.down);
-			Ray rGb = new Ray(vGbStart,Vector3.down);
+			Ray2D rGa = new Ray2D(vGaStart,Vector3.down);
+			Ray2D rGb = new Ray2D(vGbStart,Vector3.down);
 
 			// Debug this shiz
 			Debug.DrawRay(vGaStart,Vector3.down * distance,Color.green,2f);
 			Debug.DrawRay(vGbStart,Vector3.down * distance,Color.green,2f);
 
-			bGaConnected = Physics.Raycast(rGa, out hGa, distance,1 << lmGround); // Shoot out Ray A and set layer mask to ground
-			bGbConnected = Physics.Raycast(rGb, out hGb, distance,1 << lmGround); // Shoot out Ray B and set layer mask to ground
+            hGa = Physics2D.Raycast(vGaStart, -Vector2.up, distance, 1 << lmGround);
+            hGb = Physics2D.Raycast(vGbStart, -Vector2.up, distance, 1 << lmGround);
 
 			// If anything collides were on the floor
-			if (bGaConnected || bGbConnected)
+			if (hGa.collider || hGb.collider)
 			{
            
                 _jumping = false;
 				_grounded = true;
 				falling = false;
 			
-				// Store out the sensor values
-				if (hGa.collider != null) {SensorGroundA = hGa.point;}
-				if (hGb.collider != null) {SensorGroundB = hGb.point;}
+                //// Store out the sensor values
+                if (hGa.collider != null) { bGaConnected = true; SensorGroundA = hGa.point; }
+                if (hGb.collider != null) { bGbConnected = true; SensorGroundB = hGb.point; }
 
                 // Fixes a weird bug where a and b although the same height seem to give different distances
                 if (hGa.distance > hGb.distance)
@@ -353,12 +365,12 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
 
 			// Edge detection for the Balancing Animations
-			if (!bGaConnected && bGbConnected && YRotation == FACING_RIGHT && !_jumping)         // We are facing right and edge is infront of us
-			{
+            if (!bGaConnected && bGbConnected && YRotation == FACING_RIGHT && !_jumping)         // We are facing right and edge is infront of us
+            {
                 _edgeInfront = true;
                 _edgeBehind = false;
-				_edgeDistance = Mathf.Abs(((SensorGroundA.x - hGb.point.x) / 2));
-			}
+                _edgeDistance = Mathf.Abs(((SensorGroundA.x - hGb.point.x) / 2));
+            }
             else if (!bGaConnected && bGbConnected && YRotation == FACING_LEFT && !_jumping)    // We are facing right and the ledge is behind us
             {
                 _edgeInfront = false;
