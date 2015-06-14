@@ -46,7 +46,10 @@ public class Parallaxing : MonoBehaviour
             float parallax = (previousCamPos.x - cam.position.x) * parallaxScales[i];
 
             //set a target x position that is the current position plus the parallax
-            float backgroundTargetPosX = backgrounds[i].position.x + parallax;
+            float backgroundTargetPosX = backgrounds[i].position.x - parallax;
+
+            // Set Y position
+            float backgroundTargetPosY = cam.position.y;
 
             //create a target position which is the backgrounds current position with it's target x position
             Vector3 backgroundTargetPos = new Vector3(backgroundTargetPosX, backgrounds[i].position.y, backgrounds[i].position.z);
