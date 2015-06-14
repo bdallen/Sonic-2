@@ -9,13 +9,16 @@ public class PlayerSonic : BasePlayerMovement
     #endregion
 
     #region Private Variables
-    private Object[] _sonicSprites;
     private bool _superSonic = false;
+
+    // Animations
+    private AnimationClip _sonicRun;
     #endregion
 
     public PlayerSonic()
     {
         _PlayerCharacter = PLAYER_ID;
+     
     }
 
     public bool IsSuperSonic
@@ -23,7 +26,8 @@ public class PlayerSonic : BasePlayerMovement
 
     public override void CharacterAwake()
     {
-
+        // Instantiate all Animation Clips
+        _sonicRun = Resources.Load<AnimationClip>("Characters/Sonic/SonicRun");
     }
 
     public override void UpdateCharacterAnimation()
