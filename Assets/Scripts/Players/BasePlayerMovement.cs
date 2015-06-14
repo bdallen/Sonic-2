@@ -31,8 +31,6 @@ public abstract class BasePlayerMovement : MonoBehaviour
     private float TOP_SPEED = 0x600;
 
     // Player States Section
-    private bool _grounded = false;
-    private bool _jumping = false;
     private bool _inWater = false;
     private bool _spinDash = false;
     private bool _idleState1 = false;
@@ -49,19 +47,26 @@ public abstract class BasePlayerMovement : MonoBehaviour
     private LayerMask lmGround;
     private LayerMask lmRoof;
     private LayerMask lmWalls;
-    private bool _edgeInfront = false;
-    private bool _edgeBehind = false;
-    private float _edgeDistance = 0f;
     #endregion
 
     #region Protected Variables
-    // Player Options
-    protected string _PlayerCharacter;
-
+    // Game Objects
+    protected Animator _animator;
     protected AudioSource _audioSource;
     protected SpriteRenderer _spRenderer;
-    protected float _angle = 0f;
     protected int _gameTime;
+
+    // Player Information
+    protected float _angle = 0f;
+    protected float _currentSpeed = 0f;
+    protected bool _grounded = false;
+    protected bool _jumping = false;
+    protected bool _edgeInfront = false;
+    protected bool _edgeBehind = false;
+    protected float _edgeDistance = 0f;
+
+    // Player Options
+    protected string _PlayerCharacter;
     #endregion
 
     #region Abstract Methods
@@ -80,7 +85,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
     // Private Objects
 	private Rect box;
-	private float CurrentSpeed = 0f;
+	
     
 	// Ground Sensor Values
 	private Vector2 SensorGroundA, SensorGroundB;
@@ -112,6 +117,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     void Awake()
     {
         _audioSource = GetComponent<AudioSource>();
+        _animator = GetComponent<Animator>();
         CharacterAwake();
     }
 
@@ -186,24 +192,24 @@ public abstract class BasePlayerMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             // Player_MoveLeft      
-            if (CurrentSpeed > 0f)
+            if (_currentSpeed > 0f)
             {
-                CurrentSpeed = CurrentSpeed - DECELERATION;
+                _currentSpeed = _currentSpeed - DECELERATION;
 
                 // Play Braking Sound
-                if (YRotation == FACING_RIGHT && Mathf.Abs(CurrentSpeed) > 4.5f && _jumping == false) 
+                if (YRotation == FACING_RIGHT && Mathf.Abs(_currentSpeed) > 4.5f && _jumping == false) 
                 { _audioSource.PlayOneShot(SndBrake); }
 
             }
             else
             {
-                if (CurrentSpeed > -TOP_SPEED)
+                if (_currentSpeed > -TOP_SPEED)
                 {
-                    CurrentSpeed = CurrentSpeed - ACCELERATION;
+                    _currentSpeed = _currentSpeed - ACCELERATION;
                 }
                 else
                 {
-                    CurrentSpeed = -TOP_SPEED;
+                    _currentSpeed = -TOP_SPEED;
                 }
             }
 
@@ -214,24 +220,24 @@ public abstract class BasePlayerMovement : MonoBehaviour
         else if (Input.GetKey(KeyCode.RightArrow))
         {
             // Player_MoveRight
-			if (CurrentSpeed < 0f) 
+			if (_currentSpeed < 0f) 
             {
-                CurrentSpeed = CurrentSpeed + DECELERATION;
+                _currentSpeed = _currentSpeed + DECELERATION;
 
                 // Play braking Sound
-                if (YRotation == FACING_LEFT && Mathf.Abs(CurrentSpeed) > 4.5f && _jumping == false) 
+                if (YRotation == FACING_LEFT && Mathf.Abs(_currentSpeed) > 4.5f && _jumping == false) 
                 { _audioSource.PlayOneShot(SndBrake); }
 
 			} 
             else 
             {
-				if (CurrentSpeed < TOP_SPEED)
+				if (_currentSpeed < TOP_SPEED)
 				{
-					CurrentSpeed = CurrentSpeed + ACCELERATION;
+					_currentSpeed = _currentSpeed + ACCELERATION;
 				}
                 else
                 {
-					CurrentSpeed = TOP_SPEED;
+					_currentSpeed = TOP_SPEED;
 				}
 			}
 
@@ -239,35 +245,35 @@ public abstract class BasePlayerMovement : MonoBehaviour
             YRotation = FACING_RIGHT;
 			
 		} else {
-			CurrentSpeed = CurrentSpeed - (Mathf.Min(Mathf.Abs(CurrentSpeed), FRICTION)*Mathf.Sign(CurrentSpeed));
+			_currentSpeed = _currentSpeed - (Mathf.Min(Mathf.Abs(_currentSpeed), FRICTION)*Mathf.Sign(_currentSpeed));
 		}
 
-		velocity = new Vector2 (Mathf.Abs(CurrentSpeed), velocity.y);		
+		velocity = new Vector2 (Mathf.Abs(_currentSpeed), velocity.y);		
 		
 	}
 
 	void UpdateAnimations()
 	{
-		Animator anim = GetComponent<Animator> ();
-        anim.SetFloat("Speed", Mathf.Abs(CurrentSpeed));
-		anim.SetBool ("Jumping", _jumping);
-        anim.SetFloat("EdgeDistance", _edgeDistance);
-        anim.SetBool("EdgeInfront", _edgeInfront);
-        anim.SetBool("EdgeBehind", _edgeBehind);
-        anim.SetBool("IdleState1", _idleState1);
+		
+        //_animator.SetFloat("Speed", Mathf.Abs(CurrentSpeed));
+        //_animator.SetBool ("Jumping", _jumping);
+        //_animator.SetFloat("EdgeDistance", _edgeDistance);
+        //_animator.SetBool("EdgeInfront", _edgeInfront);
+        //_animator.SetBool("EdgeBehind", _edgeBehind);
+        //_animator.SetBool("IdleState1", _idleState1);
 
-        // Increment the idle state counter
-        _idleStateCounter += 1;
+        //// Increment the idle state counter
+        //_idleStateCounter += 1;
 
-        // Set the first idle animation
-        if (_idleStateCounter == 180 && !_idleState2) { _idleState1 = true; }
+        //// Set the first idle animation
+        //if (_idleStateCounter == 180 && !_idleState2) { _idleState1 = true; }
 
-        if (_grounded && CurrentSpeed > 0)
-        {
-            float walkspeed = (Mathf.Abs(CurrentSpeed) / TOP_SPEED) * 2f;
-            if (walkspeed < 0.5f) { walkspeed = 0.5f; }
-            anim.speed = walkspeed;
-        }
+        //if (_grounded && CurrentSpeed > 0)
+        //{
+        //    float walkspeed = (Mathf.Abs(CurrentSpeed) / TOP_SPEED) * 2f;
+        //    if (walkspeed < 0.5f) { walkspeed = 0.5f; }
+        //    _animator.speed = walkspeed;
+        //}
 
         // Run animation Updates in the Character Class
         UpdateCharacterAnimation();
