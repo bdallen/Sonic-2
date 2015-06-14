@@ -32,7 +32,6 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
     // Player States Section
     private bool _inWater = false;
-    private bool _spinDash = false;
     private bool _idleState1 = false;
     private bool _idleState2 = false;
 
@@ -52,6 +51,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     #region Protected Variables
     // Game Objects
     protected Animator _animator;
+    protected Animator _subAnimator;
     protected AudioSource _audioSource;
     protected SpriteRenderer _spRenderer;
     protected int _gameTime;
@@ -61,6 +61,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     protected float _currentSpeed = 0f;
     protected bool _grounded = false;
     protected bool _jumping = false;
+    protected bool _spinDash = false;
     protected bool _edgeInfront = false;
     protected bool _edgeBehind = false;
     protected float _edgeDistance = 0f;
@@ -118,6 +119,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     {
         _audioSource = GetComponent<AudioSource>();
         _animator = GetComponent<Animator>();
+        _subAnimator = GameObject.Find("SpinDashDust").GetComponent<Animator>();
         CharacterAwake();
     }
 
@@ -157,11 +159,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 	void OnGUI()
 	{
         //GUILayout.Label ("Angle: " + _angle);
-        //GUILayout.Label ("Location: " + transform.position.ToString());
-        //GUILayout.Label ("Velocity: " + velocity.ToString ());
-        //GUILayout.Label("Current Speed: " + Mathf.Abs(CurrentSpeed).ToString());
-        //GUILayout.Label ("Sensor A: " + SensorGroundA.ToString() + ", Sensor B: " + SensorGroundB.ToString ());
-        //GUILayout.Label ("Idle State Counter: " + _idleStateCounter.ToString());
+
 	}
     
     /// <summary>

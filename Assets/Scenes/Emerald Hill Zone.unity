@@ -667,6 +667,22 @@ Prefab:
       propertyPath: m_LocalPosition.y
       value: 5.0999999
       objectReference: {fileID: 0}
+    - target: {fileID: 10200966, guid: 879345acf2a7ed04e938f3bd655365e2, type: 2}
+      propertyPath: m_Text
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 474812, guid: 879345acf2a7ed04e938f3bd655365e2, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 22.7999992
+      objectReference: {fileID: 0}
+    - target: {fileID: 10200966, guid: 879345acf2a7ed04e938f3bd655365e2, type: 2}
+      propertyPath: m_Anchor
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 10200966, guid: 879345acf2a7ed04e938f3bd655365e2, type: 2}
+      propertyPath: m_Alignment
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 879345acf2a7ed04e938f3bd655365e2, type: 2}
   m_IsPrefabParent: 0

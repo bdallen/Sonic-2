@@ -84,6 +84,14 @@ public class PlayerSonic : BasePlayerMovement
             _animator.speed = 1f;
         }
 
+        // Performing a Spin Dash
+        else if (_spinDash)
+        {
+            // Sub Animator that controlls the dust
+            _subAnimator.Play("SonicSpinDashDust");
+            _subAnimator.speed = 7f;
+        }
+
         // Default State
         else
         {
