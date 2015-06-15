@@ -32,8 +32,6 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
     // Player States Section
     private bool _inWater = false;
-    private bool _idleState1 = false;
-    private bool _idleState2 = false;
 
     // Player Variables Section
     private Vector3 _savePoint;
