@@ -1,0 +1,16 @@
+#
+# Sprite sheet data for Unity.
+#
+# To import these sprites into your Unity project, download "TexturePackerImporter":
+# http://www.codeandweb.com/texturepacker/unity
+#
+# Sprite sheet: object.png (32 x 124)
+# $TexturePacker:SmartUpdate:873e9f42ded008199addea90e689f7a9:af3614ed93c7ae58d073ef5c91129d5a:d7d6a275ae157cf5104bb3122c0e00a7$
+#
+
+goalpost01;2;58;16;64;0.5;0.5
+ring01;2;39;16;17;0.5;0.5
+ring02;2;4;12;17;0.5;0.5
+ring03;20;105;6;17;0.5;0.5
+ring04;16;4;12;17;0.5;0.5
+ringsparks01;2;23;16;14;0.5;0.5
