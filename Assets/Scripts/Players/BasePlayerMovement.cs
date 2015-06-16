@@ -188,7 +188,6 @@ public abstract class BasePlayerMovement : MonoBehaviour
 	void PlayerMove()
 	{
 
-        
         if (Input.GetAxis("Horizontal") < 0)
         {
             // Player_MoveLeft      
@@ -403,18 +402,22 @@ public abstract class BasePlayerMovement : MonoBehaviour
         #endregion
 
         #region Top Collision
-        Ray rTa = new Ray(vGaStart, Vector3.up);
-        bool bTaConnected = false;
         Debug.DrawRay(vGaStart, Vector3.up * 16f, Color.cyan, 2f);
-        RaycastHit hTa;
-        bTaConnected = Physics.Raycast(rTa, out hTa, 16f, 1 << lmWalls);
+        RaycastHit2D hTa = Physics2D.Raycast(vGaStart, Vector2.up, 16f);
 
-        Ray rTb = new Ray(vGbStart, Vector3.up);
-        bool bTbConnected = false;
         Debug.DrawRay(vGbStart, Vector3.up * 16f, Color.cyan, 2f);
-        RaycastHit hTb;
-        bTbConnected = Physics.Raycast(rTb, out hTb, 16f, 1 << lmWalls);
+        RaycastHit2D hTb = Physics2D.Raycast(vGbStart, Vector2.up, 16f);
         #endregion
+
+        if (hTa.collider)
+        {
+            DoCollisionCheck(hTa);
+        }
+        if (hTb.collider)
+        {
+            DoCollisionCheck(hTb);
+        }
+
     }
 
     void CheckWater()
@@ -443,8 +446,23 @@ public abstract class BasePlayerMovement : MonoBehaviour
         }
     }
 
-    private void MoveLeft()
+    void DoCollisionCheck(RaycastHit2D _rc)
     {
-
+        // Handle Rings Hits
+        if (_rc.collider.GetComponent("Ring"))
+        {
+            Ring ring = _rc.collider.GetComponent<Ring>();
+            if (!ring._collected) 
+            { 
+                RINGS += 1;
+                if (RINGS == 10)
+                {
+                    AudioClip snd1up = Resources.Load<AudioClip>("Sound/BGM/1Up");
+                    _audioSource.PlayOneShot(snd1up);
+                    LIVES += 1;
+                }
+            }
+            ring.CollectRing();
+        }
     }
 }
