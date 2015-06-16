@@ -171,14 +171,14 @@ public abstract class BasePlayerMovement : MonoBehaviour
     {
         /// When you release the jump button in the air after jumping, the computer checks to see if Sonic is moving upward (i.e. Y speed is negative). If he is, then it checks to see if Y speed is less than -4 (e.g. -5 is "less" than -4). If it is, then Y speed is set to -4. In this way, you can cut your jump short at any time, just by releasing the jump button. If you release the button in the very next step after jumping, Sonic makes the shortest possible jump.
 
-        if (Input.GetKeyDown(KeyCode.A) && _grounded)
+        if (Input.GetButtonDown("Jump") && _grounded)
         {
             _jumping = true;
             velocity = new Vector2(velocity.x, MAX_JUMP_FORCE);
             _audioSource.PlayOneShot(SndJump);
         }
 
-        if (Input.GetKeyUp(KeyCode.A) && !_grounded)
+        if (Input.GetButtonUp("Jump") && !_grounded)
         {
             if (velocity.y > MIN_JUMP_FORCE)
                 velocity = new Vector2(velocity.x, MIN_JUMP_FORCE);
@@ -189,7 +189,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 	{
 
         
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetAxis("Horizontal") < 0)
         {
             // Player_MoveLeft      
             if (_currentSpeed > 0f)
@@ -217,7 +217,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
             YRotation = FACING_LEFT;
 
         }
-        else if (Input.GetKey(KeyCode.RightArrow))
+        else if (Input.GetAxis("Horizontal") > 0)
         {
             // Player_MoveRight
 			if (_currentSpeed < 0f) 
@@ -282,22 +282,22 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
 		Vector3 vGaStart, vGbStart, vRStart, vLStart;
 
-        #region Ground Collision
-        if (_grounded || falling) {
-
-            // Check if we are jumping, if so change the width of the Sensors
-            // Also check the roataion and swap the A and B sensors depending on what way we are facing
-            switch(_jumping)
-            {
+        // Check if we are jumping, if so change the width of the Sensors
+        // Also check the roataion and swap the A and B sensors depending on what way we are facing
+        switch (_jumping)
+        {
             case true:
-                    vGaStart = new Vector3(box.center.x + 7,box.center.y,transform.position.z);
-                    vGbStart = new Vector3(box.center.x - 7,box.center.y,transform.position.z);
+                vGaStart = new Vector3(box.center.x + 7, box.center.y, transform.position.z);
+                vGbStart = new Vector3(box.center.x - 7, box.center.y, transform.position.z);
                 break;
             default:
-					vGaStart = new Vector3(box.center.x + 9,box.center.y,transform.position.z);
-					vGbStart = new Vector3(box.center.x - 9,box.center.y,transform.position.z);
+                vGaStart = new Vector3(box.center.x + 9, box.center.y, transform.position.z);
+                vGbStart = new Vector3(box.center.x - 9, box.center.y, transform.position.z);
                 break;
-            }
+        }
+
+        #region Ground Collision
+        if (_grounded || falling) {
 
             RaycastHit2D hGa, hGb;
 
@@ -400,6 +400,20 @@ public abstract class BasePlayerMovement : MonoBehaviour
         Debug.DrawRay(vLStart, -Vector3.right * 10f, Color.cyan, 2f);
         RaycastHit hL;
         bLConnected = Physics.Raycast(rL, out hL, 10f, 1 << lmWalls);
+        #endregion
+
+        #region Top Collision
+        Ray rTa = new Ray(vGaStart, Vector3.up);
+        bool bTaConnected = false;
+        Debug.DrawRay(vGaStart, Vector3.up * 16f, Color.cyan, 2f);
+        RaycastHit hTa;
+        bTaConnected = Physics.Raycast(rTa, out hTa, 16f, 1 << lmWalls);
+
+        Ray rTb = new Ray(vGbStart, Vector3.up);
+        bool bTbConnected = false;
+        Debug.DrawRay(vGbStart, Vector3.up * 16f, Color.cyan, 2f);
+        RaycastHit hTb;
+        bTbConnected = Physics.Raycast(rTb, out hTb, 16f, 1 << lmWalls);
         #endregion
     }
 
