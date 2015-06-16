@@ -452,16 +452,25 @@ public abstract class BasePlayerMovement : MonoBehaviour
         if (_rc.collider.GetComponent("Ring"))
         {
             Ring ring = _rc.collider.GetComponent<Ring>();
+
+            // If Ring isn't collected but we have hit it then do this
             if (!ring._collected) 
             { 
                 RINGS += 1;
-                if (RINGS == 10)
+
+                // When rings gets to a block of 100, r2l will be 0
+                int r2l = RINGS % 100;
+                
+                // If the block has come back to 0, we have 100 Rings
+                if (r2l == 0)
                 {
                     AudioClip snd1up = Resources.Load<AudioClip>("Sound/BGM/1Up");
                     _audioSource.PlayOneShot(snd1up);
                     LIVES += 1;
                 }
             }
+
+            // Then collect it to say we have used the object, poor rings, getting used
             ring.CollectRing();
         }
     }
