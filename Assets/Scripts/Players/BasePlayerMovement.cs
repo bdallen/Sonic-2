@@ -279,7 +279,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
                        collider.bounds.size.x,
                        collider.bounds.size.y);
 
-		Vector3 vGaStart, vGbStart, vRStart, vLStart;
+		Vector3 vGaStart, vGbStart, vMaStart, vMbStart;
 
         // Check if we are jumping, if so change the width of the Sensors
         // Also check the roataion and swap the A and B sensors depending on what way we are facing
@@ -386,19 +386,22 @@ public abstract class BasePlayerMovement : MonoBehaviour
         #endregion
 
         #region Side Collision
-        vRStart = new Vector3(box.center.x, box.center.y, transform.position.z);
-        Ray rR = new Ray(vRStart, Vector3.right);
-        bool bRConnected = false;
-        Debug.DrawRay(vRStart, Vector3.right * 10f, Color.cyan, 2f);
-        RaycastHit hR;
-        bRConnected = Physics.Raycast(rR, out hR, 10f, 1 << lmWalls);
+        vMaStart = new Vector3(box.center.x, box.center.y, transform.position.z);
+        Debug.DrawRay(vMaStart, Vector2.right * 10f, Color.cyan, 2f);
+        RaycastHit2D hMa = Physics2D.Raycast(vMaStart, Vector2.right, 10f);
 
-        vLStart = new Vector3(box.center.x, box.center.y, transform.position.z);
-        Ray rL = new Ray(vLStart, -Vector3.right);
-        bool bLConnected = false;
-        Debug.DrawRay(vLStart, -Vector3.right * 10f, Color.cyan, 2f);
-        RaycastHit hL;
-        bLConnected = Physics.Raycast(rL, out hL, 10f, 1 << lmWalls);
+        vMbStart = new Vector3(box.center.x, box.center.y, transform.position.z);
+        Debug.DrawRay(vMbStart, -Vector2.right * 10f, Color.cyan, 2f);
+        RaycastHit2D hMb = Physics2D.Raycast(vMbStart, -Vector2.right, 10f);
+
+        if (hMa.collider)
+        {
+            DoCollisionCheck(hMa);
+        }
+        if (hMb.collider)
+        {
+            DoCollisionCheck(hMb);
+        }
         #endregion
 
         #region Top Collision
@@ -407,7 +410,6 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
         Debug.DrawRay(vGbStart, Vector3.up * 16f, Color.cyan, 2f);
         RaycastHit2D hTb = Physics2D.Raycast(vGbStart, Vector2.up, 16f);
-        #endregion
 
         if (hTa.collider)
         {
@@ -417,6 +419,24 @@ public abstract class BasePlayerMovement : MonoBehaviour
         {
             DoCollisionCheck(hTb);
         }
+        #endregion
+
+        #region Bottom Collision
+        Debug.DrawRay(vGaStart, -Vector2.up * 16f, Color.cyan, 2f);
+        RaycastHit2D hBa = Physics2D.Raycast(vGaStart, -Vector2.up, 16f);
+
+        Debug.DrawRay(vGbStart, -Vector2.up * 16f, Color.cyan, 2f);
+        RaycastHit2D hBb = Physics2D.Raycast(vGbStart, -Vector2.up, 16f);
+
+        if (hBa.collider)
+        {
+            DoCollisionCheck(hBa);
+        }
+        if (hBb.collider)
+        {
+            DoCollisionCheck(hBb);
+        }
+        #endregion
 
     }
 
@@ -448,6 +468,13 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
     void DoCollisionCheck(RaycastHit2D _rc)
     {
+
+        // Handle Wall Hits
+        if (_rc.transform.gameObject.layer == lmWalls)
+        {
+            Debug.Log("Whoa I hit a wall!");
+        }
+
         // Handle Rings Hits
         if (_rc.collider.GetComponent("Ring"))
         {

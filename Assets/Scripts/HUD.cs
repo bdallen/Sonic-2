@@ -11,6 +11,9 @@ public class HUD : MonoBehaviour
     TextMesh _ringsText;
     TextMesh _secondsText;
     TextMesh _minutesText;
+    TextMesh _ringsTextShadow;
+    TextMesh _secondsTextShadow;
+    TextMesh _minutesTextShadow;
     #endregion
 
     // Use this for initialization
@@ -20,6 +23,9 @@ public class HUD : MonoBehaviour
         _ringsText = GameObject.Find("Rings").GetComponent<TextMesh>();
         _secondsText = GameObject.Find("TimeSeconds").GetComponent<TextMesh>();
         _minutesText = GameObject.Find("TimeMinutes").GetComponent<TextMesh>();
+        _ringsTextShadow = GameObject.Find("RingsShadow").GetComponent<TextMesh>();
+        _secondsTextShadow = GameObject.Find("TimeSecondsShadow").GetComponent<TextMesh>();
+        _minutesTextShadow = GameObject.Find("TimeMinutesShadow").GetComponent<TextMesh>();
 
         // Check the caracter and load up the required Class
         switch(_bpm.PlayerCharacter)
@@ -38,7 +44,7 @@ public class HUD : MonoBehaviour
         _livesText.text = _bpm.LIVES.ToString();
 
         _ringsText.text = _bpm.RINGS.ToString();
-
+        _ringsTextShadow.text = _ringsText.text;
         
         // Update Score
 
@@ -61,7 +67,9 @@ public class HUD : MonoBehaviour
 
         // Update the Text Objects
         _secondsText.text = seconds.ToString("D2");
+        _secondsTextShadow.text = _secondsText.text;
         _minutesText.text = minutes.ToString();
+        _minutesTextShadow.text = _minutesText.text;
     }
 
     void UpdateAnimations()
