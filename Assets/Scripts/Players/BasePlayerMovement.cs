@@ -14,12 +14,12 @@ public abstract class BasePlayerMovement : MonoBehaviour
     // Player Tuning
     public int LIVES = 3;
     public int RINGS = 0;
-
-    public AudioClip SndJump;
-    public AudioClip SndBrake;
     #endregion
 
     #region Private Variables
+    // Game Manager
+    private GameManager _gm;
+
     // Player Dynamics
     private float GRAVITY = 0.21875f;
     private float MAX_FALL_VELOCITY = 16f;
@@ -44,6 +44,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     private LayerMask lmGround;
     private LayerMask lmRoof;
     private LayerMask lmWalls;
+
     #endregion
 
     #region Protected Variables
@@ -60,6 +61,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     protected bool _grounded = false;
     protected bool _jumping = false;
     protected bool _spinDash = false;
+    protected bool _hitWall = false;
     protected bool _edgeInfront = false;
     protected bool _edgeBehind = false;
     protected float _edgeDistance = 0f;
@@ -67,6 +69,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
     // Player Options
     protected string _PlayerCharacter;
+
+    // Scripted Movement
+    protected bool _scripted = false;
     #endregion
 
     #region Abstract Methods
@@ -104,6 +109,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
 	void Start()
 	{
+        // Grab the Game Manager for Global Objects
+        _gm = GameObject.Find("_GameManager").GetComponent<GameManager>();
+
 		// Get layer masks by name rather than Int
 		lmGround = LayerMask.NameToLayer ("Ground");
         lmRoof = LayerMask.NameToLayer("Roof");
@@ -133,20 +141,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
         // Update Game Time and counters
         _gameTime = (int)Time.timeSinceLevelLoad;
 
-        /// Seems the original code did the checks in the following order
-        /// CheckSpindash
-        /// Jump
-        //  SlopeResist
-        //  Move
-        //	Roll
-        //  LevelBound - Checks the Boundaries of the Level
-        //  Update Player Position
-        //  AnglePos
-        //  SlopeRepel
-
-        Collision();
-        PlayerJump();
-        PlayerMove();
+        Obj01_MdNormalChecks();
+        
         CheckWater();
         ApplyGravity();
 
@@ -158,6 +154,51 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
     }
 
+    void Obj01_MdNormalChecks()
+    {
+        // Check Logical Button Presses (Scripted Movement) If not then branch off
+        if (!_scripted)
+        {
+            Obj01_MdNormal();
+        }
+        else
+        {
+
+        }
+    }
+
+    void Obj01_MdNormal()
+    {
+        //bsr.w	Sonic_CheckSpindash
+        //bsr.w	Sonic_Jump
+        //bsr.w	Sonic_SlopeResist
+        //bsr.w	Sonic_Move
+        //bsr.w	Sonic_Roll
+        //bsr.w	Sonic_LevelBound
+        //jsr	(ObjectMove).l
+        //bsr.w	AnglePos
+        //bsr.w	Sonic_SlopeRepel
+
+        Collision();                //bsr.w	Sonic_LevelBound
+
+        Player_Jump();              //bsr.w Sonic_Jump
+
+        Player_Move();              //bsr.w Sonic_Move
+
+        Player_LevelBound();        //bsr.w	Sonic_LevelBound
+        
+
+    }
+
+    void Player_LevelBound()
+    {
+        // Check the Left Bounds of the player
+        if (transform.position.x - (box.width / 2) <= _gm.leftBound.position.x)
+        {
+            transform.position = new Vector3(_gm.leftBound.position.x + (box.width / 2), transform.position.y, transform.position.z);
+        }
+    }
+
 	void OnGUI()
 	{
         //GUILayout.Label ("Angle: " + _angle);
@@ -167,7 +208,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     /// <summary>
     /// Check For Jumps
     /// </summary>
-    void PlayerJump()
+    void Player_Jump()
     {
         /// When you release the jump button in the air after jumping, the computer checks to see if Sonic is moving upward (i.e. Y speed is negative). If he is, then it checks to see if Y speed is less than -4 (e.g. -5 is "less" than -4). If it is, then Y speed is set to -4. In this way, you can cut your jump short at any time, just by releasing the jump button. If you release the button in the very next step after jumping, Sonic makes the shortest possible jump.
 
@@ -175,6 +216,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
         {
             _jumping = true;
             velocity = new Vector2(velocity.x, MAX_JUMP_FORCE);
+            AudioClip SndJump = Resources.Load<AudioClip>("Sound/SFX/Player/Jump");
             _audioSource.PlayOneShot(SndJump);
         }
 
@@ -185,7 +227,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
         }
     }
 
-	void PlayerMove()
+	void Player_Move()
 	{
 
         if (Input.GetAxis("Horizontal") < 0)
@@ -196,8 +238,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
                 _currentSpeed = _currentSpeed - DECELERATION;
 
                 // Play Braking Sound
-                if (YRotation == FACING_RIGHT && Mathf.Abs(_currentSpeed) > 4.5f && _jumping == false) 
-                { _audioSource.PlayOneShot(SndBrake); }
+                if (YRotation == FACING_RIGHT && Mathf.Abs(_currentSpeed) > 4.5f && _jumping == false)
+                { AudioClip SndBrake = Resources.Load<AudioClip>("Sound/SFX/Player/Brake"); _audioSource.PlayOneShot(SndBrake); }
 
             }
             else
@@ -216,7 +258,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
             YRotation = FACING_LEFT;
 
         }
-        else if (Input.GetAxis("Horizontal") > 0)
+        else if (Input.GetAxis("Horizontal") > 0 )
         {
             // Player_MoveRight
 			if (_currentSpeed < 0f) 
@@ -224,8 +266,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
                 _currentSpeed = _currentSpeed + DECELERATION;
 
                 // Play braking Sound
-                if (YRotation == FACING_LEFT && Mathf.Abs(_currentSpeed) > 4.5f && _jumping == false) 
-                { _audioSource.PlayOneShot(SndBrake); }
+                if (YRotation == FACING_LEFT && Mathf.Abs(_currentSpeed) > 4.5f && _jumping == false)
+                { AudioClip SndBrake = Resources.Load<AudioClip>("Sound/SFX/Player/Brake"); _audioSource.PlayOneShot(SndBrake); }
 
 			} 
             else 
@@ -247,7 +289,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
 			_currentSpeed = _currentSpeed - (Mathf.Min(Mathf.Abs(_currentSpeed), FRICTION)*Mathf.Sign(_currentSpeed));
 		}
 
-		velocity = new Vector2 (Mathf.Abs(_currentSpeed), velocity.y);		
+		velocity = new Vector2 (Mathf.Abs(_currentSpeed), velocity.y);	
+	
 		
 	}
 
@@ -387,12 +430,12 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
         #region Side Collision
         vMaStart = new Vector3(box.center.x, box.center.y, transform.position.z);
-        Debug.DrawRay(vMaStart, Vector2.right * 10f, Color.cyan, 2f);
-        RaycastHit2D hMa = Physics2D.Raycast(vMaStart, Vector2.right, 10f);
+        Debug.DrawRay(vMaStart, Vector2.right * 11f, Color.cyan, 2f);
+        RaycastHit2D hMa = Physics2D.Raycast(vMaStart, Vector2.right, 11f);
 
         vMbStart = new Vector3(box.center.x, box.center.y, transform.position.z);
-        Debug.DrawRay(vMbStart, -Vector2.right * 10f, Color.cyan, 2f);
-        RaycastHit2D hMb = Physics2D.Raycast(vMbStart, -Vector2.right, 10f);
+        Debug.DrawRay(vMbStart, -Vector2.right * 11f, Color.cyan, 2f);
+        RaycastHit2D hMb = Physics2D.Raycast(vMbStart, -Vector2.right, 11f);
 
         if (hMa.collider)
         {
@@ -438,6 +481,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
         }
         #endregion
 
+        _hitWall = false;
+
     }
 
     void CheckWater()
@@ -472,7 +517,13 @@ public abstract class BasePlayerMovement : MonoBehaviour
         // Handle Wall Hits
         if (_rc.transform.gameObject.layer == lmWalls)
         {
-            Debug.Log("Whoa I hit a wall!");
+            velocity = new Vector2(0, velocity.y);
+            _hitWall = true;
+            transform.Translate(Vector3.right * (_rc.distance - 3f));
+        }
+        else
+        {
+            _hitWall = false;
         }
 
         // Handle Rings Hits
