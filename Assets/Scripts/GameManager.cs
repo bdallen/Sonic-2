@@ -9,6 +9,7 @@ public class GameManager: MonoBehaviour {
     public Camera camera;
     public Transform leftBound;
     public Transform rightBound;
+    public Transform bottomBound;
 
     public int TARGET_FRAMERATE = 50;
 
@@ -69,6 +70,22 @@ public class GameManager: MonoBehaviour {
             {
                 point = camera.WorldToViewportPoint(new Vector3(camera.transform.position.x, target.position.y, target.position.z));
                 delta = new Vector3(leftBound.position.x + (_camWidth / 2), target.position.y, target.position.z) - camera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z));
+                destination = camera.transform.position + delta;
+            }
+
+            // Camera hits the right bound
+            if (camera.transform.position.x + (_camWidth / 2) >= rightBound.position.x && target.position.x >= camera.transform.position.x)
+            {
+                point = camera.WorldToViewportPoint(new Vector3(camera.transform.position.x, target.position.y, target.position.z));
+                delta = new Vector3(rightBound.position.x - (_camWidth / 2), target.position.y, target.position.z) - camera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z));
+                destination = camera.transform.position + delta;
+            }
+
+            // Camera hits the bottom bound
+            if (camera.transform.position.y - (_camHeight / 2) <= bottomBound.position.y && target.position.y < camera.transform.position.y)
+            {
+                point = camera.WorldToViewportPoint(new Vector3(target.position.x, camera.transform.position.y, target.position.z));
+                delta = new Vector3(target.position.x, bottomBound.position.y + (_camHeight / 2), target.position.z) - camera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z));
                 destination = camera.transform.position + delta;
             }
 

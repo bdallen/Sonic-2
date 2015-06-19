@@ -58,6 +58,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     // Player Information
     protected float _angle = 0f;
     protected float _currentSpeed = 0f;
+    protected bool _dead = false;
     protected bool _grounded = false;
     protected bool _jumping = false;
     protected bool _spinDash = false;
@@ -179,7 +180,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
         //bsr.w	AnglePos
         //bsr.w	Sonic_SlopeRepel
 
-        Collision();                //bsr.w	Sonic_LevelBound
+        Collision();                
 
         Player_Jump();              //bsr.w Sonic_Jump
 
@@ -190,6 +191,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     void Player_LevelBound()
     {
         // Check the Left Bounds of the player
@@ -197,6 +201,20 @@ public abstract class BasePlayerMovement : MonoBehaviour
         {
             transform.position = new Vector3(_gm.leftBound.position.x + (box.width / 2), transform.position.y, transform.position.z);
         }
+
+        // Check the Right Bounds of the player
+        if (transform.position.x - (box.width / 2) >= _gm.rightBound.position.x)
+        {
+            transform.position = new Vector3(_gm.rightBound.position.x + (box.width / 2), transform.position.y, transform.position.z);
+        }
+
+        // Check the Right Bounds of the player
+        if (transform.position.y - (box.height / 2) <= _gm.bottomBound.position.y)
+        {
+            //KillCharacter
+            transform.position = new Vector3(transform.position.x, _gm.bottomBound.position.y + (box.height / 2), transform.position.z);
+        }
+
     }
 
 	void OnGUI()
