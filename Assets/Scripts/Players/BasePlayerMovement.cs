@@ -29,6 +29,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     private float FRICTION = 0xC;
     private float DECELERATION = 0x80;
     private float TOP_SPEED = 0x600;
+    private float KILL_FORCE = 8.85f;
 
     // Player States Section
     private bool _inWater = false;
@@ -209,12 +210,22 @@ public abstract class BasePlayerMovement : MonoBehaviour
         }
 
         // Check the Right Bounds of the player
-        if (transform.position.y - (box.height / 2) <= _gm.bottomBound.position.y)
+        if (transform.position.y - (box.height / 2) <= _gm.bottomBound.position.y && !_dead)
         {
-            //KillCharacter
-            transform.position = new Vector3(transform.position.x, _gm.bottomBound.position.y + (box.height / 2), transform.position.z);
+            KillCharacter();
+            //transform.position = new Vector3(transform.position.x, _gm.bottomBound.position.y + (box.height / 2), transform.position.z);
         }
 
+    }
+
+    /// <summary>
+    /// Kills the Player
+    /// </summary>
+    void KillCharacter()
+    {
+        _gm.SetCamFollowing = false;   // Camera is Not to follow movements
+        _dead = true;
+        velocity = new Vector2(0, KILL_FORCE);
     }
 
 	void OnGUI()

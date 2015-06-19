@@ -20,6 +20,7 @@ public class PlayerSonic : BasePlayerMovement
     private const string SonAni_Wait2 = "SonAni_Wait2";
     private const string SonAni_Wait3 = "SonAni_Wait3";
     private const string SonAni_Wait4 = "SonAni_Wait4";
+    private const string SonAni_Dead = "SonAni_Dead";
     #endregion
 
     #region Private Variables
@@ -52,7 +53,7 @@ public class PlayerSonic : BasePlayerMovement
     public override void UpdateCharacterAnimation()
     {
         // Walking to Running Transition State
-        if (Mathf.Abs(_currentSpeed) > 0.01f && !_jumping)
+        if (Mathf.Abs(_currentSpeed) > 0.01f && !_jumping && !_dead)
         {
             if (Mathf.Abs(_currentSpeed) > 4.5f)
             {
@@ -107,6 +108,11 @@ public class PlayerSonic : BasePlayerMovement
             _subAnimator.Play("SonicSpinDashDust");
             _subAnimator.speed = 7f;
             ResetIdleState();
+        }
+
+        else if (_dead)
+        {
+            _animator.Play(SonAni_Dead);
         }
 
         // Default State

@@ -18,6 +18,13 @@ public class GameManager: MonoBehaviour {
     private float _camHeight = 0;
     private float _camWidth = 0;
     private Vector3 velocity = Vector3.zero;
+    private bool _cameraFollowing = true;
+
+    /// <summary>
+    /// Set the Camera to Follow or Not Follow
+    /// </summary>
+    public bool SetCamFollowing
+    { get { return _cameraFollowing; } set { _cameraFollowing = value; } }
 
     // Init
     void Start()
@@ -41,7 +48,7 @@ public class GameManager: MonoBehaviour {
         udeltaTime += (Time.deltaTime - udeltaTime) * 0.1f;
     }
 
-	// Late Update is called once per frame Last!
+	// Late Update is called once per frame But Last in the order!
 	void LateUpdate () {
 
         // Camera to Follow Character
@@ -89,8 +96,8 @@ public class GameManager: MonoBehaviour {
                 destination = camera.transform.position + delta;
             }
 
-            // Shift the Camera
-            camera.transform.position = Vector3.SmoothDamp(camera.transform.position, destination, ref velocity, dampTime);
+            // Shift the Camera only if CameraFollowing is True
+            if (_cameraFollowing) { camera.transform.position = Vector3.SmoothDamp(camera.transform.position, destination, ref velocity, dampTime); }
         }
     }
 
