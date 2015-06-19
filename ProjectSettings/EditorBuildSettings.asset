@@ -10,4 +10,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainMenu.unity
   - enabled: 1
-    path: Assets/Scenes/Emerald Hill Zone.unity
+    path: Assets/Scenes/Test Zone.unity

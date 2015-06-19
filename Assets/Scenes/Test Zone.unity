@@ -199,8 +199,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LIVES: 3
   RINGS: 0
-  SndJump: {fileID: 0}
-  SndBrake: {fileID: 0}
 --- !u!54 &212510101
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -704,6 +702,7 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: .0219999999
+  m_StereoMirrorMode: 0
 --- !u!4 &652429458
 Transform:
   m_ObjectHideFlags: 0
