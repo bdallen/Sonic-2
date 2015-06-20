@@ -238,6 +238,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     {
         Player_JumpHeight();
         Player_ChgJumpDir();
+        Player_LevelBound();
 
         if (_inWater)
         {
