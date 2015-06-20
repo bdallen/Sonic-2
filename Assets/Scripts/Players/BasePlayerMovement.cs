@@ -25,26 +25,33 @@ public abstract class BasePlayerMovement : MonoBehaviour
     private float MAX_FALL_VELOCITY = 16f;
     private float MAX_JUMP_FORCE = 6.5f;
     private float MIN_JUMP_FORCE = 4f;
-    private float ACCELERATION = 0xC;
-    private float FRICTION = 0xC;
-    private float DECELERATION = 0x80;
-    private float TOP_SPEED = 0x600;
+    private float ACCELERATION = 0.046875f;
+    private float FRICTION = 0.046875f;
+    private float DECELERATION = 0.5f;
+    private float TOP_SPEED = 6f;
     private float KILL_FORCE = 8.853656f;
 
     // Player States Section
     private bool _inWater = false;
 
     // Player Variables Section
-    private Vector3 _savePoint;
+    private Vector3 _lastStarPoleHit;
     private List<Vector3> _playerPosBuf;
 
-    private int _spinDashCounter = 0;
-    
+    // Player Positioning
+    private Transform _newPlayerPosition;
 
+    private int _spinDashCounter = 0;
+
+    // Current Player Dynamics In Use
+    private int _currentGravity = 0;
+    
     // Collision & Edge Detection
     private LayerMask lmGround;
     private LayerMask lmRoof;
     private LayerMask lmWalls;
+    private Vector2 _hGaNormal;
+    private Vector2 _hGbNormal;
 
     #endregion
 
@@ -57,11 +64,13 @@ public abstract class BasePlayerMovement : MonoBehaviour
     protected int _gameTime;
 
     // Player Information
-    protected float _angle = 0f;
+    protected Vector2 _angle;
+    protected Vector3 axis;
     protected float _currentSpeed = 0f;
     protected bool _dead = false;
     protected bool _grounded = false;
     protected bool _jumping = false;
+    protected bool _rolling = false;
     protected bool _spinDash = false;
     protected bool _hitWall = false;
     protected bool _edgeInfront = false;
@@ -109,7 +118,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
 	private Vector2 velocity;
 	private float YRotation = FACING_RIGHT;
 
-	void Start()
+    #region Unity Subroutines
+    void Start()
 	{
         // Grab the Game Manager for Global Objects
         _gm = GameObject.Find("_GameManager").GetComponent<GameManager>();
@@ -124,7 +134,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
         _spRenderer = GetComponent<SpriteRenderer>();
         //_inWater = true;
-        SonicAssembler.CalcAngle(0.03f, 0.23f);
+
 	}
 
     void Awake()
@@ -135,6 +145,13 @@ public abstract class BasePlayerMovement : MonoBehaviour
         CharacterAwake();
     }
 
+    void OnGUI()
+    {
+        GUILayout.Label("                                                                 Velocity: " + velocity.ToString());
+
+    }
+    
+
     /// <summary>
     /// Update Every Single Frame
     /// </summary>
@@ -143,17 +160,42 @@ public abstract class BasePlayerMovement : MonoBehaviour
         // Update Game Time and counters
         _gameTime = (int)Time.timeSinceLevelLoad;
 
-        Obj01_MdNormalChecks();
+        Obj01_Control();
         
-        CheckWater();
-        ApplyGravity();
-
-        
-        UpdateAnimations();
-
-        transform.eulerAngles = new Vector2(0, YRotation);
+        if (YRotation == FACING_LEFT)
+        {
+            transform.localScale = new Vector3(-1, 1, 1);
+        }
+        else
+        {
+            transform.localScale = new Vector3(1, 1, 1);
+        }
+        //transform.eulerAngles = new Vector2(0, YRotation);
         transform.Translate(velocity.x, velocity.y, 0f);
 
+    }
+
+    #endregion
+
+    void Obj01_Control()
+    {
+
+        //offsetTableEntry.w Obj01_MdNormal_Checks	; 0 - not airborne or rolling
+        //offsetTableEntry.w Obj01_MdAir			; 2 - airborne
+        //offsetTableEntry.w Obj01_MdRoll			; 4 - rolling
+        //offsetTableEntry.w Obj01_MdJump			; 6 - jumping
+
+        if (_grounded && !_rolling)
+        {
+            Obj01_MdNormalChecks();
+        }
+
+        if (!_grounded)
+        {
+            Obj01_MdAir();
+        }
+
+        UpdateAnimations();
     }
 
     void Obj01_MdNormalChecks()
@@ -181,15 +223,83 @@ public abstract class BasePlayerMovement : MonoBehaviour
         //bsr.w	AnglePos
         //bsr.w	Sonic_SlopeRepel
 
-        Collision();                
+                      
 
         Player_Jump();              //bsr.w Sonic_Jump
 
         Player_Move();              //bsr.w Sonic_Move
 
         Player_LevelBound();        //bsr.w	Sonic_LevelBound
-        
+        Collision();
 
+    }
+
+    void Obj01_MdAir()
+    {
+        Player_JumpHeight();
+        Player_ChgJumpDir();
+
+        if (_inWater)
+        {
+            
+        }
+
+        ObjectMoveAndFall();
+        Collision();
+        
+    }
+
+    void Player_ChgJumpDir()
+    {
+        if (_rolling)
+        {
+
+        }
+        else
+        {
+            if (Input.GetAxis("Horizontal") < 0)
+            {
+
+                if (_currentSpeed > -TOP_SPEED)
+                {
+                    _currentSpeed = _currentSpeed - ACCELERATION;
+                }
+                else
+                {
+                    _currentSpeed = -TOP_SPEED;
+                }
+                YRotation = FACING_LEFT;
+
+            }        
+            else if (Input.GetAxis("Horizontal") > 0 )
+            {
+				if (_currentSpeed < TOP_SPEED)
+				{
+					_currentSpeed = _currentSpeed + ACCELERATION;
+				}
+                else
+                {
+					_currentSpeed = TOP_SPEED;
+				}
+                YRotation = FACING_RIGHT;
+			}
+        }
+
+        if (velocity.y < 0f && velocity.y > -4f)
+        {
+            _currentSpeed = _currentSpeed - ((_currentSpeed / 0.125f) / 256f);
+        }
+
+        velocity = new Vector2(_currentSpeed, velocity.y);	
+    }
+
+    void Player_JumpHeight()
+    {
+        if (Input.GetButtonUp("Jump") && !_grounded)
+        {
+            if (velocity.y > MIN_JUMP_FORCE)
+                velocity = new Vector2(velocity.x, MIN_JUMP_FORCE);
+        }
     }
 
     /// <summary>
@@ -228,35 +338,23 @@ public abstract class BasePlayerMovement : MonoBehaviour
         velocity = new Vector2(0, KILL_FORCE);
 
         // Need to check if hurt by spikes or general death as they have different sounds
-
-
+        AudioClip HitDeath = Resources.Load<AudioClip>("Sound/SFX/Player/HitDeath");
+        _audioSource.PlayOneShot(HitDeath);
     }
 
-	void OnGUI()
-	{
-        //GUILayout.Label ("Angle: " + _angle);
-
-	}
-    
     /// <summary>
     /// Check For Jumps
     /// </summary>
     void Player_Jump()
     {
         /// When you release the jump button in the air after jumping, the computer checks to see if Sonic is moving upward (i.e. Y speed is negative). If he is, then it checks to see if Y speed is less than -4 (e.g. -5 is "less" than -4). If it is, then Y speed is set to -4. In this way, you can cut your jump short at any time, just by releasing the jump button. If you release the button in the very next step after jumping, Sonic makes the shortest possible jump.
-
         if (Input.GetButtonDown("Jump") && _grounded)
         {
             _jumping = true;
+            _grounded = false;
             velocity = new Vector2(velocity.x, MAX_JUMP_FORCE);
             AudioClip SndJump = Resources.Load<AudioClip>("Sound/SFX/Player/Jump");
             _audioSource.PlayOneShot(SndJump);
-        }
-
-        if (Input.GetButtonUp("Jump") && !_grounded)
-        {
-            if (velocity.y > MIN_JUMP_FORCE)
-                velocity = new Vector2(velocity.x, MIN_JUMP_FORCE);
         }
     }
 
@@ -271,7 +369,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
                 _currentSpeed = _currentSpeed - DECELERATION;
 
                 // Play Braking Sound
-                if (YRotation == FACING_RIGHT && Mathf.Abs(_currentSpeed) > 4.5f && _jumping == false)
+                if (YRotation == FACING_RIGHT && _currentSpeed < -4.5f && _jumping == false)
                 { AudioClip SndBrake = Resources.Load<AudioClip>("Sound/SFX/Player/Brake"); _audioSource.PlayOneShot(SndBrake); }
 
             }
@@ -299,7 +397,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
                 _currentSpeed = _currentSpeed + DECELERATION;
 
                 // Play braking Sound
-                if (YRotation == FACING_LEFT && Mathf.Abs(_currentSpeed) > 4.5f && _jumping == false)
+                if (YRotation == FACING_LEFT && _currentSpeed > 4.5f && _jumping == false)
                 { AudioClip SndBrake = Resources.Load<AudioClip>("Sound/SFX/Player/Brake"); _audioSource.PlayOneShot(SndBrake); }
 
 			} 
@@ -322,7 +420,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 			_currentSpeed = _currentSpeed - (Mathf.Min(Mathf.Abs(_currentSpeed), FRICTION)*Mathf.Sign(_currentSpeed));
 		}
 
-		velocity = new Vector2 (Mathf.Abs(_currentSpeed), velocity.y);	
+		velocity = new Vector2 (_currentSpeed, velocity.y);	
 	
 		
 	}
@@ -332,18 +430,17 @@ public abstract class BasePlayerMovement : MonoBehaviour
 		UpdateCharacterAnimation();
 	}
 
-    void ApplyGravity()
+    void ObjectMoveAndFall()
     {
-        // Not grounded apply gravity
-        if (!_grounded)
-        {
-            velocity = new Vector2(velocity.x, Mathf.Max(velocity.y - GRAVITY, -MAX_FALL_VELOCITY));
-        }
+
+        velocity = new Vector2(velocity.x, Mathf.Max(velocity.y - GRAVITY, -MAX_FALL_VELOCITY));
+
         // Were falling
         if (velocity.y < 0)
         {
             falling = true;
         }
+
     }
 
 	void Collision()
@@ -418,6 +515,10 @@ public abstract class BasePlayerMovement : MonoBehaviour
                 {
                     transform.Translate(Vector3.down * (hGb.distance - box.height / 2)); // Places the transform on the ground
                 }
+
+                _hGaNormal = hGa.normal;
+                _hGbNormal = hGb.normal;
+
 
                 velocity = new Vector2(velocity.x, 0);
 
@@ -515,6 +616,11 @@ public abstract class BasePlayerMovement : MonoBehaviour
         #endregion
 
         _hitWall = false;
+
+    }
+
+    void Player_DoLevelCollision()
+    {
 
     }
 
