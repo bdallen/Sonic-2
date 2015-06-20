@@ -94,7 +94,7 @@ public class PlayerSonic : BasePlayerMovement
         }
         
         // Jumping
-        else if (_jumping)
+        else if (_jumping && !_dead)
         {
             _animator.Play(SonAni_Jump);
             _animator.speed = 1f;
@@ -102,7 +102,7 @@ public class PlayerSonic : BasePlayerMovement
         }
 
         // Performing a Spin Dash
-        else if (_spinDash)
+        else if (_spinDash && !_dead)
         {
             // Sub Animator that controlls the dust
             _subAnimator.Play("SonicSpinDashDust");

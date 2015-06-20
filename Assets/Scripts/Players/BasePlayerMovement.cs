@@ -29,7 +29,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     private float FRICTION = 0xC;
     private float DECELERATION = 0x80;
     private float TOP_SPEED = 0x600;
-    private float KILL_FORCE = 8.85f;
+    private float KILL_FORCE = 8.853656f;
 
     // Player States Section
     private bool _inWater = false;
@@ -212,8 +212,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
         // Check the Right Bounds of the player
         if (transform.position.y - (box.height / 2) <= _gm.bottomBound.position.y && !_dead)
         {
-            KillCharacter();
-            //transform.position = new Vector3(transform.position.x, _gm.bottomBound.position.y + (box.height / 2), transform.position.z);
+            KillCharacter();        // Player dies when they fall out of bounds!
         }
 
     }
@@ -225,7 +224,12 @@ public abstract class BasePlayerMovement : MonoBehaviour
     {
         _gm.SetCamFollowing = false;   // Camera is Not to follow movements
         _dead = true;
+        _currentSpeed = 0;
         velocity = new Vector2(0, KILL_FORCE);
+
+        // Need to check if hurt by spikes or general death as they have different sounds
+
+
     }
 
 	void OnGUI()
