@@ -1,11 +1,12 @@
 using UnityEngine;
 using System.Collections;
-//TODO: Enable Masher to start with downward angle, to offset two Mashers on wide waterfall
-public class Masher : Badnik 	// Update is called once per frame
+
+public class Coconuts : Badnik 	// Update is called once per frame
 {
-
+	
 	protected float _currentSpeed = 5.0f;
-
+	protected int _currentFrame = 0;
+	
 	public override void Update()
 	{
 		if (_eliminated)
@@ -16,7 +17,29 @@ public class Masher : Badnik 	// Update is called once per frame
 		{
 			Destroy(this.gameObject);
 		}
-		
+
+		this.transform.position = new Vector3 (this.transform.position.x, this.transform.position.y + _currentSpeed,this.transform.position.z);  	//Move Coconuts in appropriate direction
+
+		//@ 0 throw
+		//@ 10 throw
+		//@ 20 throw
+
+
+
+
+		if (_currentFrame = 30){
+			_currentFrame = 0;
+		}
+		else {
+			_currentFrame ++;
+		}
+				//3
+				//2
+				//4
+				//3
+				//3
+				//4
+
 		if (_currentSpeed < 0.0f) 															// Masher is falling
 		{
 			if((this.transform.position.y + _currentSpeed) < _startlocation.y){ 			//Current velocity will take Masher out of bounds
@@ -41,5 +64,6 @@ public class Masher : Badnik 	// Update is called once per frame
 		}
 	}
 }
+
 
 
