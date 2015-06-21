@@ -14,6 +14,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     // Player Tuning
     public int LIVES = 3;
     public int RINGS = 0;
+    public int EMERALDS = 0;
     #endregion
 
     #region Private Variables
@@ -80,7 +81,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     protected bool _grounded = false;
     protected bool _jumping = false;
     protected bool _rolling = false;
-    protected bool _super = false;
+    protected bool _isSuper = false;
     protected bool _spinDash = false;
     protected bool _hitWall = false;
     protected bool _edgeInfront = false;
@@ -254,7 +255,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
             
         }
 
-        // Do Jump Angle
+        // TODO: JumpAngle
 
         ObjectMoveAndFall();
         Collision();
@@ -266,6 +267,22 @@ public abstract class BasePlayerMovement : MonoBehaviour
     /// </summary>
     void Player_CheckGoSuper()
     {
+        if (_isSuper) { return; }            // Already Super - Exit Routine
+        if (EMERALDS != 7) { return; }       // Doesn't have 7 Emeralds - Exit Routine
+        if (RINGS < 50) { return; }          // Less than 50 Rings - Exit Routing
+
+        _isSuper = true;                     // Set Super to True
+
+        // TODO: Play Transformation Animation
+
+        // TODO: Change Top Speed
+        // TODO: Change Acceleration
+        // TODO: Change Deceleration
+        // TODO: Set Invincibility Counter to 0
+        // TODO: Set Invicibility To True
+        // TODO: Play Transformation Sound
+        // TODO: Start playing Super Song
+
 
     }
 
@@ -282,7 +299,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Jump") && Input.GetAxis("Vertical") >= 0)
         {
             _maxJumpForce = AIR_MAX_JUMP_FORCE;                        // Set Max Jump Force
-            if (_super) { }                                         // TODO: If Super - Change Max Force
+            if (_isSuper) { }                                          // TODO: If Super - Change Max Force
             if (_inWater) { _maxJumpForce = WATER_MAX_JUMP_FORCE; }    // In Water - Change Max Force
                                                                 
             _jumping = true;
