@@ -7,6 +7,14 @@ public class PlayerSonic : BasePlayerMovement
     #region Constants
     private const string PLAYER_ID = "SONIC";
 
+    // Player Physics Properties
+    private const float AirMaxJumpForce = 6.5f;
+    private const float AirMidJumpForce = 4f;
+    private const float WaterMaxJumpForce = 3.5f;
+    private const float WaterMidJumpForce = 2f;
+
+
+
     // Animation States
     private const string SonAni_Stand = "SonAni_Stand";
     private const string SonAni_Walk = "SonAni_Walk";
@@ -36,7 +44,12 @@ public class PlayerSonic : BasePlayerMovement
     public PlayerSonic()
     {
         _PlayerCharacter = PLAYER_ID;
-     
+
+        // Setup the Physics Properties
+        AIR_MAX_JUMP_FORCE = AirMaxJumpForce;
+        AIR_MID_JUMP_FORCE = AirMidJumpForce;
+        WATER_MAX_JUMP_FORCE = WaterMaxJumpForce;
+        WATER_MID_JUMP_FORCE = WaterMidJumpForce;
     }
 
     public bool IsSuperSonic

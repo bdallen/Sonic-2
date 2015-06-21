@@ -23,20 +23,23 @@ public abstract class BasePlayerMovement : MonoBehaviour
     // Player Dynamics
     private float GRAVITY = 0.21875f;
     private float MAX_FALL_VELOCITY = 16f;
-    private float MAX_JUMP_FORCE = 6.5f;
-    private float MIN_JUMP_FORCE = 4f;
     private float ACCELERATION = 0.046875f;
     private float FRICTION = 0.046875f;
     private float DECELERATION = 0.5f;
     private float TOP_SPEED = 6f;
     private float KILL_FORCE = 8.853656f;
 
+
+    // Player Physics
+    private float _maxJumpForce = 0f;
+    private float _midJumpForce = 0f;
+
     // Player States Section
     private bool _inWater = false;
 
     // Player Variables Section
     private Vector3 _lastStarPoleHit;
-    private List<Vector3> _playerPosBuf;
+    private Stack<Vector3> _playerLocationHistory;
 
     // Player Positioning
     private Transform _newPlayerPosition;
@@ -63,6 +66,12 @@ public abstract class BasePlayerMovement : MonoBehaviour
     protected SpriteRenderer _spRenderer;
     protected int _gameTime;
 
+    // Player Dynamics
+    protected float AIR_MAX_JUMP_FORCE;
+    protected float AIR_MID_JUMP_FORCE;
+    protected float WATER_MAX_JUMP_FORCE;
+    protected float WATER_MID_JUMP_FORCE;
+
     // Player Information
     protected Vector2 _angle;
     protected Vector3 axis;
@@ -71,6 +80,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     protected bool _grounded = false;
     protected bool _jumping = false;
     protected bool _rolling = false;
+    protected bool _super = false;
     protected bool _spinDash = false;
     protected bool _hitWall = false;
     protected bool _edgeInfront = false;
@@ -147,7 +157,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
     void OnGUI()
     {
-        GUILayout.Label("                                                                 Velocity: " + velocity.ToString());
+        GUILayout.Label("Velocity: " + velocity.ToString());
 
     }
     
@@ -198,16 +208,15 @@ public abstract class BasePlayerMovement : MonoBehaviour
         UpdateAnimations();
     }
 
+    /// <summary>
+    /// Normal Checks when sonic is on the ground and in no other state
+    /// </summary>
     void Obj01_MdNormalChecks()
     {
         // Check Logical Button Presses (Scripted Movement) If not then branch off
         if (!_scripted)
         {
             Obj01_MdNormal();
-        }
-        else
-        {
-
         }
     }
 
@@ -245,11 +254,69 @@ public abstract class BasePlayerMovement : MonoBehaviour
             
         }
 
+        // Do Jump Angle
+
         ObjectMoveAndFall();
         Collision();
         
     }
 
+    /// <summary>
+    /// TODO: Check and Go Super
+    /// </summary>
+    void Player_CheckGoSuper()
+    {
+
+    }
+
+    #region Jumping
+
+
+    /// <summary>
+    /// Do Jump
+    /// TODO: Angle Jumps, Caluclate Room Overhead, 
+    /// </summary>
+    void Player_Jump()
+    {
+        /// When you release the jump button in the air after jumping, the computer checks to see if Sonic is moving upward (i.e. Y speed is negative). If he is, then it checks to see if Y speed is less than -4 (e.g. -5 is "less" than -4). If it is, then Y speed is set to -4. In this way, you can cut your jump short at any time, just by releasing the jump button. If you release the button in the very next step after jumping, Sonic makes the shortest possible jump.
+        if (Input.GetButtonDown("Jump") && Input.GetAxis("Vertical") >= 0)
+        {
+            _maxJumpForce = AIR_MAX_JUMP_FORCE;                        // Set Max Jump Force
+            if (_super) { }                                         // TODO: If Super - Change Max Force
+            if (_inWater) { _maxJumpForce = WATER_MAX_JUMP_FORCE; }    // In Water - Change Max Force
+                                                                
+            _jumping = true;
+            _grounded = false;
+            velocity = new Vector2(velocity.x, _maxJumpForce);
+            AudioClip SndJump = Resources.Load<AudioClip>("Sound/SFX/Player/Jump");
+            _audioSource.PlayOneShot(SndJump);
+        }
+    }
+
+    /// <summary>
+    /// Variable Jump Heights
+    /// </summary>
+    void Player_JumpHeight()
+    {
+        if (_jumping)                                                            // Are we jumping?
+        {
+            _midJumpForce = AIR_MID_JUMP_FORCE;                                    // Set Mid Jump Force
+            if (_inWater) { _midJumpForce = WATER_MID_JUMP_FORCE; }                // Change Mid Jump Force if in Water
+            if (Input.GetButtonUp("Jump"))                                      // Button Released means we want a Mid Jump
+            {
+                if (velocity.y > _midJumpForce)
+                    velocity = new Vector2(velocity.x, _midJumpForce);
+            }
+            else
+            {
+                if (velocity.y >= _maxJumpForce){ Player_CheckGoSuper(); }      // At the height of the jump - Test for Super
+            }
+        }
+    }
+
+    /// <summary>
+    /// Change Jump Direction Mid Air
+    /// </summary>
     void Player_ChgJumpDir()
     {
         if (_rolling)
@@ -258,6 +325,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
         }
         else
         {
+
+            // Test axis to change mid air jump direction
             if (Input.GetAxis("Horizontal") < 0)
             {
 
@@ -271,40 +340,34 @@ public abstract class BasePlayerMovement : MonoBehaviour
                 }
                 YRotation = FACING_LEFT;
 
-            }        
-            else if (Input.GetAxis("Horizontal") > 0 )
+            }
+            else if (Input.GetAxis("Horizontal") > 0)
             {
-				if (_currentSpeed < TOP_SPEED)
-				{
-					_currentSpeed = _currentSpeed + ACCELERATION;
-				}
+                if (_currentSpeed < TOP_SPEED)
+                {
+                    _currentSpeed = _currentSpeed + ACCELERATION;
+                }
                 else
                 {
-					_currentSpeed = TOP_SPEED;
-				}
+                    _currentSpeed = TOP_SPEED;
+                }
                 YRotation = FACING_RIGHT;
-			}
+            }
         }
 
+        // This section applies Air Drag
         if (velocity.y < 0f && velocity.y > -4f)
         {
             _currentSpeed = _currentSpeed - ((_currentSpeed / 0.125f) / 256f);
         }
 
-        velocity = new Vector2(_currentSpeed, velocity.y);	
+        velocity = new Vector2(_currentSpeed, velocity.y);
     }
 
-    void Player_JumpHeight()
-    {
-        if (Input.GetButtonUp("Jump") && !_grounded)
-        {
-            if (velocity.y > MIN_JUMP_FORCE)
-                velocity = new Vector2(velocity.x, MIN_JUMP_FORCE);
-        }
-    }
+    #endregion
 
     /// <summary>
-    /// 
+    /// Check the Level Bounds for the Player
     /// </summary>
     void Player_LevelBound()
     {
@@ -343,21 +406,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
         _audioSource.PlayOneShot(HitDeath);
     }
 
-    /// <summary>
-    /// Check For Jumps
-    /// </summary>
-    void Player_Jump()
-    {
-        /// When you release the jump button in the air after jumping, the computer checks to see if Sonic is moving upward (i.e. Y speed is negative). If he is, then it checks to see if Y speed is less than -4 (e.g. -5 is "less" than -4). If it is, then Y speed is set to -4. In this way, you can cut your jump short at any time, just by releasing the jump button. If you release the button in the very next step after jumping, Sonic makes the shortest possible jump.
-        if (Input.GetButtonDown("Jump") && _grounded)
-        {
-            _jumping = true;
-            _grounded = false;
-            velocity = new Vector2(velocity.x, MAX_JUMP_FORCE);
-            AudioClip SndJump = Resources.Load<AudioClip>("Sound/SFX/Player/Jump");
-            _audioSource.PlayOneShot(SndJump);
-        }
-    }
+
 
 	void Player_Move()
 	{
@@ -623,32 +672,6 @@ public abstract class BasePlayerMovement : MonoBehaviour
     void Player_DoLevelCollision()
     {
 
-    }
-
-    void CheckWater()
-    {
-        if (_inWater)   // Are we underwater? If so then set appropriate values
-        {
-            GRAVITY = 0.0625f;
-            MAX_FALL_VELOCITY = 16f;
-            MAX_JUMP_FORCE = 2f;
-            MIN_JUMP_FORCE = 3.5f;
-            ACCELERATION = 0.0234375f;
-            FRICTION = 0.0234375f;
-            DECELERATION = 0.25f;
-            TOP_SPEED = 6f;
-        }
-        else
-        {
-            GRAVITY = 0.21875f;
-            MAX_FALL_VELOCITY = 16f;
-            MAX_JUMP_FORCE = 6.5f;
-            MIN_JUMP_FORCE = 4f;
-            ACCELERATION = 0.046875f;
-            FRICTION = 0.046875f;
-            DECELERATION = 0.5f;
-            TOP_SPEED = 6f;
-        }
     }
 
     void DoCollisionCheck(RaycastHit2D _rc)
