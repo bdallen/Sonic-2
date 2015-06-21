@@ -10,8 +10,17 @@ public class PlayerSonic : BasePlayerMovement
     // Player Physics Properties
     private const float AirMaxJumpForce = 6.5f;
     private const float AirMidJumpForce = 4f;
+    private const float Acceleration = 0.046875f;
+    private const float Friction = 0.046875f;
+    private const float TopSpeed = 6f;
+
+    // Player In Water Physics Properties
     private const float WaterMaxJumpForce = 3.5f;
     private const float WaterMidJumpForce = 2f;
+    private const float WaterAcceleration = 0.046875f;
+    private const float WaterFriction = 0.046875f;
+    private const float WaterTopSpeed = 6f;
+
 
 
 
@@ -68,7 +77,7 @@ public class PlayerSonic : BasePlayerMovement
         // Walking to Running Transition State
         if (Mathf.Abs(_currentSpeed) > 0.01f && !_jumping && !_dead)
         {
-            if (Mathf.Abs(_currentSpeed) > 4.5f)
+            if (Mathf.Abs(_currentSpeed) == 6f)
             {
                 _animator.Play(SonAni_Run);
                 _animator.speed = 10f;
@@ -77,7 +86,7 @@ public class PlayerSonic : BasePlayerMovement
             else
             {
                 _animator.Play(SonAni_Walk);
-                _animator.speed =Mathf.Abs(_currentSpeed) / 1.8f;
+                _animator.speed = Mathf.Lerp(0.35f,1.7f,Mathf.Abs(_currentSpeed) / 4f);
                 ResetIdleState();
             }
         }

@@ -34,6 +34,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
     // Player Physics
     private float _maxJumpForce = 0f;
     private float _midJumpForce = 0f;
+    private float _topSpeed = 0f;
+    private float _acceleration = 0f;
 
     // Player States Section
     private bool _inWater = false;
@@ -72,6 +74,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
     protected float AIR_MID_JUMP_FORCE;
     protected float WATER_MAX_JUMP_FORCE;
     protected float WATER_MID_JUMP_FORCE;
+
+
 
     // Player Information
     protected Vector2 _angle;
@@ -201,10 +205,16 @@ public abstract class BasePlayerMovement : MonoBehaviour
             Obj01_MdNormalChecks();
         }
 
-        if (!_grounded)
+        if (!_grounded && !_jumping)
         {
             Obj01_MdAir();
         }
+
+        if (_jumping)
+        {
+            Obj01_MdJump();
+        }
+
 
         UpdateAnimations();
     }
@@ -262,6 +272,24 @@ public abstract class BasePlayerMovement : MonoBehaviour
         
     }
 
+    void Obj01_MdJump()
+    {
+        Player_JumpHeight();
+        Player_ChgJumpDir();
+        Player_LevelBound();
+
+        if (_inWater)
+        {
+
+        }
+
+        // TODO: JumpAngle
+
+        ObjectMoveAndFall();
+        Collision();
+
+    }
+
     /// <summary>
     /// TODO: Check and Go Super
     /// </summary>
@@ -305,8 +333,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
             _jumping = true;
             _grounded = false;
             velocity = new Vector2(velocity.x, _maxJumpForce);
-            AudioClip SndJump = Resources.Load<AudioClip>("Sound/SFX/Player/Jump");
-            _audioSource.PlayOneShot(SndJump);
+            Player_PlaySound("Sound/SFX/Player/Jump");
         }
     }
 
@@ -332,6 +359,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     }
 
     /// <summary>
+    /// TODO: Fixup - Airdrag
     /// Change Jump Direction Mid Air
     /// </summary>
     void Player_ChgJumpDir()
@@ -372,11 +400,11 @@ public abstract class BasePlayerMovement : MonoBehaviour
             }
         }
 
-        // This section applies Air Drag
-        if (velocity.y < 0f && velocity.y > -4f)
-        {
-            _currentSpeed = _currentSpeed - ((_currentSpeed / 0.125f) / 256f);
-        }
+        // TODO: This section applies Air Drag (Unsure on the Accuracy of this)
+        //if (velocity.y < 0f && velocity.y > -4f)
+        //{
+        //    _currentSpeed = _currentSpeed - ((_currentSpeed % 0.125f) / 256f);
+        //}
 
         velocity = new Vector2(_currentSpeed, velocity.y);
     }
@@ -413,7 +441,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
     /// </summary>
     void KillCharacter()
     {
+        // TODO: Lock Controls
         _gm.SetCamFollowing = false;   // Camera is Not to follow movements
+
         _dead = true;
         _currentSpeed = 0;
         velocity = new Vector2(0, KILL_FORCE);
@@ -422,8 +452,6 @@ public abstract class BasePlayerMovement : MonoBehaviour
         AudioClip HitDeath = Resources.Load<AudioClip>("Sound/SFX/Player/HitDeath");
         _audioSource.PlayOneShot(HitDeath);
     }
-
-
 
 	void Player_Move()
 	{
@@ -437,7 +465,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
                 // Play Braking Sound
                 if (YRotation == FACING_RIGHT && _currentSpeed < -4.5f && _jumping == false)
-                { AudioClip SndBrake = Resources.Load<AudioClip>("Sound/SFX/Player/Brake"); _audioSource.PlayOneShot(SndBrake); }
+                { Player_PlaySound("Sound/SFX/Player/Brake"); }
 
             }
             else
@@ -465,7 +493,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
                 // Play braking Sound
                 if (YRotation == FACING_LEFT && _currentSpeed > 4.5f && _jumping == false)
-                { AudioClip SndBrake = Resources.Load<AudioClip>("Sound/SFX/Player/Brake"); _audioSource.PlayOneShot(SndBrake); }
+                { Player_PlaySound("Sound/SFX/Player/Brake"); }
 
 			} 
             else 
@@ -722,8 +750,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
                 // If the block has come back to 0, we have 100 Rings
                 if (r2l == 0)
                 {
-                    AudioClip snd1up = Resources.Load<AudioClip>("Sound/BGM/1Up");
-                    _audioSource.PlayOneShot(snd1up);
+                    Player_PlaySound("Sound/BGM/1Up");
                     LIVES += 1;
                 }
             }
@@ -731,5 +758,15 @@ public abstract class BasePlayerMovement : MonoBehaviour
             // Then collect it to say we have used the object, poor rings, getting used
             ring.CollectRing();
         }
+    }
+
+    /// <summary>
+    /// Plays a Sound using the players Sound Source
+    /// </summary>
+    /// <param name="SoundResourcePath">Unity Path to the Sound File/Resource</param>
+    void Player_PlaySound(string SoundResourcePath)
+    {
+        AudioClip SndResource = Resources.Load<AudioClip>(SoundResourcePath); 
+        _audioSource.PlayOneShot(SndResource);
     }
 }
