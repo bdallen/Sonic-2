@@ -119,7 +119,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 	
     
 	// Ground Sensor Values
-	private Vector2 SensorGroundA, SensorGroundB;
+	private Vector2 SensorCG, SensorDG;
 
 
 	// Checks
@@ -185,7 +185,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
         {
             transform.localScale = new Vector3(1, 1, 1);
         }
-        //transform.eulerAngles = new Vector2(0, YRotation);
+
         transform.Translate(velocity.x, velocity.y, 0f);
 
     }
@@ -250,7 +250,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
         Player_Move();              //bsr.w Sonic_Move
 
         Player_LevelBound();        //bsr.w	Sonic_LevelBound
-        Collision();
+        Player_DoLevelCollision();
+        //Collision();
 
     }
 
@@ -268,7 +269,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
         // TODO: JumpAngle
 
         ObjectMoveAndFall();
-        Collision();
+        Player_DoLevelCollision();
+        //Collision();
         
     }
 
@@ -286,7 +288,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
         // TODO: JumpAngle
 
         ObjectMoveAndFall();
-        Collision();
+        Player_DoLevelCollision();
+        //Collision();
 
     }
 
@@ -538,8 +541,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
     }
 
-	void Collision()
-	{
+    void Player_DoLevelCollision()
+    {
         // Grab out box collider and make rect object box for easier user
         BoxCollider collider = GetComponent<BoxCollider>();
         box = new Rect(collider.bounds.min.x,
@@ -547,107 +550,104 @@ public abstract class BasePlayerMovement : MonoBehaviour
                        collider.bounds.size.x,
                        collider.bounds.size.y);
 
-		Vector3 vGaStart, vGbStart, vMaStart, vMbStart;
+        Vector3 vAStart, vBStart, vCStart, vDStart, vEStart, vFstart;
 
-        // Check if we are jumping, if so change the width of the Sensors
-        // Also check the roataion and swap the A and B sensors depending on what way we are facing
+        // A & B Sensors above Sonic Head
+        vAStart = new Vector3(box.center.x - 9, box.center.y, transform.position.z);
+        vBStart = new Vector3(box.center.x + 9, box.center.y, transform.position.z);
+
+        // C & D Sensors Beloww Sonics Feet Also Check if we are jumping, if so change the width of the C & D Sensors
         switch (_jumping)
         {
             case true:
-                vGaStart = new Vector3(box.center.x + 7, box.center.y, transform.position.z);
-                vGbStart = new Vector3(box.center.x - 7, box.center.y, transform.position.z);
+                vCStart = new Vector3(box.center.x - 7, box.center.y, transform.position.z);
+                vDStart = new Vector3(box.center.x + 7, box.center.y, transform.position.z);
                 break;
             default:
-                vGaStart = new Vector3(box.center.x + 9, box.center.y, transform.position.z);
-                vGbStart = new Vector3(box.center.x - 9, box.center.y, transform.position.z);
+                vCStart = new Vector3(box.center.x - 9, box.center.y, transform.position.z);
+                vDStart = new Vector3(box.center.x + 9, box.center.y, transform.position.z);
                 break;
         }
 
-        #region Ground Collision
-        if (_grounded || falling) {
+        // TODO: Fix this
+        // This may need to be revised - This is what was causing the bouncing issue, but dividing the velocity has helped
+        float distanceABCD = (box.height / 2) + 20f;
+        float groundAqDistance = (box.height / 2) + 0.005f;
 
-            RaycastHit2D hGa, hGb;
+        // Make the ray vectors
+        Ray2D rA = new Ray2D(vAStart, Vector2.up);
+        Ray2D rB = new Ray2D(vBStart, Vector2.up);
+        Ray2D rCG = new Ray2D(vCStart, -Vector2.up);
+        Ray2D rDG = new Ray2D(vDStart, -Vector2.up);
 
-            // TODO: Fix this
-            // This may need to be revised - This is what was causing the bouncing issue, but dividing the velocity has helped
-            float distance = (box.height / 2) +(_grounded? margin: Mathf.Abs (velocity.y)/1.5f);
+        // Draw Debug Raycasts
+        Debug.DrawRay(vAStart, Vector2.up * distanceABCD, Color.green, 2f);
+        Debug.DrawRay(vBStart, Vector2.up * distanceABCD, Color.green, 2f);
+        Debug.DrawRay(vCStart, -Vector2.up * distanceABCD, Color.green, 2f);
+        Debug.DrawRay(vDStart, -Vector2.up * distanceABCD, Color.green, 2f);
 
+        RaycastHit2D hA, hB, hC, hD, hCG, hDG;
 
-			// No were not connected, no yet anyway
-			bool bGaConnected = false;
-			bool bGbConnected = false;
+        hA = Physics2D.Raycast(vAStart, Vector2.up, distanceABCD);
+        hB = Physics2D.Raycast(vBStart, Vector2.up, distanceABCD);
+        hCG = Physics2D.Raycast(vCStart, -Vector2.up, distanceABCD, 1<< lmGround);
+        hDG = Physics2D.Raycast(vDStart, -Vector2.up, distanceABCD, 1 << lmGround);
 
-			// Make the ray vectors
-			Ray2D rGa = new Ray2D(vGaStart,Vector3.down);
-			Ray2D rGb = new Ray2D(vGbStart,Vector3.down);
+        if (hCG.collider || hDG.collider)
+        {
+            // No were not connected, no yet anyway
+            bool bCGConnected = false;
+            bool bDGConnected = false;
 
-			// Debug this shiz
-			Debug.DrawRay(vGaStart,Vector3.down * distance,Color.green,2f);
-			Debug.DrawRay(vGbStart,Vector3.down * distance,Color.green,2f);
+            // Store out the sensor values
+            if (hCG.collider != null) { bCGConnected = true; SensorCG = hCG.point; }
+            if (hDG.collider != null) { bDGConnected = true; SensorDG = hDG.point; }
 
-            hGa = Physics2D.Raycast(vGaStart, -Vector2.up, distance, 1 << lmGround);
-            hGb = Physics2D.Raycast(vGbStart, -Vector2.up, distance, 1 << lmGround);
-
-			// If anything collides were on the floor
-			if (hGa.collider || hGb.collider)
-			{
-           
-                _jumping = false;
-				_grounded = true;
-				falling = false;
-			
-                //// Store out the sensor values
-                if (hGa.collider != null) { bGaConnected = true; SensorGroundA = hGa.point; }
-                if (hGb.collider != null) { bGbConnected = true; SensorGroundB = hGb.point; }
-
-                // Fixes a weird bug where a and b although the same height seem to give different distances
-                if (hGa.distance > hGb.distance)
-                {
-                    transform.Translate(Vector3.down * (hGa.distance - box.height / 2)); // Places the transform on the ground
-
-                }
-                else if (hGa.distance < hGb.distance)
-                {
-                    transform.Translate(Vector3.down * (hGb.distance - box.height / 2)); // Places the transform on the ground
-                }
-
-                _hGaNormal = hGa.normal;
-                _hGbNormal = hGb.normal;
-
-
-                velocity = new Vector2(velocity.x, 0);
-
-			}
-            else
+            if (hCG.distance <= groundAqDistance || hDG.distance <= groundAqDistance)
             {
-                _grounded = false;
+                if (hCG.distance > hDG.distance)
+                {
+                    velocity = new Vector2(velocity.x, 0);
+                    transform.Translate(Vector3.down * (hCG.distance - (box.height / 2) - 0.05f));
+                    //transform.up = hCG.normal;        // Rotation of Sonic on Angle - BUGGY
+                    _grounded = true;
+                    _jumping = false;
+                }
+                else
+                {
+                    velocity = new Vector2(velocity.x, 0);
+                    transform.Translate(Vector3.down * (hDG.distance - (box.height / 2) - 0.05f));
+                    //transform.up = hDG.normal;        // Rotation of Sonic on Angle - BUGGY
+                    _grounded = true;
+                    _jumping = false;
+                }
             }
 
 
-			// Edge detection for the Balancing Animations
-            if (!bGaConnected && bGbConnected && YRotation == FACING_RIGHT && !_jumping)         // We are facing right and edge is infront of us
+            // Edge detection for the Balancing Animations
+            if (!bDGConnected && bCGConnected && YRotation == FACING_RIGHT && !_jumping)         // We are facing right and edge is infront of us
             {
                 _edgeInfront = true;
                 _edgeBehind = false;
-                _edgeDistance = Mathf.Abs(((SensorGroundA.x - hGb.point.x) / 2));
+                _edgeDistance = Mathf.Abs(((SensorDG.x - hCG.point.x) / 2));
             }
-            else if (!bGaConnected && bGbConnected && YRotation == FACING_LEFT && !_jumping)    // We are facing right and the ledge is behind us
+            else if (!bDGConnected && bCGConnected && YRotation == FACING_LEFT && !_jumping)    // We are facing right and the ledge is behind us
             {
                 _edgeInfront = false;
                 _edgeBehind = true;
-                _edgeDistance = Mathf.Abs(((SensorGroundA.x - hGb.point.x) / 2));
+                _edgeDistance = Mathf.Abs(((SensorDG.x - hCG.point.x) / 2));
             }
-            else if (bGaConnected && !bGbConnected && YRotation == FACING_LEFT && !_jumping)   // We are facing left and the ledge is infront of us
+            else if (!bCGConnected && bDGConnected && YRotation == FACING_LEFT && !_jumping)   // We are facing left and the ledge is infront of us
             {
                 _edgeInfront = true;
                 _edgeBehind = false;
-                _edgeDistance = Mathf.Abs(((SensorGroundB.x - hGa.point.x) / 2));
+                _edgeDistance = Mathf.Abs(((SensorCG.x - hDG.point.x) / 2));
             }
-            else if (bGaConnected && !bGbConnected && YRotation == FACING_RIGHT && !_jumping)  // We are facing right and the ledge is behind us
+            else if (!bCGConnected && bDGConnected && YRotation == FACING_RIGHT && !_jumping)  // We are facing right and the ledge is behind us
             {
                 _edgeInfront = false;
                 _edgeBehind = true;
-                _edgeDistance = Mathf.Abs(((SensorGroundB.x - hGa.point.x) / 2));
+                _edgeDistance = Mathf.Abs(((SensorCG.x - hDG.point.x) / 2));
             }
             else
             {
@@ -655,69 +655,165 @@ public abstract class BasePlayerMovement : MonoBehaviour
                 _edgeBehind = false;
             }
         }
-        #endregion
-
-        #region Side Collision
-        vMaStart = new Vector3(box.center.x, box.center.y, transform.position.z);
-        Debug.DrawRay(vMaStart, Vector2.right * 11f, Color.cyan, 2f);
-        RaycastHit2D hMa = Physics2D.Raycast(vMaStart, Vector2.right, 11f);
-
-        vMbStart = new Vector3(box.center.x, box.center.y, transform.position.z);
-        Debug.DrawRay(vMbStart, -Vector2.right * 11f, Color.cyan, 2f);
-        RaycastHit2D hMb = Physics2D.Raycast(vMbStart, -Vector2.right, 11f);
-
-        if (hMa.collider)
+        else
         {
-            DoCollisionCheck(hMa);
+            _grounded = false;
         }
-        if (hMb.collider)
-        {
-            DoCollisionCheck(hMb);
-        }
-        #endregion
-
-        #region Top Collision
-        Debug.DrawRay(vGaStart, Vector3.up * 16f, Color.cyan, 2f);
-        RaycastHit2D hTa = Physics2D.Raycast(vGaStart, Vector2.up, 16f);
-
-        Debug.DrawRay(vGbStart, Vector3.up * 16f, Color.cyan, 2f);
-        RaycastHit2D hTb = Physics2D.Raycast(vGbStart, Vector2.up, 16f);
-
-        if (hTa.collider)
-        {
-            DoCollisionCheck(hTa);
-        }
-        if (hTb.collider)
-        {
-            DoCollisionCheck(hTb);
-        }
-        #endregion
-
-        #region Bottom Collision
-        Debug.DrawRay(vGaStart, -Vector2.up * 16f, Color.cyan, 2f);
-        RaycastHit2D hBa = Physics2D.Raycast(vGaStart, -Vector2.up, 16f);
-
-        Debug.DrawRay(vGbStart, -Vector2.up * 16f, Color.cyan, 2f);
-        RaycastHit2D hBb = Physics2D.Raycast(vGbStart, -Vector2.up, 16f);
-
-        if (hBa.collider)
-        {
-            DoCollisionCheck(hBa);
-        }
-        if (hBb.collider)
-        {
-            DoCollisionCheck(hBb);
-        }
-        #endregion
-
-        _hitWall = false;
-
+        
     }
 
-    void Player_DoLevelCollision()
+    void Player_Ground()
     {
 
     }
+
+    //void Collision()
+    //{
+
+
+
+
+    //    #region Ground Collision
+    //    if (_grounded || falling) {
+
+            
+
+
+
+    //        // No were not connected, no yet anyway
+    //        bool bGaConnected = false;
+    //        bool bGbConnected = false;
+
+
+
+    //        // If anything collides were on the floor
+    //        if (hGa.collider || hGb.collider)
+    //        {
+           
+    //            _jumping = false;
+    //            _grounded = true;
+    //            falling = false;
+			
+    //            //// Store out the sensor values
+    //            if (hGa.collider != null) { bGaConnected = true; SensorGroundA = hGa.point; }
+    //            if (hGb.collider != null) { bGbConnected = true; SensorGroundB = hGb.point; }
+
+    //            // Fixes a weird bug where a and b although the same height seem to give different distances
+    //            if (hGa.distance > hGb.distance)
+    //            {
+    //                transform.Translate(Vector3.down * (hGa.distance - box.height / 2)); // Places the transform on the ground
+
+    //            }
+    //            else if (hGa.distance < hGb.distance)
+    //            {
+    //                transform.Translate(Vector3.down * (hGb.distance - box.height / 2)); // Places the transform on the ground
+    //            }
+
+    //            _hGaNormal = hGa.normal;
+    //            _hGbNormal = hGb.normal;
+
+    //            transform.up = hGa.normal;
+
+
+    //            velocity = new Vector2(velocity.x, 0);
+
+    //        }
+    //        else
+    //        {
+    //            transform.up = new Vector3(0, 0, 0);
+    //            _grounded = false;
+    //        }
+
+
+    //        // Edge detection for the Balancing Animations
+    //        if (!bGaConnected && bGbConnected && YRotation == FACING_RIGHT && !_jumping)         // We are facing right and edge is infront of us
+    //        {
+    //            _edgeInfront = true;
+    //            _edgeBehind = false;
+    //            _edgeDistance = Mathf.Abs(((SensorGroundA.x - hGb.point.x) / 2));
+    //        }
+    //        else if (!bGaConnected && bGbConnected && YRotation == FACING_LEFT && !_jumping)    // We are facing right and the ledge is behind us
+    //        {
+    //            _edgeInfront = false;
+    //            _edgeBehind = true;
+    //            _edgeDistance = Mathf.Abs(((SensorGroundA.x - hGb.point.x) / 2));
+    //        }
+    //        else if (bGaConnected && !bGbConnected && YRotation == FACING_LEFT && !_jumping)   // We are facing left and the ledge is infront of us
+    //        {
+    //            _edgeInfront = true;
+    //            _edgeBehind = false;
+    //            _edgeDistance = Mathf.Abs(((SensorGroundB.x - hGa.point.x) / 2));
+    //        }
+    //        else if (bGaConnected && !bGbConnected && YRotation == FACING_RIGHT && !_jumping)  // We are facing right and the ledge is behind us
+    //        {
+    //            _edgeInfront = false;
+    //            _edgeBehind = true;
+    //            _edgeDistance = Mathf.Abs(((SensorGroundB.x - hGa.point.x) / 2));
+    //        }
+    //        else
+    //        {
+    //            _edgeInfront = false;
+    //            _edgeBehind = false;
+    //        }
+    //    }
+    //    #endregion
+
+    //    #region Side Collision
+    //    vMaStart = new Vector3(box.center.x, box.center.y, transform.position.z);
+    //    Debug.DrawRay(vMaStart, Vector2.right * 11f, Color.cyan, 2f);
+    //    RaycastHit2D hMa = Physics2D.Raycast(vMaStart, Vector2.right, 11f);
+
+    //    vMbStart = new Vector3(box.center.x, box.center.y, transform.position.z);
+    //    Debug.DrawRay(vMbStart, -Vector2.right * 11f, Color.cyan, 2f);
+    //    RaycastHit2D hMb = Physics2D.Raycast(vMbStart, -Vector2.right, 11f);
+
+    //    if (hMa.collider)
+    //    {
+    //        DoCollisionCheck(hMa);
+    //    }
+    //    if (hMb.collider)
+    //    {
+    //        DoCollisionCheck(hMb);
+    //    }
+    //    #endregion
+
+    //    #region Top Collision
+    //    Debug.DrawRay(vGaStart, Vector3.up * 16f, Color.cyan, 2f);
+    //    RaycastHit2D hTa = Physics2D.Raycast(vGaStart, Vector2.up, 16f);
+
+    //    Debug.DrawRay(vGbStart, Vector3.up * 16f, Color.cyan, 2f);
+    //    RaycastHit2D hTb = Physics2D.Raycast(vGbStart, Vector2.up, 16f);
+
+    //    if (hTa.collider)
+    //    {
+    //        DoCollisionCheck(hTa);
+    //    }
+    //    if (hTb.collider)
+    //    {
+    //        DoCollisionCheck(hTb);
+    //    }
+    //    #endregion
+
+    //    #region Bottom Collision
+    //    Debug.DrawRay(vGaStart, -Vector2.up * 16f, Color.cyan, 2f);
+    //    RaycastHit2D hBa = Physics2D.Raycast(vGaStart, -Vector2.up, 16f);
+
+    //    Debug.DrawRay(vGbStart, -Vector2.up * 16f, Color.cyan, 2f);
+    //    RaycastHit2D hBb = Physics2D.Raycast(vGbStart, -Vector2.up, 16f);
+
+    //    if (hBa.collider)
+    //    {
+    //        DoCollisionCheck(hBa);
+    //    }
+    //    if (hBb.collider)
+    //    {
+    //        DoCollisionCheck(hBb);
+    //    }
+    //    #endregion
+
+    //    _hitWall = false;
+
+    //}
 
     void DoCollisionCheck(RaycastHit2D _rc)
     {
