@@ -14,6 +14,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     // Player Tuning
     public int LIVES = 3;
     public int RINGS = 0;
+	public int SCORE = 0;
     #endregion
 
     #region Private Variables
@@ -584,5 +585,35 @@ public abstract class BasePlayerMovement : MonoBehaviour
             // Then collect it to say we have used the object, poor rings, getting used
             ring.CollectRing();
         }
+
+
+
+
+		if (_rc.collider.GetComponent("Badnik"))
+		{
+			Badnik badnik = _rc.collider.GetComponent<Badnik>();
+			// We've hit a live badnik
+			if (!badnik._eliminated) 
+			{	//If Sonic is spinning, kill it
+				if (_spinDash || _jumping){
+					//Score += 1;
+					badnik.EliminateBadnik();
+					SCORE += 100;
+				}
+				else{ //If not sonic gets hurt
+					//Sonic gets hurt
+				}
+			}
+		}
+
+
+
+
+
+
+
+
+
+
     }
 }

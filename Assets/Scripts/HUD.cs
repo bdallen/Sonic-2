@@ -9,9 +9,11 @@ public class HUD : MonoBehaviour
     PlayerSonic _pSonic;
     TextMesh _livesText;
     TextMesh _ringsText;
+	TextMesh _scoreText;
     TextMesh _secondsText;
     TextMesh _minutesText;
     TextMesh _ringsTextShadow;
+	TextMesh _scoreTextShadow;
     TextMesh _secondsTextShadow;
     TextMesh _minutesTextShadow;
     #endregion
@@ -21,9 +23,11 @@ public class HUD : MonoBehaviour
         _bpm = GameObject.Find("Player").GetComponent<BasePlayerMovement>();
         _livesText = GameObject.Find("LivesText").GetComponent<TextMesh>();
         _ringsText = GameObject.Find("Rings").GetComponent<TextMesh>();
+		_scoreText = GameObject.Find("Score").GetComponent<TextMesh>();
         _secondsText = GameObject.Find("TimeSeconds").GetComponent<TextMesh>();
         _minutesText = GameObject.Find("TimeMinutes").GetComponent<TextMesh>();
         _ringsTextShadow = GameObject.Find("RingsShadow").GetComponent<TextMesh>();
+		_scoreTextShadow = GameObject.Find("ScoreShadow").GetComponent<TextMesh>();
         _secondsTextShadow = GameObject.Find("TimeSecondsShadow").GetComponent<TextMesh>();
         _minutesTextShadow = GameObject.Find("TimeMinutesShadow").GetComponent<TextMesh>();
 
@@ -43,10 +47,13 @@ public class HUD : MonoBehaviour
         // Update Lives Text
         _livesText.text = _bpm.LIVES.ToString();
 
+		// Update Rings
         _ringsText.text = _bpm.RINGS.ToString();
         _ringsTextShadow.text = _ringsText.text;
         
         // Update Score
+		_scoreText.text = _bpm.SCORE.ToString();
+		_scoreTextShadow.text = _scoreText.text;
 
         // Update Game Time
         UpdateGameTime();
