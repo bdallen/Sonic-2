@@ -591,6 +591,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
 		if (_rc.collider.GetComponent("Badnik"))
 		{
+
+
 			Badnik badnik = _rc.collider.GetComponent<Badnik>();
 			// We've hit a live badnik
 			if (!badnik._eliminated) 
@@ -601,7 +603,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
 					SCORE += 100;
 				}
 				else{ //If not sonic gets hurt
-					//Sonic gets hurt
+					AudioClip sndRingScatter = Resources.Load<AudioClip>("Sound/SFX/Level Objects/RingScatter");
+					_audioSource.PlayOneShot(sndRingScatter);
+
 				}
 			}
 		}

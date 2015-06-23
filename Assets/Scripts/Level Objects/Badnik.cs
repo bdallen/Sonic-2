@@ -28,14 +28,14 @@ public class Badnik : MonoBehaviour {
 	
 	// Update is called once per frame
 	public virtual void Update () {
-		//if (_eliminated)
-		//{
-		//	_destroyDelay += 1;
-		//}
-		//if (_destroyDelay == 25)
-		//{
-		//	Destroy(this.gameObject);
-		//}
+		if (_eliminated)
+		{
+			_destroyDelay += 1;
+		}
+		if (_destroyDelay == 25)
+		{
+			Destroy(this.gameObject);
+		}
 		switch (_badnikType) {
 		case "Masher":
 			UpdateMasher();
@@ -55,11 +55,12 @@ public class Badnik : MonoBehaviour {
 		//_animator = GetComponent<Animator>();
 		//_animator.Play("Badnik_Puff"); // TODO: Create animation for animals being freed
 		//TODO: instanciate a squirrel to run off screen
-		//TODO: Append 100 to score
 		//TODO: Create '100' test to show
-		//if (!_eliminated) { GetComponent<AudioSource>().Play(); } //TODO: Obtain sound clip
+		//if (!_eliminated) { 
+			this.GetComponent<AudioSource>().Play(); 
+		//}
 		_eliminated = true;
-		Destroy(this.gameObject);
+
 	}	
 
 
