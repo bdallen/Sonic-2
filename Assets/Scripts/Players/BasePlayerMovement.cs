@@ -69,6 +69,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
     protected SpriteRenderer _spRenderer;
     protected int _gameTime;
 
+    // Debugging
+    protected ConsoleLog _log;
+
     // Player Dynamics
     protected float AIR_MAX_JUMP_FORCE;
     protected float AIR_MID_JUMP_FORCE;
@@ -138,6 +141,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 	{
         // Grab the Game Manager for Global Objects
         _gm = GameObject.Find("_GameManager").GetComponent<GameManager>();
+        _log = ConsoleLog.Instance;
 
 		// Get layer masks by name rather than Int
 		lmGround = LayerMask.NameToLayer ("Ground");
