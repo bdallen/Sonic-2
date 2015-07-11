@@ -581,79 +581,81 @@ public abstract class BasePlayerMovement : MonoBehaviour
         Ray2D rDG = new Ray2D(vDStart, -Vector2.up);
 
         // Draw Debug Raycasts
-        Debug.DrawRay(vAStart, Vector2.up * distanceABCD, Color.green, 2f);
-        Debug.DrawRay(vBStart, Vector2.up * distanceABCD, Color.green, 2f);
-        Debug.DrawRay(vCStart, -Vector2.up * distanceABCD, Color.green, 2f);
-        Debug.DrawRay(vDStart, -Vector2.up * distanceABCD, Color.green, 2f);
+        //Debug.DrawRay(vAStart, Vector2.up * distanceABCD, Color.green, 2f);
+        //Debug.DrawRay(vBStart, Vector2.up * distanceABCD, Color.green, 2f);
+        Debug.DrawRay(vCStart, -Vector2.up * distanceABCD, Color.red, 2f);
+        Debug.DrawRay(vDStart, -Vector2.up * distanceABCD, Color.blue, 2f);
 
         RaycastHit2D hA, hB, hC, hD, hCG, hDG;
 
         hA = Physics2D.Raycast(vAStart, Vector2.up, distanceABCD);
         hB = Physics2D.Raycast(vBStart, Vector2.up, distanceABCD);
-        hCG = Physics2D.Raycast(vCStart, -Vector2.up, distanceABCD, 1<< lmGround);
+        hCG = Physics2D.Raycast(vCStart, -Vector2.up, distanceABCD, 1 << lmGround);
         hDG = Physics2D.Raycast(vDStart, -Vector2.up, distanceABCD, 1 << lmGround);
 
         if (hCG.collider || hDG.collider)
         {
-            // No were not connected, no yet anyway
+            // No were not connected, not yet anyway
             bool bCGConnected = false;
             bool bDGConnected = false;
+            float CDistance = 0f, DDistance = 0f;
 
             // Store out the sensor values
-            if (hCG.collider != null) { bCGConnected = true; SensorCG = hCG.point; }
-            if (hDG.collider != null) { bDGConnected = true; SensorDG = hDG.point; }
+            if (hCG.collider != null) { bCGConnected = true; SensorCG = hCG.point; CDistance = hCG.distance; }
+            if (hDG.collider != null) { bDGConnected = true; SensorDG = hDG.point; DDistance = hDG.distance; }
 
-            if (hCG.distance <= groundAqDistance || hDG.distance <= groundAqDistance)
+            if (CDistance > 0f && DDistance > 0f)
             {
-                if (hCG.distance > hDG.distance)
+                if (CDistance > DDistance)
                 {
-                    velocity = new Vector2(velocity.x, 0);
-                    transform.Translate(Vector3.down * (hCG.distance - (box.height / 2) - 0.05f));
-                    //transform.up = hCG.normal;        // Rotation of Sonic on Angle - BUGGY
-                    _grounded = true;
-                    _jumping = false;
+                    if (CDistance <= groundAqDistance)
+                    {
+                        velocity = new Vector2(velocity.x, 0);
+                        transform.Translate(Vector3.down * (hCG.distance - (box.height / 2) - 0.05f));
+                        //transform.up = hDG.normal;        // Rotation of Sonic on Angle - BUGGY
+                        _grounded = true;
+                        _jumping = false;
+                    }
                 }
-                else
+                else if (CDistance < DDistance)
                 {
-                    velocity = new Vector2(velocity.x, 0);
-                    transform.Translate(Vector3.down * (hDG.distance - (box.height / 2) - 0.05f));
-                    //transform.up = hDG.normal;        // Rotation of Sonic on Angle - BUGGY
-                    _grounded = true;
-                    _jumping = false;
+                    if (DDistance <= groundAqDistance)
+                    {
+                        velocity = new Vector2(velocity.x, 0);
+                        transform.Translate(Vector3.down * (hDG.distance - (box.height / 2) - 0.05f));
+                        //transform.up = hDG.normal;        // Rotation of Sonic on Angle - BUGGY
+                        _grounded = true;
+                        _jumping = false;
+                    }
+                }
+                else if (CDistance == DDistance)
+                {
+                    if (CDistance <= groundAqDistance)
+                    {
+                        velocity = new Vector2(velocity.x, 0);
+                        transform.Translate(Vector3.down * (hCG.distance - (box.height / 2) - 0.05f));
+                        //transform.up = hDG.normal;        // Rotation of Sonic on Angle - BUGGY
+                        _grounded = true;
+                        _jumping = false;
+                    }
                 }
             }
+            else if (CDistance > 0f && DDistance == 0f)
+            {
 
+            }
+            else if (CDistance == 0f && DDistance > 0f)
+            {
 
-            // Edge detection for the Balancing Animations
-            if (!bDGConnected && bCGConnected && YRotation == FACING_RIGHT && !_jumping)         // We are facing right and edge is infront of us
-            {
-                _edgeInfront = true;
-                _edgeBehind = false;
-                _edgeDistance = Mathf.Abs(((SensorDG.x - hCG.point.x) / 2));
-            }
-            else if (!bDGConnected && bCGConnected && YRotation == FACING_LEFT && !_jumping)    // We are facing right and the ledge is behind us
-            {
-                _edgeInfront = false;
-                _edgeBehind = true;
-                _edgeDistance = Mathf.Abs(((SensorDG.x - hCG.point.x) / 2));
-            }
-            else if (!bCGConnected && bDGConnected && YRotation == FACING_LEFT && !_jumping)   // We are facing left and the ledge is infront of us
-            {
-                _edgeInfront = true;
-                _edgeBehind = false;
-                _edgeDistance = Mathf.Abs(((SensorCG.x - hDG.point.x) / 2));
-            }
-            else if (!bCGConnected && bDGConnected && YRotation == FACING_RIGHT && !_jumping)  // We are facing right and the ledge is behind us
-            {
-                _edgeInfront = false;
-                _edgeBehind = true;
-                _edgeDistance = Mathf.Abs(((SensorCG.x - hDG.point.x) / 2));
             }
             else
             {
-                _edgeInfront = false;
-                _edgeBehind = false;
+                _grounded = false;
             }
+            
+            // Process Edge Detection
+            EdgeDetection(bCGConnected, bDGConnected, hCG, hDG);
+
         }
         else
         {
@@ -662,7 +664,41 @@ public abstract class BasePlayerMovement : MonoBehaviour
         
     }
 
-    void Player_Ground()
+    void EdgeDetection(bool bCGConnected, bool bDGConnected, RaycastHit2D hCG, RaycastHit2D hDG)
+    {
+        // Edge detection for the Balancing Animations
+        if (!bDGConnected && bCGConnected && YRotation == FACING_RIGHT && !_jumping)         // We are facing right and edge is infront of us
+        {
+            _edgeInfront = true;
+            _edgeBehind = false;
+            _edgeDistance = Mathf.Abs(((SensorDG.x - hCG.point.x) / 2));
+        }
+        else if (!bDGConnected && bCGConnected && YRotation == FACING_LEFT && !_jumping)    // We are facing right and the ledge is behind us
+        {
+            _edgeInfront = false;
+            _edgeBehind = true;
+            _edgeDistance = Mathf.Abs(((SensorDG.x - hCG.point.x) / 2));
+        }
+        else if (!bCGConnected && bDGConnected && YRotation == FACING_LEFT && !_jumping)   // We are facing left and the ledge is infront of us
+        {
+            _edgeInfront = true;
+            _edgeBehind = false;
+            _edgeDistance = Mathf.Abs(((SensorCG.x - hDG.point.x) / 2));
+        }
+        else if (!bCGConnected && bDGConnected && YRotation == FACING_RIGHT && !_jumping)  // We are facing right and the ledge is behind us
+        {
+            _edgeInfront = false;
+            _edgeBehind = true;
+            _edgeDistance = Mathf.Abs(((SensorCG.x - hDG.point.x) / 2));
+        }
+        else
+        {
+            _edgeInfront = false;
+            _edgeBehind = false;
+        }
+    }
+
+    void Player_GetGround()
     {
 
     }
