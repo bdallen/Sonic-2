@@ -5,6 +5,12 @@ using System.Collections.Generic;
 public abstract class BasePlayerMovement : MonoBehaviour
 {
 
+    protected enum Char_State
+    {
+        IN_AIR = 0,
+        ON_GROUND = 1
+    }
+
     #region Constants
     private const float FACING_RIGHT = 0f;
     private const float FACING_LEFT = 180f;
@@ -78,13 +84,15 @@ public abstract class BasePlayerMovement : MonoBehaviour
     protected float WATER_MAX_JUMP_FORCE;
     protected float WATER_MID_JUMP_FORCE;
 
-
+    // Player Debug States
+    protected bool _debugNoGravity = true;
 
     // Player Information
     protected Vector2 _angle;
     protected Vector3 axis;
     protected float _currentSpeed = 0f;
     protected bool _dead = false;
+    protected Char_State _state = Char_State.IN_AIR;
     protected bool _grounded = false;
     protected bool _jumping = false;
     protected bool _rolling = false;
@@ -153,6 +161,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
         _spRenderer = GetComponent<SpriteRenderer>();
         //_inWater = true;
+
+        // Setup the Player Command
+        _gm._consoleCmd.RegisterCommand("player", Player);
 
 	}
 
@@ -360,7 +371,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
             }
             else
             {
-                if (velocity.y >= _maxJumpForce){ Player_CheckGoSuper(); }      // At the height of the jump - Test for Super
+                if (velocity.y >= _maxJumpForce) { Player_CheckGoSuper(); _jumping = false; }      // At the height of the jump - Test for Super and also turn off the jumping flag.
             }
         }
     }
@@ -448,6 +459,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
     /// </summary>
     void KillCharacter()
     {
+        // Log Status
+        _log.Log(_gameTime.ToString() + ": Player Died");
+
         // TODO: Lock Controls
         _gm.SetCamFollowing = false;   // Camera is Not to follow movements
 
@@ -534,11 +548,12 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
     void ObjectMoveAndFall()
     {
+        if (_debugNoGravity == true) { return; }    // If No Gravity Debug is on, then exit routine
 
-        velocity = new Vector2(velocity.x, Mathf.Max(velocity.y - GRAVITY, -MAX_FALL_VELOCITY));
+        velocity = new Vector2(velocity.x, Mathf.Max(velocity.y - GRAVITY, -MAX_FALL_VELOCITY));    // Apply gravity to Player
 
         // Were falling
-        if (velocity.y < 0)
+        if (velocity.y < 0f)
         {
             falling = true;
         }
@@ -608,62 +623,53 @@ public abstract class BasePlayerMovement : MonoBehaviour
             if (hCG.collider != null) { bCGConnected = true; SensorCG = hCG.point; CDistance = hCG.distance; }
             if (hDG.collider != null) { bDGConnected = true; SensorDG = hDG.point; DDistance = hDG.distance; }
 
-            if (CDistance > 0f && DDistance > 0f)
-            {
-                if (CDistance > DDistance)
-                {
-                    if (CDistance <= groundAqDistance)
-                    {
-                        velocity = new Vector2(velocity.x, 0);
-                        transform.Translate(Vector3.down * (hCG.distance - (box.height / 2) - 0.05f));
-                        //transform.up = hDG.normal;        // Rotation of Sonic on Angle - BUGGY
-                        _grounded = true;
-                        _jumping = false;
-                    }
-                }
-                else if (CDistance < DDistance)
-                {
-                    if (DDistance <= groundAqDistance)
-                    {
-                        velocity = new Vector2(velocity.x, 0);
-                        transform.Translate(Vector3.down * (hDG.distance - (box.height / 2) - 0.05f));
-                        //transform.up = hDG.normal;        // Rotation of Sonic on Angle - BUGGY
-                        _grounded = true;
-                        _jumping = false;
-                    }
-                }
-                else if (CDistance == DDistance)
-                {
-                    if (CDistance <= groundAqDistance)
-                    {
-                        velocity = new Vector2(velocity.x, 0);
-                        transform.Translate(Vector3.down * (hCG.distance - (box.height / 2) - 0.05f));
-                        //transform.up = hDG.normal;        // Rotation of Sonic on Angle - BUGGY
-                        _grounded = true;
-                        _jumping = false;
-                    }
-                }
-            }
-            else if (CDistance > 0f && DDistance == 0f)
+            if (_state == Char_State.IN_AIR && !_jumping)
             {
 
             }
-            else if (CDistance == 0f && DDistance > 0f)
+            else if (_state == Char_State.ON_GROUND)
             {
+                // Process Edge Detection
+                EdgeDetection(bCGConnected, bDGConnected, hCG, hDG);
+            }
+
+
+        }
+
+
+        if (_state == Char_State.IN_AIR)
+        {
+            _grounded = false;
+
+            if (hCG.collider || hDG.collider)
+            {
+                // No were not connected, not yet anyway
+                bool bCGConnected = false;
+                bool bDGConnected = false;
+                float CDistance = 0f, DDistance = 0f;
+
+                // Store out the sensor values
+                if (hCG.collider != null) { bCGConnected = true; SensorCG = hCG.point; CDistance = hCG.distance; }
+                if (hDG.collider != null) { bDGConnected = true; SensorDG = hDG.point; DDistance = hDG.distance; }
 
             }
-            else
-            {
-                _grounded = false;
-            }
-            
-            // Process Edge Detection
-            EdgeDetection(bCGConnected, bDGConnected, hCG, hDG);
-
         }
         else
         {
-            _grounded = false;
+
+            _grounded = true;
+
+            // No were not connected, not yet anyway
+            bool bCGConnected = false;
+            bool bDGConnected = false;
+            float CDistance = 0f, DDistance = 0f;
+
+            // Store out the sensor values
+            if (hCG.collider != null) { bCGConnected = true; SensorCG = hCG.point; CDistance = hCG.distance; }
+            if (hDG.collider != null) { bDGConnected = true; SensorDG = hDG.point; DDistance = hDG.distance; }
+
+            // Process Edge Detection
+            EdgeDetection(bCGConnected, bDGConnected, hCG, hDG);
         }
         
     }
@@ -904,5 +910,31 @@ public abstract class BasePlayerMovement : MonoBehaviour
     {
         AudioClip SndResource = Resources.Load<AudioClip>(SoundResourcePath); 
         _audioSource.PlayOneShot(SndResource);
+    }
+
+    /// <summary>
+    /// Player Console Commands
+    /// </summary>
+    /// <param name="args">Arguments to pass</param>
+    /// <returns>String output for the Console</returns>
+    public string Player(params string[] args)
+    {
+        if (args.Length == 0) { return "Command player not found"; }
+        switch (args[0])
+        {
+            case "super":           // Changes player Super Mode
+                if (args[1] == "on") {_isSuper = true; }
+                if (args[1] == "off") { _isSuper = false; }
+                return "Super Mode is " + _isSuper;
+            case "addrings":       // Adds 50 Rings to the player        
+                RINGS = RINGS + 50;
+                return "Added 50 Rings";
+            case "gravity":         // Changes Gravity Debug Mode
+                if (args[1] == "on") { _debugNoGravity = false; }
+                if (args[1] == "off") { _debugNoGravity = true; }
+                return "Gravity State is " + !_debugNoGravity;
+            default:
+                return "Command player not found";
+        }
     }
 }

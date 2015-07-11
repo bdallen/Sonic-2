@@ -10,6 +10,7 @@ public class GameManager: MonoBehaviour {
     public Transform leftBound;
     public Transform rightBound;
     public Transform bottomBound;
+    public ConsoleCommandsRepository _consoleCmd;
 
     public int TARGET_FRAMERATE = 50;
 
@@ -37,6 +38,8 @@ public class GameManager: MonoBehaviour {
         _camHeight = 2f * camera.orthographicSize;
         _camWidth = _camHeight * camera.aspect;
 
+        _consoleCmd = ConsoleCommandsRepository.Instance;
+        _consoleCmd.RegisterCommand("debug", Debug);
     }
 
     void FixedUpdate()
@@ -118,5 +121,10 @@ public class GameManager: MonoBehaviour {
         string text = string.Format("GFX: {0:0.0} ms ({1:0.} fps)\n", msec, fps);
         text = text + string.Format("PHY: {0:0.0} ms ({1:0.} fps)", pmsec, pfps);
         GUI.Label(rect, text, style);
+    }
+
+    public string Debug(params string[] args)
+    {
+        return "Debug Mode";
     }
 }
