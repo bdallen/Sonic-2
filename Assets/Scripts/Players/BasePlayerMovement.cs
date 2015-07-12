@@ -614,7 +614,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
         // TODO: Fix this
         // This may need to be revised - This is what was causing the bouncing issue, but dividing the velocity has helped
-        float distanceABCD = (box.height / 2) + 20f;
+        float distanceABCD = (box.height / 2) + 2f;
         float groundAqDistance = (box.height / 2) + 0.005f;
 
         // Make the ray vectors
@@ -649,24 +649,29 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
             if (_state == Char_State.IN_AIR || _state == Char_State.JUMPING && velocity.y < 0)
             {
-                if(CDistance == DDistance)
-                {
-                    if (groundAqDistance > CDistance)
+                    if (groundAqDistance > CDistance || groundAqDistance > DDistance)
                     {
                         velocity = new Vector2(velocity.x, 0f);
                         transform.Translate(Vector3.down * (CDistance - box.height / 2)); // Places the transform on the ground
                         _state = Char_State.ON_GROUND;
                     }
-                }
             }
             else if (_state == Char_State.ON_GROUND)
             {
+                velocity = new Vector2(velocity.x, 0f);
+                transform.Translate(Vector3.down * (CDistance - box.height / 2)); // Places the transform on the ground
+                _state = Char_State.ON_GROUND;
+
+                transform.up = hDG.normal;
+
                 // Process Edge Detection
                 EdgeDetection(bCGConnected, bDGConnected, hCG, hDG);
             }
-
-
-        }        
+        }
+        else
+        {
+            if (_state != Char_State.JUMPING) { _state = Char_State.IN_AIR; }
+        }
     }
 
     void EdgeDetection(bool bCGConnected, bool bDGConnected, RaycastHit2D hCG, RaycastHit2D hDG)
