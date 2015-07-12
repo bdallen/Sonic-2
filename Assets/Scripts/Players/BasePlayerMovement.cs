@@ -90,7 +90,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
     // Player Debug States
     protected bool _debugStats = true;
-    protected bool _debugNoGravity = true;
+    protected bool _debugNoGravity = false;
 
     // Player Information
     protected Vector2 _angle;
@@ -98,7 +98,6 @@ public abstract class BasePlayerMovement : MonoBehaviour
     protected float _currentSpeed = 0f;
     protected bool _dead = false;
     protected Char_State _state = Char_State.IN_AIR;
-    protected bool _grounded = false;
     protected bool _jumping = false;
     protected bool _rolling = false;
     protected bool _isSuper = false;
@@ -371,7 +370,6 @@ public abstract class BasePlayerMovement : MonoBehaviour
             if (_inWater) { _maxJumpForce = WATER_MAX_JUMP_FORCE; }    // In Water - Change Max Force
 
             _state = Char_State.JUMPING;
-            _grounded = false;
             velocity = new Vector2(velocity.x, _maxJumpForce);
             Player_PlaySound("Sound/SFX/Player/Jump");
         }
@@ -382,10 +380,10 @@ public abstract class BasePlayerMovement : MonoBehaviour
     /// </summary>
     void Player_JumpHeight()
     {
-        if (_state == Char_State.JUMPING)                                           // Are we jumping?
+        if (_state == Char_State.JUMPING)                                         // Are we jumping?
         {
-            _midJumpForce = AIR_MID_JUMP_FORCE;                                    // Set Mid Jump Force
-            if (_inWater) { _midJumpForce = WATER_MID_JUMP_FORCE; }                // Change Mid Jump Force if in Water
+            _midJumpForce = AIR_MID_JUMP_FORCE;                                   // Set Mid Jump Force
+            if (_inWater) { _midJumpForce = WATER_MID_JUMP_FORCE; }               // Change Mid Jump Force if in Water
             if (Input.GetButtonUp("Jump"))                                        // Button Released means we want a Mid Jump
             {
                 if (velocity.y > _midJumpForce)
@@ -395,7 +393,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
             }
             else
             {
-                if (velocity.y <= 0) { Player_CheckGoSuper(); }      // At the height of the jump - Test for Super and also say that we are in the air.
+                if (velocity.y <= 0) { Player_CheckGoSuper(); }                 // At the height of the jump - Test for Super and also say that we are in the air.
             }
         }
     }
@@ -614,7 +612,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
         // TODO: Fix this
         // This may need to be revised - This is what was causing the bouncing issue, but dividing the velocity has helped
-        float distanceABCD = (box.height / 2) + 2f;
+        float distanceABCD = (box.height / 2) + 20f;
         float groundAqDistance = (box.height / 2) + 0.005f;
 
         // Make the ray vectors
@@ -649,20 +647,35 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
             if (_state == Char_State.IN_AIR || _state == Char_State.JUMPING && velocity.y < 0)
             {
-                    if (groundAqDistance > CDistance || groundAqDistance > DDistance)
+
+                if (groundAqDistance > CDistance || groundAqDistance > DDistance)
+                {
+                    if (CDistance > DDistance)
                     {
                         velocity = new Vector2(velocity.x, 0f);
                         transform.Translate(Vector3.down * (CDistance - box.height / 2)); // Places the transform on the ground
-                        _state = Char_State.ON_GROUND;
                     }
+                    else
+                    {
+                        velocity = new Vector2(velocity.x, 0f);
+                        transform.Translate(Vector3.down * (DDistance - box.height / 2)); // Places the transform on the ground
+                    }
+                    _state = Char_State.ON_GROUND;
+                }
             }
             else if (_state == Char_State.ON_GROUND)
             {
-                velocity = new Vector2(velocity.x, 0f);
-                transform.Translate(Vector3.down * (CDistance - box.height / 2)); // Places the transform on the ground
-                _state = Char_State.ON_GROUND;
-
-                transform.up = hDG.normal;
+                if (CDistance > DDistance)
+                {
+                    velocity = new Vector2(velocity.x, 0f);
+                    transform.Translate(Vector3.down * (CDistance - box.height / 2)); // Places the transform on the ground
+                }
+                else
+                {
+                    velocity = new Vector2(velocity.x, 0f);
+                    transform.Translate(Vector3.down * (DDistance - box.height / 2)); // Places the transform on the ground
+                }
+                _state = Char_State.ON_GROUND;                
 
                 // Process Edge Detection
                 EdgeDetection(bCGConnected, bDGConnected, hCG, hDG);
@@ -712,154 +725,6 @@ public abstract class BasePlayerMovement : MonoBehaviour
     {
 
     }
-
-    //void Collision()
-    //{
-
-
-
-
-    //    #region Ground Collision
-    //    if (_grounded || falling) {
-
-            
-
-
-
-    //        // No were not connected, no yet anyway
-    //        bool bGaConnected = false;
-    //        bool bGbConnected = false;
-
-
-
-    //        // If anything collides were on the floor
-    //        if (hGa.collider || hGb.collider)
-    //        {
-           
-    //            _jumping = false;
-    //            _grounded = true;
-    //            falling = false;
-			
-    //            //// Store out the sensor values
-    //            if (hGa.collider != null) { bGaConnected = true; SensorGroundA = hGa.point; }
-    //            if (hGb.collider != null) { bGbConnected = true; SensorGroundB = hGb.point; }
-
-    //            // Fixes a weird bug where a and b although the same height seem to give different distances
-    //            if (hGa.distance > hGb.distance)
-    //            {
-    //                transform.Translate(Vector3.down * (hGa.distance - box.height / 2)); // Places the transform on the ground
-
-    //            }
-    //            else if (hGa.distance < hGb.distance)
-    //            {
-    //                transform.Translate(Vector3.down * (hGb.distance - box.height / 2)); // Places the transform on the ground
-    //            }
-
-    //            _hGaNormal = hGa.normal;
-    //            _hGbNormal = hGb.normal;
-
-    //            transform.up = hGa.normal;
-
-
-    //            velocity = new Vector2(velocity.x, 0);
-
-    //        }
-    //        else
-    //        {
-    //            transform.up = new Vector3(0, 0, 0);
-    //            _grounded = false;
-    //        }
-
-
-    //        // Edge detection for the Balancing Animations
-    //        if (!bGaConnected && bGbConnected && YRotation == FACING_RIGHT && !_jumping)         // We are facing right and edge is infront of us
-    //        {
-    //            _edgeInfront = true;
-    //            _edgeBehind = false;
-    //            _edgeDistance = Mathf.Abs(((SensorGroundA.x - hGb.point.x) / 2));
-    //        }
-    //        else if (!bGaConnected && bGbConnected && YRotation == FACING_LEFT && !_jumping)    // We are facing right and the ledge is behind us
-    //        {
-    //            _edgeInfront = false;
-    //            _edgeBehind = true;
-    //            _edgeDistance = Mathf.Abs(((SensorGroundA.x - hGb.point.x) / 2));
-    //        }
-    //        else if (bGaConnected && !bGbConnected && YRotation == FACING_LEFT && !_jumping)   // We are facing left and the ledge is infront of us
-    //        {
-    //            _edgeInfront = true;
-    //            _edgeBehind = false;
-    //            _edgeDistance = Mathf.Abs(((SensorGroundB.x - hGa.point.x) / 2));
-    //        }
-    //        else if (bGaConnected && !bGbConnected && YRotation == FACING_RIGHT && !_jumping)  // We are facing right and the ledge is behind us
-    //        {
-    //            _edgeInfront = false;
-    //            _edgeBehind = true;
-    //            _edgeDistance = Mathf.Abs(((SensorGroundB.x - hGa.point.x) / 2));
-    //        }
-    //        else
-    //        {
-    //            _edgeInfront = false;
-    //            _edgeBehind = false;
-    //        }
-    //    }
-    //    #endregion
-
-    //    #region Side Collision
-    //    vMaStart = new Vector3(box.center.x, box.center.y, transform.position.z);
-    //    Debug.DrawRay(vMaStart, Vector2.right * 11f, Color.cyan, 2f);
-    //    RaycastHit2D hMa = Physics2D.Raycast(vMaStart, Vector2.right, 11f);
-
-    //    vMbStart = new Vector3(box.center.x, box.center.y, transform.position.z);
-    //    Debug.DrawRay(vMbStart, -Vector2.right * 11f, Color.cyan, 2f);
-    //    RaycastHit2D hMb = Physics2D.Raycast(vMbStart, -Vector2.right, 11f);
-
-    //    if (hMa.collider)
-    //    {
-    //        DoCollisionCheck(hMa);
-    //    }
-    //    if (hMb.collider)
-    //    {
-    //        DoCollisionCheck(hMb);
-    //    }
-    //    #endregion
-
-    //    #region Top Collision
-    //    Debug.DrawRay(vGaStart, Vector3.up * 16f, Color.cyan, 2f);
-    //    RaycastHit2D hTa = Physics2D.Raycast(vGaStart, Vector2.up, 16f);
-
-    //    Debug.DrawRay(vGbStart, Vector3.up * 16f, Color.cyan, 2f);
-    //    RaycastHit2D hTb = Physics2D.Raycast(vGbStart, Vector2.up, 16f);
-
-    //    if (hTa.collider)
-    //    {
-    //        DoCollisionCheck(hTa);
-    //    }
-    //    if (hTb.collider)
-    //    {
-    //        DoCollisionCheck(hTb);
-    //    }
-    //    #endregion
-
-    //    #region Bottom Collision
-    //    Debug.DrawRay(vGaStart, -Vector2.up * 16f, Color.cyan, 2f);
-    //    RaycastHit2D hBa = Physics2D.Raycast(vGaStart, -Vector2.up, 16f);
-
-    //    Debug.DrawRay(vGbStart, -Vector2.up * 16f, Color.cyan, 2f);
-    //    RaycastHit2D hBb = Physics2D.Raycast(vGbStart, -Vector2.up, 16f);
-
-    //    if (hBa.collider)
-    //    {
-    //        DoCollisionCheck(hBa);
-    //    }
-    //    if (hBb.collider)
-    //    {
-    //        DoCollisionCheck(hBb);
-    //    }
-    //    #endregion
-
-    //    _hitWall = false;
-
-    //}
 
     void DoCollisionCheck(RaycastHit2D _rc)
     {
@@ -932,7 +797,12 @@ public abstract class BasePlayerMovement : MonoBehaviour
                 return "Super Mode is " + _isSuper;
             case "addrings":       // Adds 50 Rings to the player        
                 RINGS = RINGS + 50;
+                Player_PlaySound("Sound/SFX/Level Objects/Ring");
                 return "Added 50 Rings";
+            case "addlife":
+                LIVES = LIVES + 1;
+                Player_PlaySound("Sound/BGM/1Up");
+                return "Added 1 Life";
             case "gravity":         // Changes Gravity Debug Mode
                 if (args[1] == "on") { _debugNoGravity = false; }
                 if (args[1] == "off") { _debugNoGravity = true; }
