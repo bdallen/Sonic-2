@@ -12,16 +12,20 @@ public class Badnik : MonoBehaviour {
 	protected float _currentSpeed;
 	// Use this for initialization
 	public void Awake () {
+		_animator = GetComponent<Animator>();
 		_startlocation = this.transform.position;
 		switch (_badnikType) {
 		case "Masher":
 			_currentSpeed = 5.0f;
+			_animator.Play("Masher");
 		break;
 		case "Buzzer":
 			_currentSpeed = 1.0f;
+			_animator.Play("Buzzer");
 		break;
 		case "Coconuts":
 			_currentSpeed = -5.0f;
+			_animator.Play("Coconuts");
 		break;
 		}
 	}
