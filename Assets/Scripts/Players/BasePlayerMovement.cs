@@ -196,6 +196,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     {
         GUILayout.Label("Current State: " + _state.ToString());
         GUILayout.Label("Current Velocity: " + velocity.ToString());
+        GUILayout.Label("Gnd Sensor Points: C-" + SensorCG.y.ToString() + " D-" + SensorDG.y.ToString());
 
         // Debug Buttons
         if (GUI.Button(new Rect(180, 20, 100, 25), "Toggle Gravity"))
@@ -381,7 +382,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     /// </summary>
     void Player_JumpHeight()
     {
-        if (_jumping)                                                            // Are we jumping?
+        if (_state == Char_State.JUMPING)                                           // Are we jumping?
         {
             _midJumpForce = AIR_MID_JUMP_FORCE;                                    // Set Mid Jump Force
             if (_inWater) { _midJumpForce = WATER_MID_JUMP_FORCE; }                // Change Mid Jump Force if in Water
@@ -390,12 +391,11 @@ public abstract class BasePlayerMovement : MonoBehaviour
                 if (velocity.y > _midJumpForce)
                 {
                     velocity = new Vector2(velocity.x, _midJumpForce);
-                    _state = Char_State.IN_AIR;
                 }
             }
             else
             {
-                if (velocity.y >= _maxJumpForce) { Player_CheckGoSuper(); _state = Char_State.IN_AIR; }      // At the height of the jump - Test for Super and also say that we are in the air.
+                if (velocity.y <= 0) { Player_CheckGoSuper(); }      // At the height of the jump - Test for Super and also say that we are in the air.
             }
         }
     }
@@ -647,9 +647,17 @@ public abstract class BasePlayerMovement : MonoBehaviour
             if (hCG.collider != null) { bCGConnected = true; SensorCG = hCG.point; CDistance = hCG.distance; }
             if (hDG.collider != null) { bDGConnected = true; SensorDG = hDG.point; DDistance = hDG.distance; }
 
-            if (_state == Char_State.IN_AIR)
+            if (_state == Char_State.IN_AIR || _state == Char_State.JUMPING && velocity.y < 0)
             {
-                
+                if(CDistance == DDistance)
+                {
+                    if (groundAqDistance > CDistance)
+                    {
+                        velocity = new Vector2(velocity.x, 0f);
+                        transform.Translate(Vector3.down * (CDistance - box.height / 2)); // Places the transform on the ground
+                        _state = Char_State.ON_GROUND;
+                    }
+                }
             }
             else if (_state == Char_State.ON_GROUND)
             {

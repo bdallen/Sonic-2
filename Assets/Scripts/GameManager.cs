@@ -124,7 +124,15 @@ public class GameManager: MonoBehaviour {
     }
 
     public string Debug(params string[] args)
-    {
-        return "Debug Mode";
+    {      
+        if (args.Length == 0) { return "Command player not found"; }
+        switch (args[0])
+        {
+            case "fps":
+                if (args[1] == "on") { showFPS = true; }
+                if (args[1] == "off") { showFPS = false; }
+                return "Framerate Display is " + showFPS;
+        }
+        return "";
     }
 }

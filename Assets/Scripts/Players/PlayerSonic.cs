@@ -75,7 +75,7 @@ public class PlayerSonic : BasePlayerMovement
     public override void UpdateCharacterAnimation()
     {
         // Walking to Running Transition State
-        if (Mathf.Abs(_currentSpeed) > 0.01f && !_jumping && !_dead)
+        if (Mathf.Abs(_currentSpeed) > 0.01f && _state != Char_State.JUMPING && !_dead)
         {
             if (Mathf.Abs(_currentSpeed) == 6f)
             {
@@ -92,7 +92,7 @@ public class PlayerSonic : BasePlayerMovement
         }
 
         // Balancing on Forward Ledge
-        else if (!_jumping && _edgeInfront  && _edgeDistance < 6f && _edgeDistance > 4f && _currentSpeed == 0f)
+        else if (_state == Char_State.ON_GROUND && _edgeInfront  && _edgeDistance < 6f && _edgeDistance > 4f && _currentSpeed == 0f)
         {
             _animator.Play(SonAni_Balance);
             _animator.speed = 2f;
@@ -100,7 +100,7 @@ public class PlayerSonic : BasePlayerMovement
         }
 
         // Balancing on Baward Ledge
-        else if (!_jumping && _edgeBehind && _edgeDistance < 6f && _currentSpeed == 0f)
+        else if (_state == Char_State.ON_GROUND && _edgeBehind && _edgeDistance < 6f && _currentSpeed == 0f)
         {
             _animator.Play(SonAni_Balance2);
             _animator.speed = 2f;
@@ -108,7 +108,7 @@ public class PlayerSonic : BasePlayerMovement
         }
 
         // Balancing on Forward Ledge (About to Fall Off)
-        else if (!_jumping && _edgeInfront && _edgeDistance < 4f && _currentSpeed == 0f)
+        else if (_state == Char_State.ON_GROUND && _edgeInfront && _edgeDistance < 4f && _currentSpeed == 0f)
         {
             _animator.Play(SonAni_Balance3);
             _animator.speed = 6f;
@@ -116,7 +116,7 @@ public class PlayerSonic : BasePlayerMovement
         }
         
         // Jumping
-        else if (_jumping && !_dead)
+        else if (_state == Char_State.JUMPING && !_dead)
         {
             _animator.Play(SonAni_Jump);
             _animator.speed = 1f;
