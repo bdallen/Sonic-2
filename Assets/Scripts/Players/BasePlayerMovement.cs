@@ -66,8 +66,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     private LayerMask lmGround;
     private LayerMask lmRoof;
     private LayerMask lmWalls;
-    private Vector2 _hGaNormal;
-    private Vector2 _hGbNormal;
+    private Vector2 _normal;
 
     #endregion
 
@@ -196,7 +195,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
         GUILayout.Label("Current State: " + _state.ToString());
         GUILayout.Label("Current Velocity: " + velocity.ToString());
         GUILayout.Label("Gnd Sensor Points: C-" + SensorCG.y.ToString() + " D-" + SensorDG.y.ToString());
-
+        GUILayout.Label("Ground Normal: " + _normal.ToString());
         // Debug Buttons
         if (GUI.Button(new Rect(180, 20, 100, 25), "Toggle Gravity"))
         { _debugNoGravity = !_debugNoGravity; }
@@ -654,11 +653,13 @@ public abstract class BasePlayerMovement : MonoBehaviour
                     {
                         velocity = new Vector2(velocity.x, 0f);
                         transform.Translate(Vector3.down * (CDistance - box.height / 2)); // Places the transform on the ground
+                        _normal = hCG.normal;
                     }
                     else
                     {
                         velocity = new Vector2(velocity.x, 0f);
                         transform.Translate(Vector3.down * (DDistance - box.height / 2)); // Places the transform on the ground
+                        _normal = hDG.normal;
                     }
                     _state = Char_State.ON_GROUND;
                 }
@@ -669,13 +670,18 @@ public abstract class BasePlayerMovement : MonoBehaviour
                 {
                     velocity = new Vector2(velocity.x, 0f);
                     transform.Translate(Vector3.down * (CDistance - box.height / 2)); // Places the transform on the ground
+                    _normal = hCG.normal;
                 }
                 else
                 {
                     velocity = new Vector2(velocity.x, 0f);
                     transform.Translate(Vector3.down * (DDistance - box.height / 2)); // Places the transform on the ground
+                    _normal = hDG.normal;
                 }
-                _state = Char_State.ON_GROUND;                
+                _state = Char_State.ON_GROUND;
+
+                Vector3 objectForward = transform.TransformDirection(Vector3.forward);
+                transform.rotation = Quaternion.LookRotation(objectForward, _normal);
 
                 // Process Edge Detection
                 EdgeDetection(bCGConnected, bDGConnected, hCG, hDG);
