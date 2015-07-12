@@ -8,7 +8,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
     protected enum Char_State
     {
         IN_AIR = 0,
-        ON_GROUND = 1
+        ON_GROUND = 1,
+        JUMPING = 2
     }
 
     #region Constants
@@ -26,6 +27,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
     #region Private Variables
     // Game Manager
     private GameManager _gm;
+
+    // Player Debugging
+    private Rect rectDebugWindow = new Rect(300, 10, 300, 240);
 
     // Player Dynamics
     private float GRAVITY = 0.21875f;
@@ -85,6 +89,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     protected float WATER_MID_JUMP_FORCE;
 
     // Player Debug States
+    protected bool _debugStats = true;
     protected bool _debugNoGravity = true;
 
     // Player Information
@@ -177,8 +182,24 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
     void OnGUI()
     {
-        GUILayout.Label("Velocity: " + velocity.ToString());
+        if (_debugStats)
+        {
+            GUI.Window(0, rectDebugWindow, DebugWindow, "Player Debug Information");
+        }
+    }
 
+    /// <summary>
+    /// Player Debugging Window
+    /// </summary>
+    /// <param name="windowID"></param>
+    void DebugWindow(int windowID)
+    {
+        GUILayout.Label("Current State: " + _state.ToString());
+        GUILayout.Label("Current Velocity: " + velocity.ToString());
+
+        // Debug Buttons
+        if (GUI.Button(new Rect(180, 20, 100, 25), "Toggle Gravity"))
+        { _debugNoGravity = !_debugNoGravity; }
     }
     
 
@@ -215,17 +236,17 @@ public abstract class BasePlayerMovement : MonoBehaviour
         //offsetTableEntry.w Obj01_MdRoll			; 4 - rolling
         //offsetTableEntry.w Obj01_MdJump			; 6 - jumping
 
-        if (_grounded && !_rolling)
+        if (_state == Char_State.ON_GROUND && !_rolling)
         {
             Obj01_MdNormalChecks();
         }
 
-        if (!_grounded && !_jumping)
+        if (_state == Char_State.IN_AIR)
         {
             Obj01_MdAir();
         }
 
-        if (_jumping)
+        if (_state == Char_State.JUMPING)
         {
             Obj01_MdJump();
         }
@@ -347,8 +368,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
             _maxJumpForce = AIR_MAX_JUMP_FORCE;                        // Set Max Jump Force
             if (_isSuper) { }                                          // TODO: If Super - Change Max Force
             if (_inWater) { _maxJumpForce = WATER_MAX_JUMP_FORCE; }    // In Water - Change Max Force
-                                                                
-            _jumping = true;
+
+            _state = Char_State.JUMPING;
             _grounded = false;
             velocity = new Vector2(velocity.x, _maxJumpForce);
             Player_PlaySound("Sound/SFX/Player/Jump");
@@ -364,14 +385,17 @@ public abstract class BasePlayerMovement : MonoBehaviour
         {
             _midJumpForce = AIR_MID_JUMP_FORCE;                                    // Set Mid Jump Force
             if (_inWater) { _midJumpForce = WATER_MID_JUMP_FORCE; }                // Change Mid Jump Force if in Water
-            if (Input.GetButtonUp("Jump"))                                      // Button Released means we want a Mid Jump
+            if (Input.GetButtonUp("Jump"))                                        // Button Released means we want a Mid Jump
             {
                 if (velocity.y > _midJumpForce)
+                {
                     velocity = new Vector2(velocity.x, _midJumpForce);
+                    _state = Char_State.IN_AIR;
+                }
             }
             else
             {
-                if (velocity.y >= _maxJumpForce) { Player_CheckGoSuper(); _jumping = false; }      // At the height of the jump - Test for Super and also turn off the jumping flag.
+                if (velocity.y >= _maxJumpForce) { Player_CheckGoSuper(); _state = Char_State.IN_AIR; }      // At the height of the jump - Test for Super and also say that we are in the air.
             }
         }
     }
@@ -623,9 +647,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
             if (hCG.collider != null) { bCGConnected = true; SensorCG = hCG.point; CDistance = hCG.distance; }
             if (hDG.collider != null) { bDGConnected = true; SensorDG = hDG.point; DDistance = hDG.distance; }
 
-            if (_state == Char_State.IN_AIR && !_jumping)
+            if (_state == Char_State.IN_AIR)
             {
-
+                
             }
             else if (_state == Char_State.ON_GROUND)
             {
@@ -634,44 +658,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
             }
 
 
-        }
-
-
-        if (_state == Char_State.IN_AIR)
-        {
-            _grounded = false;
-
-            if (hCG.collider || hDG.collider)
-            {
-                // No were not connected, not yet anyway
-                bool bCGConnected = false;
-                bool bDGConnected = false;
-                float CDistance = 0f, DDistance = 0f;
-
-                // Store out the sensor values
-                if (hCG.collider != null) { bCGConnected = true; SensorCG = hCG.point; CDistance = hCG.distance; }
-                if (hDG.collider != null) { bDGConnected = true; SensorDG = hDG.point; DDistance = hDG.distance; }
-
-            }
-        }
-        else
-        {
-
-            _grounded = true;
-
-            // No were not connected, not yet anyway
-            bool bCGConnected = false;
-            bool bDGConnected = false;
-            float CDistance = 0f, DDistance = 0f;
-
-            // Store out the sensor values
-            if (hCG.collider != null) { bCGConnected = true; SensorCG = hCG.point; CDistance = hCG.distance; }
-            if (hDG.collider != null) { bDGConnected = true; SensorDG = hDG.point; DDistance = hDG.distance; }
-
-            // Process Edge Detection
-            EdgeDetection(bCGConnected, bDGConnected, hCG, hDG);
-        }
-        
+        }        
     }
 
     void EdgeDetection(bool bCGConnected, bool bDGConnected, RaycastHit2D hCG, RaycastHit2D hDG)
@@ -922,6 +909,10 @@ public abstract class BasePlayerMovement : MonoBehaviour
         if (args.Length == 0) { return "Command player not found"; }
         switch (args[0])
         {
+            case "debug":
+                if (args[1] == "on") {_debugStats = true; }
+                if (args[1] == "off") { _debugStats = false; }
+                return "Player Debugging is " + _debugStats;
             case "super":           // Changes player Super Mode
                 if (args[1] == "on") {_isSuper = true; }
                 if (args[1] == "off") { _isSuper = false; }
