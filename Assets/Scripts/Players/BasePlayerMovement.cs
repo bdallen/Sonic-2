@@ -392,7 +392,12 @@ public abstract class BasePlayerMovement : MonoBehaviour
             }
             else
             {
-                if (velocity.y <= 0) { Player_CheckGoSuper(); }                 // At the height of the jump - Test for Super and also say that we are in the air.
+                if (velocity.y <= 0)
+                {
+                    Player_CheckGoSuper();                                                                  // At the height of the jump - Test for Super and also say that we are in the air.
+                    Vector3 objectForward = transform.TransformDirection(Vector3.forward);                  // Set the Normal back to standard as we want gravity to be down
+                    transform.rotation = Quaternion.LookRotation(objectForward, new Vector2(0f,1f));
+                }                 
             }
         }
     }
@@ -576,7 +581,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
         // Were falling
         if (velocity.y < 0f)
         {
-            falling = true;
+            Vector3 objectForward = transform.TransformDirection(Vector3.forward);                  // Set the Normal back to standard as we want gravity to be down
+            transform.rotation = Quaternion.LookRotation(objectForward, new Vector2(0f, 1f));
         }
 
     }
@@ -617,21 +623,21 @@ public abstract class BasePlayerMovement : MonoBehaviour
         // Make the ray vectors
         Ray2D rA = new Ray2D(vAStart, Vector2.up);
         Ray2D rB = new Ray2D(vBStart, Vector2.up);
-        Ray2D rCG = new Ray2D(vCStart, -Vector2.up);
-        Ray2D rDG = new Ray2D(vDStart, -Vector2.up);
+        Ray2D rCG = new Ray2D(vCStart, -transform.up);
+        Ray2D rDG = new Ray2D(vDStart, -transform.up);
 
         // Draw Debug Raycasts
         //Debug.DrawRay(vAStart, Vector2.up * distanceABCD, Color.green, 2f);
         //Debug.DrawRay(vBStart, Vector2.up * distanceABCD, Color.green, 2f);
-        Debug.DrawRay(vCStart, -Vector2.up * distanceABCD, Color.red, 2f);
-        Debug.DrawRay(vDStart, -Vector2.up * distanceABCD, Color.blue, 2f);
+        Debug.DrawRay(vCStart, -transform.up * distanceABCD, Color.red, 2f);
+        Debug.DrawRay(vDStart, -transform.up * distanceABCD, Color.blue, 2f);
 
         RaycastHit2D hA, hB, hC, hD, hCG, hDG;
 
         hA = Physics2D.Raycast(vAStart, Vector2.up, distanceABCD);
         hB = Physics2D.Raycast(vBStart, Vector2.up, distanceABCD);
-        hCG = Physics2D.Raycast(vCStart, -Vector2.up, distanceABCD, 1 << lmGround);
-        hDG = Physics2D.Raycast(vDStart, -Vector2.up, distanceABCD, 1 << lmGround);
+        hCG = Physics2D.Raycast(vCStart, -transform.up, distanceABCD, 1 << lmGround);
+        hDG = Physics2D.Raycast(vDStart, -transform.up, distanceABCD, 1 << lmGround);
 
         if (hCG.collider || hDG.collider)
         {
