@@ -11,9 +11,18 @@ public class PlayerSonic : BasePlayerMovement
     private const float AirMaxJumpForce = 6.5f;
     private const float AirMidJumpForce = 4f;
     private const float Acceleration = 0.046875f;
+    private const float Deceleration = 0.5f;
     private const float Friction = 0.046875f;
     private const float TopSpeed = 6f;
+    private const float Air_Acceleration = 0.1875f;
 
+    // Super Sonic Physics Properties
+    private const float SuperAirMaxJumpForce = 8f;
+    private const float SuperAcceleration = 0.1875f;
+    private const float SuperDeceleration = 1f;
+    private const float SuperTopSpeed = 10f;
+    private const float Super_Air_Acceleration = 0.375f;
+    
     // Player In Water Physics Properties
     private const float WaterMaxJumpForce = 3.5f;
     private const float WaterMidJumpForce = 2f;
@@ -52,7 +61,19 @@ public class PlayerSonic : BasePlayerMovement
         _PlayerCharacter = PLAYER_ID;
 
         // Setup the Physics Properties
+        ACCELERATION = Acceleration;
+        SUPER_ACCELERATION = SuperAcceleration;
+
+        DECELERATION = Deceleration;
+        SUPER_DECELERATION = SuperDeceleration;
+
+        TOP_SPEED = TopSpeed;
+        SUPER_TOP_SPEED = SuperTopSpeed;
+
         AIR_MAX_JUMP_FORCE = AirMaxJumpForce;
+        SUPER_AIR_MAX_JUMP_FORCE = SuperAirMaxJumpForce;
+
+        FRICTION = Friction;
         AIR_MID_JUMP_FORCE = AirMidJumpForce;
         WATER_MAX_JUMP_FORCE = WaterMaxJumpForce;
         WATER_MID_JUMP_FORCE = WaterMidJumpForce;

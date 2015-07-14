@@ -36,17 +36,13 @@ public abstract class BasePlayerMovement : MonoBehaviour
     // Player Dynamics
     private float GRAVITY = 0.21875f;
     private float MAX_FALL_VELOCITY = 16f;
-    private float ACCELERATION = 0.046875f;
-    private float FRICTION = 0.046875f;
-    private float DECELERATION = 0.5f;
-    private float TOP_SPEED = 6f;
     private float KILL_FORCE = 8.853656f;
-
 
     // Player Physics
     private float _maxJumpForce = 0f;
     private float _midJumpForce = 0f;
     private float _topSpeed = 0f;
+    private float _deceleration = 0f;
     private float _acceleration = 0f;
 
     // Player States Section
@@ -87,6 +83,18 @@ public abstract class BasePlayerMovement : MonoBehaviour
     protected float AIR_MID_JUMP_FORCE;
     protected float WATER_MAX_JUMP_FORCE;
     protected float WATER_MID_JUMP_FORCE;
+    protected float AIR_ACCELERATION;
+    protected float ACCELERATION;
+    protected float FRICTION;
+    protected float DECELERATION;
+    protected float TOP_SPEED;
+
+    // Player Super Dynamics
+    protected float SUPER_AIR_MAX_JUMP_FORCE;
+    protected float SUPER_AIR_ACCELERATION;
+    protected float SUPER_ACCELERATION;
+    protected float SUPER_DECELERATION;
+    protected float SUPER_TOP_SPEED;
 
     // Player Debug States
     protected bool _debugStats = true;
@@ -233,7 +241,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
             Obj01_MdNormalChecks();
         }
 
-        if (_state == Char_State.IN_AIR || _state == Char_State.DEAD)
+        if (_state == Char_State.IN_AIR)
         {
             Obj01_MdAir();
         }
@@ -241,6 +249,12 @@ public abstract class BasePlayerMovement : MonoBehaviour
         if (_state == Char_State.JUMPING)
         {
             Obj01_MdJump();
+        }
+
+        // Were dead, just apply gravity, no imput from player needed
+        if (_state == Char_State.DEAD)
+        {
+            ObjectMoveAndFall();
         }
 
 
@@ -357,9 +371,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
         /// When you release the jump button in the air after jumping, the computer checks to see if Sonic is moving upward (i.e. Y speed is negative). If he is, then it checks to see if Y speed is less than -4 (e.g. -5 is "less" than -4). If it is, then Y speed is set to -4. In this way, you can cut your jump short at any time, just by releasing the jump button. If you release the button in the very next step after jumping, Sonic makes the shortest possible jump.
         if (Input.GetButtonDown("Jump") && Input.GetAxis("Vertical") >= 0)
         {
-            _maxJumpForce = AIR_MAX_JUMP_FORCE;                        // Set Max Jump Force
-            if (_isSuper) { }                                          // TODO: If Super - Change Max Force
-            if (_inWater) { _maxJumpForce = WATER_MAX_JUMP_FORCE; }    // In Water - Change Max Force
+            _maxJumpForce = AIR_MAX_JUMP_FORCE;                             // Set Max Jump Force
+            if (_isSuper) { _maxJumpForce = SUPER_AIR_MAX_JUMP_FORCE; }     // If Super change Max Jump Force
+            if (_inWater) { _maxJumpForce = WATER_MAX_JUMP_FORCE; }         // In Water - Change Max Force
 
             _state = Char_State.JUMPING;
             velocity = new Vector2(velocity.x, _maxJumpForce);
@@ -401,6 +415,15 @@ public abstract class BasePlayerMovement : MonoBehaviour
     /// </summary>
     void Player_ChgJumpDir()
     {
+        _acceleration = ACCELERATION;   // Set Accekeration
+        _topSpeed = TOP_SPEED;          // Set Top Speed
+
+        if (_isSuper) // If Super change Attributes
+        {
+            _acceleration = SUPER_ACCELERATION;
+            _topSpeed = SUPER_TOP_SPEED;
+        }     
+
         if (_rolling)
         {
 
@@ -412,26 +435,26 @@ public abstract class BasePlayerMovement : MonoBehaviour
             if (Input.GetAxis("Horizontal") < 0)
             {
 
-                if (_currentSpeed > -TOP_SPEED)
+                if (_currentSpeed > -_topSpeed)
                 {
-                    _currentSpeed = _currentSpeed - ACCELERATION;
+                    _currentSpeed = _currentSpeed - _acceleration;
                 }
                 else
                 {
-                    _currentSpeed = -TOP_SPEED;
+                    _currentSpeed = -_topSpeed;
                 }
                 YRotation = FACING_LEFT;
 
             }
             else if (Input.GetAxis("Horizontal") > 0)
             {
-                if (_currentSpeed < TOP_SPEED)
+                if (_currentSpeed < _topSpeed)
                 {
-                    _currentSpeed = _currentSpeed + ACCELERATION;
+                    _currentSpeed = _currentSpeed + _acceleration;
                 }
                 else
                 {
-                    _currentSpeed = TOP_SPEED;
+                    _currentSpeed = _topSpeed;
                 }
                 YRotation = FACING_RIGHT;
             }
@@ -494,27 +517,38 @@ public abstract class BasePlayerMovement : MonoBehaviour
 	void Player_Move()
 	{
 
+        _acceleration = ACCELERATION;   // Set Accekeration
+        _deceleration = DECELERATION;   // Set Deceleration
+        _topSpeed = TOP_SPEED;          // Set Top Speed
+
+        if (_isSuper) // If Super change Attributes
+        {
+            _acceleration = SUPER_ACCELERATION;
+            _deceleration = SUPER_DECELERATION;
+            _topSpeed = SUPER_TOP_SPEED;
+        }     
+
         if (Input.GetAxis("Horizontal") < 0)
         {
             // Player_MoveLeft      
             if (_currentSpeed > 0f)
             {
-                _currentSpeed = _currentSpeed - DECELERATION;
+                _currentSpeed = _currentSpeed - _deceleration;
 
                 // Play Braking Sound
-                if (YRotation == FACING_RIGHT && _currentSpeed < -4.5f && _jumping == false)
+                if (YRotation == FACING_RIGHT && _currentSpeed < -4.5f && _state == Char_State.ON_GROUND)
                 { Player_PlaySound("Sound/SFX/Player/Brake"); }
 
             }
             else
             {
-                if (_currentSpeed > -TOP_SPEED)
+                if (_currentSpeed > -_topSpeed)
                 {
-                    _currentSpeed = _currentSpeed - ACCELERATION;
+                    _currentSpeed = _currentSpeed - _acceleration;
                 }
                 else
                 {
-                    _currentSpeed = -TOP_SPEED;
+                    _currentSpeed = -_topSpeed;
                 }
             }
 
@@ -527,22 +561,22 @@ public abstract class BasePlayerMovement : MonoBehaviour
             // Player_MoveRight
 			if (_currentSpeed < 0f) 
             {
-                _currentSpeed = _currentSpeed + DECELERATION;
+                _currentSpeed = _currentSpeed + _deceleration;
 
                 // Play braking Sound
-                if (YRotation == FACING_LEFT && _currentSpeed > 4.5f && _jumping == false)
+                if (YRotation == FACING_LEFT && _currentSpeed > 4.5f && _state == Char_State.ON_GROUND)
                 { Player_PlaySound("Sound/SFX/Player/Brake"); }
 
 			} 
             else 
             {
-				if (_currentSpeed < TOP_SPEED)
+				if (_currentSpeed < _topSpeed)
 				{
-					_currentSpeed = _currentSpeed + ACCELERATION;
+					_currentSpeed = _currentSpeed + _acceleration;
 				}
                 else
                 {
-					_currentSpeed = TOP_SPEED;
+					_currentSpeed = _topSpeed;
 				}
 			}
 
