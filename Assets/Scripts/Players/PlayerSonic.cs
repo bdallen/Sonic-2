@@ -21,9 +21,6 @@ public class PlayerSonic : BasePlayerMovement
     private const float WaterFriction = 0.046875f;
     private const float WaterTopSpeed = 6f;
 
-
-
-
     // Animation States
     private const string SonAni_Stand = "SonAni_Stand";
     private const string SonAni_Walk = "SonAni_Walk";
@@ -75,7 +72,7 @@ public class PlayerSonic : BasePlayerMovement
     public override void UpdateCharacterAnimation()
     {
         // Walking to Running Transition State
-        if (Mathf.Abs(_currentSpeed) > 0.01f && _state != Char_State.JUMPING && !_dead)
+        if (Mathf.Abs(_currentSpeed) > 0.01f && _state != Char_State.JUMPING && _state != Char_State.DEAD)
         {
             if (Mathf.Abs(_currentSpeed) == 6f)
             {
@@ -116,7 +113,7 @@ public class PlayerSonic : BasePlayerMovement
         }
         
         // Jumping
-        else if (_state == Char_State.JUMPING && !_dead)
+        else if (_state == Char_State.JUMPING && _state != Char_State.DEAD)
         {
             _animator.Play(SonAni_Jump);
             _animator.speed = 1f;
@@ -124,7 +121,7 @@ public class PlayerSonic : BasePlayerMovement
         }
 
         // Performing a Spin Dash
-        else if (_spinDash && !_dead)
+        else if (_spinDash && _state != Char_State.DEAD)
         {
             // Sub Animator that controlls the dust
             _subAnimator.Play("SonicSpinDashDust");
@@ -132,7 +129,7 @@ public class PlayerSonic : BasePlayerMovement
             ResetIdleState();
         }
 
-        else if (_dead)
+        else if (_state == Char_State.DEAD)
         {
             _animator.Play(SonAni_Dead);
         }

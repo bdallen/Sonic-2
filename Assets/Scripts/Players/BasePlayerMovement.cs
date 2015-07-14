@@ -9,7 +9,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
     {
         IN_AIR = 0,
         ON_GROUND = 1,
-        JUMPING = 2
+        JUMPING = 2,
+        DEAD = 3
     }
 
     #region Constants
@@ -29,7 +30,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
     private GameManager _gm;
 
     // Player Debugging
-    private Rect rectDebugWindow = new Rect(300, 10, 300, 240);
+    private Rect rectDebugWindow = new Rect(400, 10, 500, 200);
+    private string _dbgCurrentRoutine;
 
     // Player Dynamics
     private float GRAVITY = 0.21875f;
@@ -76,7 +78,6 @@ public abstract class BasePlayerMovement : MonoBehaviour
     protected Animator _subAnimator;
     protected AudioSource _audioSource;
     protected SpriteRenderer _spRenderer;
-    protected int _gameTime;
 
     // Debugging
     protected ConsoleLog _log;
@@ -118,12 +119,6 @@ public abstract class BasePlayerMovement : MonoBehaviour
     public abstract void UpdateCharacterAnimation();    // Updates specific Character Animations
     public abstract void CharacterAwake();              // Perform Awake on the Character Class
     #endregion
-
-    /// <summary>
-    /// Returns the Current Game Time
-    /// </summary>
-    public int PlayTime
-    { get { return _gameTime; } }
 
     public string PlayerCharacter
     { get { return _PlayerCharacter; } }
@@ -193,11 +188,12 @@ public abstract class BasePlayerMovement : MonoBehaviour
     void DebugWindow(int windowID)
     {
         GUILayout.Label("Current State: " + _state.ToString());
-        GUILayout.Label("Current Velocity: " + velocity.ToString());
-        GUILayout.Label("Gnd Sensor Points: C-" + SensorCG.y.ToString() + " D-" + SensorDG.y.ToString());
-        GUILayout.Label("Ground Normal: " + _normal.ToString());
+        GUILayout.Label("Current Routine: " + _dbgCurrentRoutine);
+        GUILayout.Label("Current Velocity Vectors: " + velocity.ToString());
+        GUILayout.Label("In Water: " + _inWater.ToString());
+        GUILayout.Label("Ground Angle: " + Vector2.Angle(Vector2.up, _normal).ToString());
         // Debug Buttons
-        if (GUI.Button(new Rect(180, 20, 100, 25), "Toggle Gravity"))
+        if (GUI.Button(new Rect(370, 20, 100, 25), "Toggle Gravity"))
         { _debugNoGravity = !_debugNoGravity; }
     }
     
@@ -207,9 +203,6 @@ public abstract class BasePlayerMovement : MonoBehaviour
     /// </summary>
     void Update()
     {
-        // Update Game Time and counters
-        _gameTime = (int)Time.timeSinceLevelLoad;
-
         Obj01_Control();
         
         if (YRotation == FACING_LEFT)
@@ -240,7 +233,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
             Obj01_MdNormalChecks();
         }
 
-        if (_state == Char_State.IN_AIR)
+        if (_state == Char_State.IN_AIR || _state == Char_State.DEAD)
         {
             Obj01_MdAir();
         }
@@ -277,7 +270,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
         //jsr	(ObjectMove).l
         //bsr.w	AnglePos
         //bsr.w	Sonic_SlopeRepel
-
+        _dbgCurrentRoutine = "MdNormal";
                       
 
         Player_Jump();              //bsr.w Sonic_Jump
@@ -292,6 +285,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
     void Obj01_MdAir()
     {
+        _dbgCurrentRoutine = "MdAir";
         Player_JumpHeight();
         Player_ChgJumpDir();
         Player_LevelBound();
@@ -305,12 +299,12 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
         ObjectMoveAndFall();
         Player_DoLevelCollision();
-        //Collision();
         
     }
 
     void Obj01_MdJump()
     {
+        _dbgCurrentRoutine = "MdJump";
         Player_JumpHeight();
         Player_ChgJumpDir();
         Player_LevelBound();
@@ -324,7 +318,6 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
         ObjectMoveAndFall();
         Player_DoLevelCollision();
-        //Collision();
 
     }
 
@@ -473,7 +466,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
         }
 
         // Check the Right Bounds of the player
-        if (transform.position.y - (box.height / 2) <= _gm.bottomBound.position.y && !_dead)
+        if (transform.position.y - (box.height / 2) <= _gm.bottomBound.position.y && _state != Char_State.DEAD)
         {
             KillCharacter();        // Player dies when they fall out of bounds!
         }
@@ -485,13 +478,11 @@ public abstract class BasePlayerMovement : MonoBehaviour
     /// </summary>
     void KillCharacter()
     {
-        // Log Status
-        _log.Log(_gameTime.ToString() + ": Player Died");
-
         // TODO: Lock Controls
-        _gm.SetCamFollowing = false;   // Camera is Not to follow movements
+        _gm.SetCamFollowing = false;    // Camera is Not to follow movements
 
-        _dead = true;
+        _state = Char_State.DEAD;       // Set the DEAD Flag
+
         _currentSpeed = 0;
         velocity = new Vector2(0, KILL_FORCE);
 
@@ -695,7 +686,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
         }
         else
         {
-            if (_state != Char_State.JUMPING) { _state = Char_State.IN_AIR; }
+            if (_state != Char_State.JUMPING && _state != Char_State.DEAD) { _state = Char_State.IN_AIR; }   // If were not jumping or colliding with the ground, were possibly in the AIR........
         }
     }
 
@@ -731,11 +722,6 @@ public abstract class BasePlayerMovement : MonoBehaviour
             _edgeInfront = false;
             _edgeBehind = false;
         }
-    }
-
-    void Player_GetGround()
-    {
-
     }
 
     void DoCollisionCheck(RaycastHit2D _rc)

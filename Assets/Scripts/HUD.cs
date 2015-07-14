@@ -6,6 +6,7 @@ public class HUD : MonoBehaviour
 
     #region Private
     BasePlayerMovement _bpm;
+    GameManager _gm;
     PlayerSonic _pSonic;
     TextMesh _livesText;
     TextMesh _ringsText;
@@ -18,6 +19,7 @@ public class HUD : MonoBehaviour
 
     // Use this for initialization
 	void Start () {
+        _gm = GameObject.Find("_GameManager").GetComponent<GameManager>();
         _bpm = GameObject.Find("Player").GetComponent<BasePlayerMovement>();
         _livesText = GameObject.Find("LivesText").GetComponent<TextMesh>();
         _ringsText = GameObject.Find("Rings").GetComponent<TextMesh>();
@@ -62,8 +64,8 @@ public class HUD : MonoBehaviour
     {
        
         // Run a Modulus and Remainder on the Minutes and Seconds as Playtime is in Total Seconds
-        int minutes = _bpm.PlayTime / 60;
-        int seconds = _bpm.PlayTime % 60;
+        int minutes = _gm.PlayTime / 60;
+        int seconds = _gm.PlayTime % 60;
 
         // Update the Text Objects
         _secondsText.text = seconds.ToString("D2");

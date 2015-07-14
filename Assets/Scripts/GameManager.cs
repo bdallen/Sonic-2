@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GameManager: MonoBehaviour {
+public class GameManager: MonoBehaviour
+{
 
-    public bool showFPS = false;
+    #region Public Declarations
 	public float dampTime = 0.15f;
 	public Transform target;
     public Camera camera;
@@ -11,21 +12,29 @@ public class GameManager: MonoBehaviour {
     public Transform rightBound;
     public Transform bottomBound;
     public ConsoleCommandsRepository _consoleCmd;
-
     public int TARGET_FRAMERATE = 50;
+    #endregion
 
+    #region Private Declarations
+    private bool _showFPS = false;
     private float udeltaTime = 0.0f;
     private float pdeltaTime = 0.0f;
     private float _camHeight = 0;
     private float _camWidth = 0;
     private Vector3 velocity = Vector3.zero;
     private bool _cameraFollowing = true;
+    private int _gameTime;
+    #endregion
 
     /// <summary>
     /// Set the Camera to Follow or Not Follow
     /// </summary>
     public bool SetCamFollowing
     { get { return _cameraFollowing; } set { _cameraFollowing = value; } }
+
+    // Play Time
+    public int PlayTime
+    { get { return _gameTime; } }
 
     // Init
     void Start()
@@ -48,6 +57,9 @@ public class GameManager: MonoBehaviour {
     }
     void Update()
     {
+        // Update Game Time and counters
+        _gameTime = (int)Time.timeSinceLevelLoad;
+
         udeltaTime += (Time.deltaTime - udeltaTime) * 0.1f;
     }
 
@@ -61,7 +73,7 @@ public class GameManager: MonoBehaviour {
 
     void OnGUI()
     {
-        if (showFPS) { FPSDisplay(); }      // If Show FPS is enabled
+        if (_showFPS) { FPSDisplay(); }      // If Show FPS is enabled
     }
 
     /// <summary>
@@ -129,9 +141,9 @@ public class GameManager: MonoBehaviour {
         switch (args[0])
         {
             case "fps":
-                if (args[1] == "on") { showFPS = true; }
-                if (args[1] == "off") { showFPS = false; }
-                return "Framerate Display is " + showFPS;
+                if (args[1] == "on") { _showFPS = true; }
+                if (args[1] == "off") { _showFPS = false; }
+                return "Framerate Display is " + _showFPS;
         }
         return "";
     }
