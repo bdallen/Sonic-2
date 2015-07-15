@@ -10,7 +10,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
         IN_AIR = 0,
         ON_GROUND = 1,
         JUMPING = 2,
-        DEAD = 3
+        DEAD = 3,
+        ROLLING = 4
     }
 
     #region Constants
@@ -44,6 +45,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
     private float _topSpeed = 0f;
     private float _deceleration = 0f;
     private float _acceleration = 0f;
+
+    // Player Ground Physics
+    private float _angle = 0f;
 
     // Player States Section
     private bool _inWater = false;
@@ -101,7 +105,6 @@ public abstract class BasePlayerMovement : MonoBehaviour
     protected bool _debugNoGravity = false;
 
     // Player Information
-    protected Vector2 _angle;
     protected Vector3 axis;
     protected float _currentSpeed = 0f;
     protected bool _dead = false;
@@ -199,7 +202,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
         GUILayout.Label("Current Routine: " + _dbgCurrentRoutine);
         GUILayout.Label("Current Velocity Vectors: " + velocity.ToString());
         GUILayout.Label("In Water: " + _inWater.ToString());
-        GUILayout.Label("Ground Angle: " + Vector2.Angle(Vector2.up, _normal).ToString());
+        GUILayout.Label("Ground Angle: " + _angle);
         // Debug Buttons
         if (GUI.Button(new Rect(370, 20, 100, 25), "Toggle Gravity"))
         { _debugNoGravity = !_debugNoGravity; }
@@ -221,8 +224,6 @@ public abstract class BasePlayerMovement : MonoBehaviour
         {
             transform.localScale = new Vector3(1, 1, 1);
         }
-
-        transform.Translate(velocity.x, velocity.y, 0f);
 
     }
 
@@ -288,10 +289,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
                       
 
         Player_Jump();              //bsr.w Sonic_Jump
-
         Player_Move();              //bsr.w Sonic_Move
-
         Player_LevelBound();        //bsr.w	Sonic_LevelBound
+        ObjectMove();
         Player_DoLevelCollision();
         //Collision();
 
@@ -606,10 +606,16 @@ public abstract class BasePlayerMovement : MonoBehaviour
         // Were falling
         if (velocity.y < 0f)
         {
-            Vector3 objectForward = transform.TransformDirection(Vector3.forward);                  // Set the Normal back to standard as we want gravity to be down
-            transform.rotation = Quaternion.LookRotation(objectForward, new Vector2(0f, 1f));
+
         }
 
+        transform.Translate(velocity.x, velocity.y, 0f);
+
+    }
+
+    void ObjectMove()
+    {
+        transform.Translate(velocity.x, velocity.y, 0f);
     }
 
     void Player_DoLevelCollision()
@@ -648,21 +654,21 @@ public abstract class BasePlayerMovement : MonoBehaviour
         // Make the ray vectors
         Ray2D rA = new Ray2D(vAStart, Vector2.up);
         Ray2D rB = new Ray2D(vBStart, Vector2.up);
-        Ray2D rCG = new Ray2D(vCStart, -transform.up);
-        Ray2D rDG = new Ray2D(vDStart, -transform.up);
+        Ray2D rCG = new Ray2D(vCStart, -Vector2.up);
+        Ray2D rDG = new Ray2D(vDStart, -Vector2.up);
 
         // Draw Debug Raycasts
         //Debug.DrawRay(vAStart, Vector2.up * distanceABCD, Color.green, 2f);
         //Debug.DrawRay(vBStart, Vector2.up * distanceABCD, Color.green, 2f);
-        Debug.DrawRay(vCStart, -transform.up * distanceABCD, Color.red, 2f);
-        Debug.DrawRay(vDStart, -transform.up * distanceABCD, Color.blue, 2f);
+        Debug.DrawRay(vCStart, -Vector2.up * distanceABCD, Color.red, 2f);
+        Debug.DrawRay(vDStart, -Vector2.up * distanceABCD, Color.blue, 2f);
 
         RaycastHit2D hA, hB, hC, hD, hCG, hDG;
 
         hA = Physics2D.Raycast(vAStart, Vector2.up, distanceABCD);
         hB = Physics2D.Raycast(vBStart, Vector2.up, distanceABCD);
-        hCG = Physics2D.Raycast(vCStart, -transform.up, distanceABCD, 1 << lmGround);
-        hDG = Physics2D.Raycast(vDStart, -transform.up, distanceABCD, 1 << lmGround);
+        hCG = Physics2D.Raycast(vCStart, -Vector2.up, distanceABCD, 1 << lmGround);
+        hDG = Physics2D.Raycast(vDStart, -Vector2.up, distanceABCD, 1 << lmGround);
 
         if (hCG.collider || hDG.collider)
         {
@@ -711,8 +717,11 @@ public abstract class BasePlayerMovement : MonoBehaviour
                 }
                 _state = Char_State.ON_GROUND;
 
+                // Rotate the Sprite
                 Vector3 objectForward = transform.TransformDirection(Vector3.forward);
                 transform.rotation = Quaternion.LookRotation(objectForward, _normal);
+
+                _angle = Vector2.Angle(Vector2.up, _normal);        // Calculate and send out the agle of colliders
 
                 // Process Edge Detection
                 EdgeDetection(bCGConnected, bDGConnected, hCG, hDG);
