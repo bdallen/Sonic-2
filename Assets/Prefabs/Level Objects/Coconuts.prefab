@@ -12,6 +12,7 @@ GameObject:
   - 114: {fileID: 11420816}
   - 61: {fileID: 6156066}
   - 82: {fileID: 8265658}
+  - 95: {fileID: 9570154}
   m_Layer: 0
   m_Name: Coconuts
   m_TagString: Untagged
@@ -113,6 +114,23 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
+--- !u!95 &9570154
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 193004}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bfb7db62cd1006e4ba0452d63cd18bb8, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &11420816
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -121,11 +139,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 193004}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12c1076255217d4418a5ee78bbff4248, type: 3}
+  m_Script: {fileID: 11500000, guid: e7674cf3520eac24690a15d98e4fcc86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _eliminated: 0
-  _badnikType: Coconuts
+  _startlocation: {x: 0, y: 0, z: 0}
+  _currentSpeed: 0
 --- !u!212 &21213202
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -179,6 +198,14 @@ Prefab:
       propertyPath: m_PlayOnAwake
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: _badnikType
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: bfb7db62cd1006e4ba0452d63cd18bb8, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 193004}

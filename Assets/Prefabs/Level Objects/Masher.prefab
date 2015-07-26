@@ -123,7 +123,7 @@ Animator:
   m_GameObject: {fileID: 181702}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: d24a6d3845400364da35e5976d76b0ab, type: 2}
+  m_Controller: {fileID: 9100000, guid: 4833f6d6d08129c4089b36bee49f97b2, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -139,11 +139,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 181702}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12c1076255217d4418a5ee78bbff4248, type: 3}
+  m_Script: {fileID: 11500000, guid: cdfda0f4eac01294aad2aaa32acec3a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _eliminated: 0
-  _badnikType: Masher
+  _startlocation: {x: 0, y: 0, z: 0}
+  _currentSpeed: 0
 --- !u!212 &21291302
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -201,6 +202,10 @@ Prefab:
       propertyPath: m_audioClip
       value: 
       objectReference: {fileID: 8300000, guid: a0dc70efe96834f49ba3f7dba54a3ddf, type: 3}
+    - target: {fileID: 0}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 4833f6d6d08129c4089b36bee49f97b2, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 181702}
