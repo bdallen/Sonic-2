@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: cfe409f03d68e8b479d64d3d31d7813e
-timeCreated: 1433648477
+timeCreated: 1440587751
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -143,8 +143,8 @@ TextureImporter:
         y: 39
         width: 29
         height: 30
-      alignment: 9
-      pivot: {x: .517241359, y: .800000012}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ball02
       rect:
@@ -153,8 +153,8 @@ TextureImporter:
         y: 8
         width: 30
         height: 29
-      alignment: 9
-      pivot: {x: .5, y: .827586234}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ball03
       rect:
@@ -163,8 +163,8 @@ TextureImporter:
         y: 259
         width: 29
         height: 30
-      alignment: 9
-      pivot: {x: .517241359, y: .800000012}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ball04
       rect:
@@ -173,8 +173,8 @@ TextureImporter:
         y: 228
         width: 30
         height: 29
-      alignment: 9
-      pivot: {x: .5, y: .827586234}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: ball05
       rect:
@@ -183,8 +183,8 @@ TextureImporter:
         y: 155
         width: 30
         height: 30
-      alignment: 9
-      pivot: {x: .5, y: .800000012}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: breath01
       rect:
@@ -203,8 +203,8 @@ TextureImporter:
         y: 39
         width: 27
         height: 37
-      alignment: 9
-      pivot: {x: .518518507, y: .64864862}
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: corkscrew02
       rect:
@@ -323,8 +323,8 @@ TextureImporter:
         y: 121
         width: 24
         height: 32
-      alignment: 9
-      pivot: {x: .375, y: .75}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: crouch02
       rect:
@@ -333,8 +333,8 @@ TextureImporter:
         y: 116
         width: 29
         height: 26
-      alignment: 9
-      pivot: {x: .344827592, y: .923076928}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: death01
       rect:
@@ -433,8 +433,8 @@ TextureImporter:
         y: 251
         width: 32
         height: 37
-      alignment: 9
-      pivot: {x: .46875, y: .64864862}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: edge02
       rect:
@@ -443,8 +443,8 @@ TextureImporter:
         y: 78
         width: 35
         height: 37
-      alignment: 9
-      pivot: {x: .514285743, y: .64864862}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: edge03
       rect:
@@ -453,8 +453,8 @@ TextureImporter:
         y: 251
         width: 34
         height: 37
-      alignment: 9
-      pivot: {x: .5, y: .64864862}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: edgealt01
       rect:
@@ -463,8 +463,8 @@ TextureImporter:
         y: 132
         width: 31
         height: 37
-      alignment: 9
-      pivot: {x: .483870953, y: .64864862}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: edgealt02
       rect:
@@ -473,8 +473,8 @@ TextureImporter:
         y: 93
         width: 32
         height: 37
-      alignment: 9
-      pivot: {x: .46875, y: .64864862}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: flail01
       rect:
@@ -484,7 +484,7 @@ TextureImporter:
         width: 32
         height: 37
       alignment: 9
-      pivot: {x: .46875, y: .64864862}
+      pivot: {x: .300000012, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: flail02
       rect:
@@ -494,7 +494,7 @@ TextureImporter:
         width: 29
         height: 37
       alignment: 9
-      pivot: {x: .413793117, y: .64864862}
+      pivot: {x: .234999999, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: flail03
       rect:
@@ -504,7 +504,7 @@ TextureImporter:
         width: 29
         height: 37
       alignment: 9
-      pivot: {x: .413793117, y: .64864862}
+      pivot: {x: .234999999, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: flail04
       rect:
@@ -514,7 +514,7 @@ TextureImporter:
         width: 36
         height: 37
       alignment: 9
-      pivot: {x: .333333343, y: .64864862}
+      pivot: {x: .234999999, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: float01
       rect:
@@ -623,8 +623,8 @@ TextureImporter:
         y: 2
         width: 30
         height: 35
-      alignment: 9
-      pivot: {x: .566666663, y: .685714304}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: idlesit02
       rect:
@@ -643,8 +643,8 @@ TextureImporter:
         y: 205
         width: 39
         height: 24
-      alignment: 9
-      pivot: {x: .615384638, y: 1}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: idlesit04
       rect:
@@ -652,9 +652,9 @@ TextureImporter:
         x: 287
         y: 202
         width: 39
-        height: 24
-      alignment: 9
-      pivot: {x: .615384638, y: 1}
+        height: 25
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: idletap01
       rect:
@@ -663,8 +663,8 @@ TextureImporter:
         y: 210
         width: 26
         height: 39
-      alignment: 9
-      pivot: {x: .538461566, y: .615384638}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: idletap02
       rect:
@@ -673,8 +673,8 @@ TextureImporter:
         y: 78
         width: 28
         height: 38
-      alignment: 9
-      pivot: {x: .464285702, y: .631578922}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: idletap03
       rect:
@@ -683,8 +683,8 @@ TextureImporter:
         y: 47
         width: 28
         height: 38
-      alignment: 9
-      pivot: {x: .464285702, y: .631578922}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: idletap04
       rect:
@@ -694,7 +694,7 @@ TextureImporter:
         width: 29
         height: 38
       alignment: 9
-      pivot: {x: .448275864, y: .631578922}
+      pivot: {x: .479999989, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: idletap05
       rect:
@@ -703,8 +703,8 @@ TextureImporter:
         y: 171
         width: 28
         height: 38
-      alignment: 9
-      pivot: {x: .464285702, y: .631578922}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: lookup01
       rect:
@@ -713,8 +713,8 @@ TextureImporter:
         y: 171
         width: 27
         height: 38
-      alignment: 9
-      pivot: {x: .555555582, y: .631578922}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: lookup02
       rect:
@@ -723,8 +723,8 @@ TextureImporter:
         y: 53
         width: 27
         height: 38
-      alignment: 9
-      pivot: {x: .555555582, y: .631578922}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: push01
       rect:
@@ -733,8 +733,8 @@ TextureImporter:
         y: 15
         width: 29
         height: 36
-      alignment: 9
-      pivot: {x: .517241359, y: .666666687}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: push02
       rect:
@@ -743,8 +743,8 @@ TextureImporter:
         y: 172
         width: 24
         height: 37
-      alignment: 9
-      pivot: {x: .416666657, y: .64864862}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: push03
       rect:
@@ -753,8 +753,8 @@ TextureImporter:
         y: 18
         width: 28
         height: 36
-      alignment: 9
-      pivot: {x: .5, y: .666666687}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: push04
       rect:
@@ -763,8 +763,8 @@ TextureImporter:
         y: 133
         width: 24
         height: 37
-      alignment: 9
-      pivot: {x: .416666657, y: .64864862}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: run01
       rect:
@@ -773,8 +773,8 @@ TextureImporter:
         y: 2
         width: 31
         height: 35
-      alignment: 9
-      pivot: {x: .516129017, y: .685714304}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: run02
       rect:
@@ -783,8 +783,8 @@ TextureImporter:
         y: 216
         width: 31
         height: 36
-      alignment: 9
-      pivot: {x: .516129017, y: .666666687}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: run03
       rect:
@@ -793,8 +793,8 @@ TextureImporter:
         y: 2
         width: 30
         height: 35
-      alignment: 9
-      pivot: {x: .5, y: .685714304}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: run04
       rect:
@@ -803,8 +803,8 @@ TextureImporter:
         y: 178
         width: 31
         height: 36
-      alignment: 9
-      pivot: {x: .516129017, y: .666666687}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: skid01
       rect:
@@ -813,8 +813,8 @@ TextureImporter:
         y: 292
         width: 38
         height: 38
-      alignment: 9
-      pivot: {x: .473684222, y: .631578922}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: skid02
       rect:
@@ -823,8 +823,8 @@ TextureImporter:
         y: 292
         width: 38
         height: 38
-      alignment: 9
-      pivot: {x: .473684222, y: .631578922}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: skid03
       rect:
@@ -833,8 +833,8 @@ TextureImporter:
         y: 291
         width: 37
         height: 39
-      alignment: 9
-      pivot: {x: .459459454, y: .615384638}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: spindash01
       rect:
@@ -843,8 +843,8 @@ TextureImporter:
         y: 173
         width: 30
         height: 27
-      alignment: 9
-      pivot: {x: .366666675, y: .888888896}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: spindash02
       rect:
@@ -853,8 +853,8 @@ TextureImporter:
         y: 144
         width: 29
         height: 27
-      alignment: 9
-      pivot: {x: .37931034, y: .888888896}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: spindash03
       rect:
@@ -863,8 +863,8 @@ TextureImporter:
         y: 87
         width: 29
         height: 27
-      alignment: 9
-      pivot: {x: .37931034, y: .888888896}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: spindash04
       rect:
@@ -873,8 +873,8 @@ TextureImporter:
         y: 56
         width: 29
         height: 27
-      alignment: 9
-      pivot: {x: .37931034, y: .888888896}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: spindash05
       rect:
@@ -883,8 +883,8 @@ TextureImporter:
         y: 56
         width: 29
         height: 27
-      alignment: 9
-      pivot: {x: .37931034, y: .888888896}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: spindash06
       rect:
@@ -893,8 +893,8 @@ TextureImporter:
         y: 27
         width: 29
         height: 27
-      alignment: 9
-      pivot: {x: .37931034, y: .888888896}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: spring01
       rect:
@@ -913,8 +913,8 @@ TextureImporter:
         y: 169
         width: 27
         height: 39
-      alignment: 9
-      pivot: {x: .555555582, y: .615384638}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: turn01
       rect:
@@ -933,8 +933,8 @@ TextureImporter:
         y: 128
         width: 26
         height: 39
-      alignment: 9
-      pivot: {x: .576923072, y: .615384638}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: walk02
       rect:
@@ -943,8 +943,8 @@ TextureImporter:
         y: 160
         width: 28
         height: 40
-      alignment: 9
-      pivot: {x: .535714269, y: .600000024}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: walk03
       rect:
@@ -953,8 +953,8 @@ TextureImporter:
         y: 292
         width: 40
         height: 38
-      alignment: 9
-      pivot: {x: .524999976, y: .552631557}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: walk04
       rect:
@@ -963,8 +963,8 @@ TextureImporter:
         y: 249
         width: 39
         height: 39
-      alignment: 9
-      pivot: {x: .512820542, y: .589743614}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: walk05
       rect:
@@ -973,8 +973,8 @@ TextureImporter:
         y: 87
         width: 26
         height: 39
-      alignment: 9
-      pivot: {x: .576923072, y: .615384638}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: walk06
       rect:
@@ -983,8 +983,8 @@ TextureImporter:
         y: 118
         width: 29
         height: 40
-      alignment: 9
-      pivot: {x: .620689631, y: .600000024}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: walk07
       rect:
@@ -993,8 +993,8 @@ TextureImporter:
         y: 290
         width: 39
         height: 40
-      alignment: 9
-      pivot: {x: .538461566, y: .574999988}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: walk08
       rect:
@@ -1003,8 +1003,8 @@ TextureImporter:
         y: 251
         width: 39
         height: 39
-      alignment: 9
-      pivot: {x: .56410259, y: .589743614}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

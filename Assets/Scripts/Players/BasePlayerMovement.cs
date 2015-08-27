@@ -106,6 +106,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
     // Player Information
     protected Vector3 axis;
+	protected Transform _pivot;
     protected float _currentSpeed = 0f;
     protected bool _dead = false;
     protected Char_State _state = Char_State.IN_AIR;
@@ -181,6 +182,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
         _animator = GetComponent<Animator>();
         _subAnimator = GameObject.Find("DustAnimations").GetComponent<Animator>();
+		_pivot = GameObject.Find("Pivot").transform;
         CharacterAwake();
     }
 
@@ -214,6 +216,13 @@ public abstract class BasePlayerMovement : MonoBehaviour
     /// </summary>
     void Update()
     {
+
+		if(Input.GetKeyDown(KeyCode.P)){
+			Debug.Log("Pivot world position = " + _pivot.position) ;
+			Debug.Log("Pivot position relative to my parent = " + _pivot.localPosition) ;
+			Debug.Log("Pivot parent's world position = " + _pivot.position) ;
+		}
+
         Obj01_Control();
         
         if (YRotation == FACING_LEFT)
@@ -626,29 +635,28 @@ public abstract class BasePlayerMovement : MonoBehaviour
                        collider.bounds.min.y,
                        collider.bounds.size.x,
                        collider.bounds.size.y);
-
         Vector3 vAStart, vBStart, vCStart, vDStart, vEStart, vFstart;
 
         // A & B Sensors above Sonic Head
         vAStart = new Vector3(box.center.x - 9, box.center.y, transform.position.z);
         vBStart = new Vector3(box.center.x + 9, box.center.y, transform.position.z);
-
+		float distanceABCD;
         // C & D Sensors Beloww Sonics Feet Also Check if we are jumping, if so change the width of the C & D Sensors
         switch (_jumping)
         {
             case true:
-                vCStart = new Vector3(box.center.x - 7, box.center.y, transform.position.z);
-                vDStart = new Vector3(box.center.x + 7, box.center.y, transform.position.z);
+				vCStart = new Vector3(_pivot.position.x - 7, _pivot.position.y + box.height / 2, transform.position.z);
+				vDStart = new Vector3(_pivot.position.x + 7, _pivot.position.y + box.height / 2, transform.position.z);
+				distanceABCD = (box.height / 2) + 30f;
                 break;
             default:
-                vCStart = new Vector3(box.center.x - 9, box.center.y, transform.position.z);
-                vDStart = new Vector3(box.center.x + 9, box.center.y, transform.position.z);
+				vCStart = new Vector3(_pivot.position.x - 9, _pivot.position.y + box.height / 2, transform.position.z);
+				vDStart = new Vector3(_pivot.position.x + 9, _pivot.position.y + box.height / 2, transform.position.z);
+				distanceABCD = (box.height / 2) + 30f;
                 break;
         }
-
         // TODO: Fix this
         // This may need to be revised - This is what was causing the bouncing issue, but dividing the velocity has helped
-        float distanceABCD = (box.height / 2) + 20f;
         float groundAqDistance = (box.height / 2) + 0.005f;
 
         // Make the ray vectors
@@ -670,9 +678,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
         hCG = Physics2D.Raycast(vCStart, -Vector2.up, distanceABCD, 1 << lmGround);
         hDG = Physics2D.Raycast(vDStart, -Vector2.up, distanceABCD, 1 << lmGround);
 
-        if (hCG.collider || hDG.collider)
+        if (hCG.collider || hDG.collider) // Ray casts have hit something
         {
-            // No were not connected, not yet anyway
+            // Reset variables
             bool bCGConnected = false;
             bool bDGConnected = false;
             float CDistance = 0f, DDistance = 0f;
@@ -686,45 +694,96 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
                 if (groundAqDistance > CDistance || groundAqDistance > DDistance)
                 {
-                    if (CDistance > DDistance)
-                    {
-                        velocity = new Vector2(velocity.x, 0f);
-                        transform.Translate(Vector3.down * (CDistance - box.height / 2)); // Places the transform on the ground
-                        _normal = hCG.normal;
-                    }
-                    else
-                    {
-                        velocity = new Vector2(velocity.x, 0f);
-                        transform.Translate(Vector3.down * (DDistance - box.height / 2)); // Places the transform on the ground
-                        _normal = hDG.normal;
-                    }
+						
+					if (CDistance != 0f && DDistance != 0f)
+					{
+
+	                    if (CDistance > DDistance)
+	                    {
+	                        velocity = new Vector2(velocity.x, 0f);
+							transform.Translate(Vector3.down * ((CDistance+DDistance)/2 - box.height / 2)); // Places the transform on the ground
+	                        _normal = hCG.normal;
+	                    }
+	                    else
+	                    {
+	                        velocity = new Vector2(velocity.x, 0f);
+							transform.Translate(Vector3.down * ((CDistance+DDistance)/2 - box.height / 2)); // Places the transform on the ground
+	                        _normal = hDG.normal;
+	                    }
+					}
+					else 
+					{
+						if (CDistance == 0f)
+						{
+							velocity = new Vector2(velocity.x, 0f);
+							transform.Translate(Vector3.down * (DDistance - box.height / 2)); // Places the transform on the ground
+							_normal = hDG.normal;
+						}
+						else
+						{
+							velocity = new Vector2(velocity.x, 0f);
+							transform.Translate(Vector3.down * (CDistance - box.height / 2)); // Places the transform on the ground
+							_normal = hDG.normal;
+						}
+					}
                     _state = Char_State.ON_GROUND;
                 }
             }
             else if (_state == Char_State.ON_GROUND)
             {
-                if (CDistance > DDistance)
-                {
-                    velocity = new Vector2(velocity.x, 0f);
-                    transform.Translate(Vector3.down * (CDistance - box.height / 2)); // Places the transform on the ground
-                    _normal = hCG.normal;
-                }
-                else
-                {
-                    velocity = new Vector2(velocity.x, 0f);
-                    transform.Translate(Vector3.down * (DDistance - box.height / 2)); // Places the transform on the ground
-                    _normal = hDG.normal;
-                }
-                _state = Char_State.ON_GROUND;
+				if (CDistance != 0f && DDistance != 0f)
+				{
+               	 	if (CDistance < DDistance)
+	                {
+	                    velocity = new Vector2(velocity.x, 0f);
+						transform.Translate(Vector3.down * ((CDistance+DDistance)/2 - box.height / 2)); // Places the transform on the ground
+	                    _normal = hDG.normal;
+	                }
+	                else
+	                {
+	                    velocity = new Vector2(velocity.x, 0f);
+						transform.Translate(Vector3.down * ((CDistance+DDistance)/2 - box.height / 2)); // Places the transform on the ground
+	                    _normal = hCG.normal;
+	                }
+				}
+				else 
+				{
+					if (CDistance == 0f)
+					{
+						velocity = new Vector2(velocity.x, 0f);
+						transform.Translate(Vector3.down * (DDistance - box.height / 2)); // Places the transform on the ground
+						_normal = hDG.normal;
+					}
+                    else
+                    {
+						velocity = new Vector2(velocity.x, 0f);
+						transform.Translate(Vector3.down * (CDistance - box.height / 2)); // Places the transform on the ground
+	                    _normal = hDG.normal;
+	                }
+				}
 
-                // Rotate the Sprite
-                Vector3 objectForward = transform.TransformDirection(Vector3.forward);
-                transform.rotation = Quaternion.LookRotation(objectForward, _normal);
 
-                _angle = Vector2.Angle(Vector2.up, _normal);        // Calculate and send out the agle of colliders
+				_state = Char_State.ON_GROUND;
+
+				// Rotate the Sprite
+				Vector3 objectForward = transform.TransformDirection(Vector3.forward);
+				_angle = Vector2.Angle(Vector2.up, _normal);        // Calculate and send out the angle of colliders
+				Vector3 deg45 = new Vector3(0,1,0);
+				if (_angle > 20)
+				{
+					deg45 = new Vector3(-1,1,0);
+
+				}
+				if (_angle < -20)
+				{
+					deg45 = new Vector3(1,1,0);
+				}
+				transform.rotation = Quaternion.LookRotation(objectForward, deg45);		
+
 
                 // Process Edge Detection
                 EdgeDetection(bCGConnected, bDGConnected, hCG, hDG);
+				
             }
         }
         else
