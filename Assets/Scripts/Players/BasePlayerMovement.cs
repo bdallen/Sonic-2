@@ -769,12 +769,12 @@ public abstract class BasePlayerMovement : MonoBehaviour
 				Vector3 objectForward = transform.TransformDirection(Vector3.forward);
 				_angle = Vector2.Angle(Vector2.up, _normal);        // Calculate and send out the angle of colliders
 				Vector3 deg45 = new Vector3(0,1,0);
-				if (_angle > 20)
+				if (_angle > 20 && velocity.x != 0f )
 				{
 					deg45 = new Vector3(-1,1,0);
 
 				}
-				if (_angle < -20)
+				if (_angle < -20 && velocity.x != 0f)
 				{
 					deg45 = new Vector3(1,1,0);
 				}
