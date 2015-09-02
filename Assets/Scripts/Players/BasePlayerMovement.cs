@@ -218,10 +218,19 @@ public abstract class BasePlayerMovement : MonoBehaviour
     {
 
 		if(Input.GetKeyDown(KeyCode.P)){
-			Debug.Log("Pivot world position = " + _pivot.position) ;
-			Debug.Log("Pivot position relative to my parent = " + _pivot.localPosition) ;
-			Debug.Log("Pivot parent's world position = " + _pivot.position) ;
+			//Debug.Log("Pivot world position = " + _pivot.position) ;
+			//Debug.Log("Pivot position relative to my parent = " + _pivot.localPosition) ;
+			//Debug.Log("Pivot parent's world position = " + _pivot.position) ;
 		}
+
+		if(Input.GetKeyDown(KeyCode.R)){
+			transform.rotation = Quaternion.LookRotation(transform.TransformDirection(Vector3.forward), new Vector3(1,1,0));	
+		}
+		else{
+			transform.rotation = Quaternion.LookRotation(transform.TransformDirection(Vector3.forward), transform.TransformDirection(Vector3.forward));
+		}
+
+
 
         Obj01_Control();
         
@@ -300,8 +309,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
         Player_Jump();              //bsr.w Sonic_Jump
         Player_Move();              //bsr.w Sonic_Move
         Player_LevelBound();        //bsr.w	Sonic_LevelBound
-        ObjectMove();
-        Player_DoLevelCollision();
+		Player_DoLevelCollision();
+		ObjectMove();
+
         //Collision();
 
     }
@@ -319,9 +329,8 @@ public abstract class BasePlayerMovement : MonoBehaviour
         }
 
         // TODO: JumpAngle
-
+		Player_DoLevelCollision();
         ObjectMoveAndFall();
-        Player_DoLevelCollision();
         
     }
 
@@ -338,9 +347,9 @@ public abstract class BasePlayerMovement : MonoBehaviour
         }
 
         // TODO: JumpAngle
-
+		Player_DoLevelCollision();
         ObjectMoveAndFall();
-        Player_DoLevelCollision();
+        
 
     }
 
@@ -609,7 +618,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
     void ObjectMoveAndFall()
     {
         if (_debugNoGravity == true) { return; }    // If No Gravity Debug is on, then exit routine
-
+		if (_state == Char_State.ON_GROUND) {return;}
         velocity = new Vector2(velocity.x, Mathf.Max(velocity.y - GRAVITY, -MAX_FALL_VELOCITY));    // Apply gravity to Player
 
         // Were falling
@@ -619,177 +628,199 @@ public abstract class BasePlayerMovement : MonoBehaviour
         }
 
         transform.Translate(velocity.x, velocity.y, 0f);
+		transform.position = new Vector3 (Mathf.Round(transform.position.x),Mathf.Round(transform.position.y),Mathf.Round(transform.position.z));
 
     }
 
     void ObjectMove()
     {
         transform.Translate(velocity.x, velocity.y, 0f);
+		transform.position = new Vector3 (Mathf.Round(transform.position.x),Mathf.Round(transform.position.y),Mathf.Round(transform.position.z));
     }
 
     void Player_DoLevelCollision()
     {
+		//velocity.x = Mathf.Abs (velocity.x);
+		//velocity.y = Mathf.Abs (velocity.y);
         // Grab out box collider and make rect object box for easier user
         BoxCollider collider = GetComponent<BoxCollider>();
-        box = new Rect(collider.bounds.min.x,
-                       collider.bounds.min.y,
-                       collider.bounds.size.x,
-                       collider.bounds.size.y);
-        Vector3 vAStart, vBStart, vCStart, vDStart, vEStart, vFstart;
-
-        // A & B Sensors above Sonic Head
-        vAStart = new Vector3(box.center.x - 9, box.center.y, transform.position.z);
-        vBStart = new Vector3(box.center.x + 9, box.center.y, transform.position.z);
-		float distanceABCD;
-        // C & D Sensors Beloww Sonics Feet Also Check if we are jumping, if so change the width of the C & D Sensors
-        switch (_jumping)
-        {
-            case true:
-				vCStart = new Vector3(_pivot.position.x - 7, _pivot.position.y + box.height / 2, transform.position.z);
-				vDStart = new Vector3(_pivot.position.x + 7, _pivot.position.y + box.height / 2, transform.position.z);
-				distanceABCD = (box.height / 2) + 30f;
-                break;
+        box = new Rect(collider.bounds.min.x, collider.bounds.min.y, collider.bounds.size.x, collider.bounds.size.y);
+        Vector3 vAStart, vBStart, vCStart, vDStart, vEStart, vFstart; // A & B Sensors above Sonic Head, C & D Sensors Below Sonics Feet
+		Vector2 ground;
+		Vector2 feet = new Vector2(Mathf.Abs (box.center.x), box.center.y - box.height / 2);
+		float boxLayerZ = transform.position.z;
+		float rayLength = (box.height / 2) + 30f;
+		float rayOffset, distanceToGround;
+		switch (_jumping) // Check if we are jumping, if so change the width of the C & D Sensors
+		{
+			case true:
+				rayOffset = 9f;
+				break;
             default:
-				vCStart = new Vector3(_pivot.position.x - 9, _pivot.position.y + box.height / 2, transform.position.z);
-				vDStart = new Vector3(_pivot.position.x + 9, _pivot.position.y + box.height / 2, transform.position.z);
-				distanceABCD = (box.height / 2) + 30f;
-                break;
-        }
-        // TODO: Fix this
-        // This may need to be revised - This is what was causing the bouncing issue, but dividing the velocity has helped
-        float groundAqDistance = (box.height / 2) + 0.005f;
+				rayOffset = 7f;
+				break;
+		}
 
-        // Make the ray vectors
-        Ray2D rA = new Ray2D(vAStart, Vector2.up);
-        Ray2D rB = new Ray2D(vBStart, Vector2.up);
-        Ray2D rCG = new Ray2D(vCStart, -Vector2.up);
-        Ray2D rDG = new Ray2D(vDStart, -Vector2.up);
+		vAStart = new Vector3(box.center.x - rayOffset + velocity.x, box.center.y + velocity.y, boxLayerZ);
+		vBStart = new Vector3(box.center.x + rayOffset + velocity.x, box.center.y + velocity.y, boxLayerZ);
+		vCStart = new Vector3(box.center.x - rayOffset + velocity.x, box.center.y + velocity.y, boxLayerZ);
+		vDStart = new Vector3(box.center.x + rayOffset + velocity.x, box.center.y + velocity.y, boxLayerZ);
 
         // Draw Debug Raycasts
         //Debug.DrawRay(vAStart, Vector2.up * distanceABCD, Color.green, 2f);
         //Debug.DrawRay(vBStart, Vector2.up * distanceABCD, Color.green, 2f);
-        Debug.DrawRay(vCStart, -Vector2.up * distanceABCD, Color.red, 2f);
-        Debug.DrawRay(vDStart, -Vector2.up * distanceABCD, Color.blue, 2f);
+        Debug.DrawRay(vCStart, -Vector2.up * rayLength, Color.red, 2f);
+        Debug.DrawRay(vDStart, -Vector2.up * rayLength, Color.blue, 2f);
 
         RaycastHit2D hA, hB, hC, hD, hCG, hDG;
+        hA = Physics2D.Raycast(vAStart, Vector2.up, rayLength);
+        hB = Physics2D.Raycast(vBStart, Vector2.up, rayLength);
+        hCG = Physics2D.Raycast(vCStart, -Vector2.up, rayLength, 1 << lmGround); //rays only collide with ground
+		hDG = Physics2D.Raycast(vDStart, -Vector2.up, rayLength, 1 << lmGround); //rays only collide with ground
 
-        hA = Physics2D.Raycast(vAStart, Vector2.up, distanceABCD);
-        hB = Physics2D.Raycast(vBStart, Vector2.up, distanceABCD);
-        hCG = Physics2D.Raycast(vCStart, -Vector2.up, distanceABCD, 1 << lmGround);
-        hDG = Physics2D.Raycast(vDStart, -Vector2.up, distanceABCD, 1 << lmGround);
-
-        if (hCG.collider || hDG.collider) // Ray casts have hit something
-        {
-            // Reset variables
-            bool bCGConnected = false;
-            bool bDGConnected = false;
-            float CDistance = 0f, DDistance = 0f;
-
-            // Store out the sensor values
-            if (hCG.collider != null) { bCGConnected = true; SensorCG = hCG.point; CDistance = hCG.distance; }
-            if (hDG.collider != null) { bDGConnected = true; SensorDG = hDG.point; DDistance = hDG.distance; }
-
-            if (_state == Char_State.IN_AIR || _state == Char_State.JUMPING && velocity.y < 0)
-            {
-
-                if (groundAqDistance > CDistance || groundAqDistance > DDistance)
-                {
-						
-					if (CDistance != 0f && DDistance != 0f)
-					{
-
-	                    if (CDistance > DDistance)
-	                    {
-	                        velocity = new Vector2(velocity.x, 0f);
-							transform.Translate(Vector3.down * ((CDistance+DDistance)/2 - box.height / 2)); // Places the transform on the ground
-	                        _normal = hCG.normal;
-	                    }
-	                    else
-	                    {
-	                        velocity = new Vector2(velocity.x, 0f);
-							transform.Translate(Vector3.down * ((CDistance+DDistance)/2 - box.height / 2)); // Places the transform on the ground
-	                        _normal = hDG.normal;
-	                    }
-					}
-					else 
-					{
-						if (CDistance == 0f)
-						{
-							velocity = new Vector2(velocity.x, 0f);
-							transform.Translate(Vector3.down * (DDistance - box.height / 2)); // Places the transform on the ground
-							_normal = hDG.normal;
-						}
-						else
-						{
-							velocity = new Vector2(velocity.x, 0f);
-							transform.Translate(Vector3.down * (CDistance - box.height / 2)); // Places the transform on the ground
-							_normal = hDG.normal;
-						}
-					}
-                    _state = Char_State.ON_GROUND;
-                }
-            }
-            else if (_state == Char_State.ON_GROUND)
-            {
-				if (CDistance != 0f && DDistance != 0f)
-				{
-               	 	if (CDistance < DDistance)
-	                {
-	                    velocity = new Vector2(velocity.x, 0f);
-						transform.Translate(Vector3.down * ((CDistance+DDistance)/2 - box.height / 2)); // Places the transform on the ground
-	                    _normal = hDG.normal;
-	                }
-	                else
-	                {
-	                    velocity = new Vector2(velocity.x, 0f);
-						transform.Translate(Vector3.down * ((CDistance+DDistance)/2 - box.height / 2)); // Places the transform on the ground
-	                    _normal = hCG.normal;
-	                }
+		// Reset variables
+		bool edgeDetected = false;
+		bool groundDetected = false;
+		bool collisionDetected = false;
+		bool bCGConnected = false;
+		bool bDGConnected = false;
+		float CDistance = 0f, DDistance = 0f;
+		ground = new Vector2(0, 0); // Here just to keep compiler happy
+		distanceToGround = 0f; // Here just to keep compiler happy
+		if (hCG.collider && hDG.collider)// && velocity.y < 0f) { // Solid ground below
+		{
+			groundDetected = true;
+			SensorCG = hCG.point;
+			SensorDG = hDG.point;
+			ground = new Vector2((SensorCG.x + SensorDG.x) / 2, (SensorCG.y + SensorDG.y) / 2);
+			if (SensorCG.y == SensorDG.y)  // Ground below is flat
+			{
+				ground = new Vector2(SensorCG.x, SensorCG.y);
+				_normal = hCG.normal;
+			} 
+			else if (SensorCG.y < SensorDG.y) { // Ground below is inclined
+				if (hDG.normal == Vector2.up){ // Top of quarter pipe
+					ground = new Vector2(SensorDG.x, SensorDG.y);
+					_normal = hDG.normal;
 				}
-				else 
-				{
-					if (CDistance == 0f)
-					{
-						velocity = new Vector2(velocity.x, 0f);
-						transform.Translate(Vector3.down * (DDistance - box.height / 2)); // Places the transform on the ground
-						_normal = hDG.normal;
-					}
-                    else
-                    {
-						velocity = new Vector2(velocity.x, 0f);
-						transform.Translate(Vector3.down * (CDistance - box.height / 2)); // Places the transform on the ground
-	                    _normal = hDG.normal;
-	                }
+				else {
+					ground = new Vector2((SensorCG.x + SensorDG.x) / 2, (SensorCG.y + SensorDG.y) / 2);
+					_normal = hDG.normal;
 				}
+			} 
+			else { // Ground below is declined
+				if (hCG.normal == Vector2.up){ // Top of quarter pipe
+					ground = new Vector2(SensorCG.x, SensorCG.y);
+					_normal = hCG.normal;
+				}
+				else {
+					ground = new Vector2((SensorCG.x + SensorDG.x) / 2, (SensorCG.y + SensorDG.y) / 2);
+					_normal = hCG.normal;
+				}
+			}
+		} 
+		if (hCG.collider != null && hDG.collider == null)// && velocity.y < 0f) //Ground on the left
+		{
+			edgeDetected = true;
+			groundDetected = true;
+			SensorCG = hCG.point;
+			ground = new Vector2(SensorCG.x, SensorCG.y);
+			_normal = hCG.normal;
+		}
+		if (hCG.collider == null && hDG.collider != null)// && velocity.y < 0f) //Ground on the right
+		{
+			edgeDetected = true;
+			groundDetected = true;
+			SensorDG = hDG.point;
+			ground = new Vector2(SensorDG.x, SensorDG.y);
+			_normal = hDG.normal;
+		}
+		if (hDG.collider == null && hCG.collider == null && velocity.y < 0f)//No ground detected below, don't care if we're dropping or raising
+		{
+			groundDetected = false;
+			_state = Char_State.IN_AIR;
+		}
 
+		if (groundDetected) //Your rays have collisions, tell me more about the location of the ground
+		{
+			distanceToGround = Mathf.Abs (ground.y - feet.y);
+			Debug.DrawRay(new Vector3(ground.x, ground.y, boxLayerZ), new Vector2(_normal.y,-_normal.x) * 10, Color.black, 1f);
+			Debug.DrawRay(new Vector3(ground.x, ground.y, boxLayerZ), new Vector2(-_normal.y,_normal.x) * 10, Color.black, 1f);
 
+			if (Mathf.Abs(ground.y - feet.y) <= 1 && _state != Char_State.JUMPING){ //Sonic is on the ground
 				_state = Char_State.ON_GROUND;
-
-				// Rotate the Sprite
-				Vector3 objectForward = transform.TransformDirection(Vector3.forward);
-				_angle = Vector2.Angle(Vector2.up, _normal);        // Calculate and send out the angle of colliders
-				Vector3 deg45 = new Vector3(0,1,0);
-				if (_angle > 20 && velocity.x != 0f )
-				{
-					deg45 = new Vector3(-1,1,0);
-
+				velocity.y = 0f;
+				collisionDetected = true;
+			} else if (feet.y + velocity.y < ground.y) // Player is going to hit the ground
+			{
+				collisionDetected = true;
+				if (ground.y < feet.y){
+					velocity.y = ground.y - feet.y;
+					_state = Char_State.ON_GROUND;
 				}
-				if (_angle < -20 && velocity.x != 0f)
-				{
-					deg45 = new Vector3(1,1,0);
+				else {
+					transform.Translate(0f, ground.y - feet.y, 0f);
 				}
-				transform.rotation = Quaternion.LookRotation(objectForward, deg45);		
+			} else if (_state != Char_State.JUMPING)
+			{
+				velocity.y = velocity.y - GRAVITY;
+			}
 
+			/*
+			if (Mathf.Abs(ground.y - feet.y) <= 1 && _state != Char_State.JUMPING){ //Sonic is on the ground
+				_state = Char_State.ON_GROUND;
+				velocity.y = 0f;
+			}
+			else if (velocity.y <= 0f && _state != Char_State.JUMPING)
+			{
+				velocity.y = velocity.y - GRAVITY;
+			}
+			if ((velocity.y <= 0f) && (feet.y + velocity.y < ground.y) ) // Player is going to hit the ground
+			{
+				collisionDetected = true;
+				if (ground.y - feet.y <= 0){
+					velocity.y = ground.y - feet.y;
+				}
+				else {
+					transform.Translate(0f, ground.y - feet.y, 0f);
+				}
+			}
+			*/
 
-                // Process Edge Detection
-                EdgeDetection(bCGConnected, bDGConnected, hCG, hDG);
+		}
+		else if (_state != Char_State.JUMPING)
+		{
+			_state = Char_State.IN_AIR; //Rays passing ground but player is not
+		}
+
+		distanceToGround = Mathf.Abs (ground.y - feet.y);
+		if (collisionDetected || _state == Char_State.ON_GROUND ) { //On ground or will be in next frame
+			_state = Char_State.ON_GROUND;
+			// Rotate the Sprite
+			Vector3 objectForward = transform.TransformDirection(Vector3.forward);
+			_angle = Vector2.Angle(Vector2.up, _normal);        // Calculate and send out the angle of colliders
+			Vector3 deg45 = new Vector3(0,1,0);
+			if (_angle > 35 && velocity.x != 0f )
+			{
+				deg45 = new Vector3(-1,1,0);
 				
-            }
-        }
-        else
-        {
-            if (_state != Char_State.JUMPING && _state != Char_State.DEAD) { _state = Char_State.IN_AIR; }   // If were not jumping or colliding with the ground, were possibly in the AIR........
-        }
+			}
+			if (_angle < -35 && velocity.x != 0f)
+			{
+				deg45 = new Vector3(1,1,0);
+			}
+			transform.rotation = Quaternion.LookRotation(objectForward, deg45);	
+		} 
+		else if (!collisionDetected && _state != Char_State.ON_GROUND  && _state != Char_State.JUMPING )//Is no longer on the ground  // feet.y - ground.y > 2
+		{
+			Vector3 objectForward = transform.TransformDirection(Vector3.forward);
+			transform.rotation = Quaternion.LookRotation(objectForward, objectForward);
+			_state = Char_State.IN_AIR;
+		}
+
+		if (edgeDetected) {
+			EdgeDetection(bCGConnected, bDGConnected, hCG, hDG);    // Process Edge Detection
+		}     
     }
 
     void EdgeDetection(bool bCGConnected, bool bDGConnected, RaycastHit2D hCG, RaycastHit2D hDG)
