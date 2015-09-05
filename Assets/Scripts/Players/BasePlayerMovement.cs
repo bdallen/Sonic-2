@@ -649,7 +649,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 		Vector2 ground;
 		Vector2 feet = new Vector2(Mathf.Abs (box.center.x), box.center.y - box.height / 2);
 		float boxLayerZ = transform.position.z;
-		float rayLength = (box.height / 2) + 30f;
+		float rayLength = (box.height / 2) + 20f;
 		float rayOffset, distanceToGround;
 		switch (_jumping) // Check if we are jumping, if so change the width of the C & D Sensors
 		{
@@ -747,7 +747,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 			Debug.DrawRay(new Vector3(ground.x, ground.y, boxLayerZ), new Vector2(_normal.y,-_normal.x) * 10, Color.black, 1f);
 			Debug.DrawRay(new Vector3(ground.x, ground.y, boxLayerZ), new Vector2(-_normal.y,_normal.x) * 10, Color.black, 1f);
 
-			if (Mathf.Abs(ground.y - feet.y) <= 1 && _state != Char_State.JUMPING){ //Sonic is on the ground
+			if (Mathf.Abs(ground.y - feet.y) <= 1 && _state != Char_State.JUMPING && velocity.y <= 0){ //Sonic is on the ground
 				_state = Char_State.ON_GROUND;
 				velocity.y = 0f;
 				collisionDetected = true;
@@ -759,7 +759,14 @@ public abstract class BasePlayerMovement : MonoBehaviour
 					_state = Char_State.ON_GROUND;
 				}
 				else {
-					transform.Translate(0f, ground.y - feet.y, 0f);
+				//if (YRotation == FACING_LEFT){
+				//	velocity = new Vector2(_normal.y,-_normal.x) * velocity.magnitude;
+				//}
+				//else{
+				//	velocity = new Vector2(-_normal.y,_normal.x) * velocity.magnitude;
+				//}
+					//transform.Translate(0f, ground.y - feet.y, 0f);
+					velocity.y = Mathf.Min(ground.y - feet.y, _topSpeed);
 				}
 			} else if (_state != Char_State.JUMPING)
 			{
@@ -794,6 +801,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 		}
 
 		distanceToGround = Mathf.Abs (ground.y - feet.y);
+
 		if (collisionDetected || _state == Char_State.ON_GROUND ) { //On ground or will be in next frame
 			_state = Char_State.ON_GROUND;
 			// Rotate the Sprite
@@ -803,7 +811,6 @@ public abstract class BasePlayerMovement : MonoBehaviour
 			if (_angle > 35 && velocity.x != 0f )
 			{
 				deg45 = new Vector3(-1,1,0);
-				
 			}
 			if (_angle < -35 && velocity.x != 0f)
 			{
@@ -820,7 +827,7 @@ public abstract class BasePlayerMovement : MonoBehaviour
 
 		if (edgeDetected) {
 			EdgeDetection(bCGConnected, bDGConnected, hCG, hDG);    // Process Edge Detection
-		}     
+		}
     }
 
     void EdgeDetection(bool bCGConnected, bool bDGConnected, RaycastHit2D hCG, RaycastHit2D hDG)
